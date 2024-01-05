@@ -6,7 +6,7 @@ const BettingScreen = () => {
   const [betAmount, setBetAmount] = useState(0);
 
   const handleBetSubmit = () => {
-    // Send bet amount to backend and start game
+    // Send bet amount
     navigate("/game");
   };
 

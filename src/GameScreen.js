@@ -6,67 +6,19 @@ const GameScreen = () => {
   });
 
   useEffect(() => {
-    // Fetch initial game state from backend
+    // Fetch initial game state
   }, []);
 
   const handleHit = () => {
-    fetch("/hit", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        /* game state or player ID as needed */
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Update the game state based on the response
-        setGameState(data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    
   };
 
   const handleStand = () => {
-    fetch("/stand", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        /* game state or player ID as needed */
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Update the game state based on the response
-        setGameState(data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    
   };
 
   const handleDouble = () => {
-    fetch("/double", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        /* game state or player ID as needed */
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // Update the game state based on the response
-        setGameState(data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+   
   };
 
 
