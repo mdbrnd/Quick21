@@ -17,8 +17,18 @@ const io = new Server(server, {
   },
 });
 
+let activeRooms = {};
+
 io.on("connection", (socket) => {
   console.log("a user connected with socket id: ", socket.id);
+
+  socket.on("create-room", () => {
+    console.log("creating room: ", roomName);
+    activeRooms[roomName] = { users: {} };
+    socket.join(roomName);
+  });
+
+
   socket.on("disconnect", () => {
     console.log("user disconnected");
   });
