@@ -1,15 +1,6 @@
+import { Card } from "./card";
+import { GameState } from "./game_state";
 import Player from "./player";
-
-interface Card {
-  value: string;
-  suit: string;
-}
-
-export interface GameState {
-  deck: Card[];
-  playersHands: Map<Player, Card[]>;
-  dealersHand: Card[];
-}
 
 class Game {
   public state: GameState = {
@@ -48,6 +39,22 @@ class Game {
         this.state.deck.push({ value, suit });
       }
     }
+  }
+
+  public hit(playerSocketId: string) {
+    const player = this.getPlayerHandBySocketId(playerSocketId);
+    if (player) {
+      player.push(this.state.deck.pop()!);
+    }
+  }
+
+  public getPlayerHandBySocketId(socketId: string) {
+    for (let [player, hand] of this.state.playersHands.entries()) {
+      if (player.socketId === socketId) {
+        return hand;
+      }
+    }
+    return undefined;
   }
 
   // copilot

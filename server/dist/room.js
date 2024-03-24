@@ -11,15 +11,16 @@ var PlayerAction;
     PlayerAction["Insurance"] = "insurance";
 })(PlayerAction || (PlayerAction = {}));
 class Room {
-    constructor(roomId, playerSocketId, playerName) {
+    constructor(roomId, initialPlayer) {
         this.players = [];
         // The initial playerSocketId is the player who created the room
         this.id = roomId;
-        this.players.push({ socketId: playerSocketId, name: playerName });
-        this.game = new game_1.default({ socketId: playerSocketId, name: playerName });
+        this.players.push(initialPlayer);
+        this.currentPlayer = this.players[0];
+        this.game = new game_1.default(initialPlayer);
     }
-    addPlayer(playerSocketId, playerName) {
-        this.players.push({ socketId: playerSocketId, name: playerName });
+    addPlayer(player) {
+        this.players.push(player);
     }
     removePlayer(playerSocketId) {
         const index = this.players.findIndex((player) => player.socketId === playerSocketId);
@@ -27,7 +28,13 @@ class Room {
             this.players.splice(index, 1);
         }
     }
+    hasPlayer(playerSocketId) {
+        return this.players.some((player) => player.socketId === playerSocketId);
+    }
     performAction(playerSocketId, action) {
+        if (this.currentPlayer.socketId !== playerSocketId) {
+            return { success: false, updatedGameState: this.game.state };
+        }
         switch (action) {
             case PlayerAction.Hit:
                 break;
@@ -36,6 +43,7 @@ class Room {
             case PlayerAction.Insurance:
                 break;
         }
+        return { success: true, updatedGameState: this.game.state };
     }
 }
 exports.default = Room;

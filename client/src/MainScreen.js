@@ -6,22 +6,66 @@ import { socket } from "./socket";
 const MainScreen = () => {
   let navigate = useNavigate();
   const [showRules, setShowRules] = useState(false);
+  const [roomCode, setRoomCode] = useState("");
 
-  const handlePlayClick = () => {
+  const newGame = () => {
     socket.emit("create-room", "player 1");
     navigate("/bet");
+    gameLoop();
   };
 
   const toggleRules = () => {
     setShowRules(!showRules);
   };
 
+  const joinRoom = () => {
+    if (roomCode.length !== 6) {
+      alert("Room code must be 6 digits");
+      return;
+    }
+
+    socket.emit("join-room", roomCode);
+
+    socket.on("join-room-response", (response) => {
+      if (response.success === false) {
+        alert("Room not found or full");
+      } else {
+        navigate("/bet");
+        gameLoop();
+      }
+    });
+  };
+
+  const sanitizeRoomCode = (event) => {
+    let changed = event.target.value;
+    if (/^\d*$/.test(changed) && changed.length <= 6) {
+      setRoomCode(changed);
+    }
+  };
+
+  const gameLoop = () => {
+    socket.on("game-state-update", (gameState) => {
+      console.log(gameState);
+    });
+  }
+
   return (
     <div className="mainScreenStyle">
       <h1>Welcome to Quick21</h1>
-      <button onClick={handlePlayClick} className="buttonStyle">
-        Play
+      <button onClick={newGame} className="buttonStyle">
+        New Game
       </button>
+      <div>
+        <input
+          value={roomCode}
+          onChange={sanitizeRoomCode}
+          placeholder="Enter game code"
+          maxLength="6"
+        />
+        <button onClick={joinRoom} className="buttonStyle">
+          Join Game
+        </button>
+      </div>
       <button onClick={toggleRules} className="buttonStyle">
         Rules
       </button>

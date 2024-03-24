@@ -2,12 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Game {
     constructor(firstPlayer) {
-        this.deck = [];
-        this.playersHands = new Map();
-        this.dealersHand = [];
+        this.state = {
+            deck: [],
+            playersHands: new Map(),
+            dealersHand: [],
+        };
         this.initializeDeck();
-        this.deck = this.shuffleDeck(this.deck);
-        this.playersHands.set(firstPlayer, []);
+        this.state.deck = this.shuffleDeck(this.state.deck);
+        this.state.playersHands.set(firstPlayer, []);
         this.dealFirstCards();
     }
     initializeDeck() {
@@ -29,9 +31,23 @@ class Game {
         ];
         for (let suit of suits) {
             for (let value of values) {
-                this.deck.push({ value, suit });
+                this.state.deck.push({ value, suit });
             }
         }
+    }
+    hit(playerSocketId) {
+        const player = this.getPlayerHandBySocketId(playerSocketId);
+        if (player) {
+            player.push(this.state.deck.pop());
+        }
+    }
+    getPlayerHandBySocketId(socketId) {
+        for (let [player, hand] of this.state.playersHands.entries()) {
+            if (player.socketId === socketId) {
+                return hand;
+            }
+        }
+        return undefined;
     }
     // copilot
     shuffleDeck(deck) {
@@ -45,14 +61,14 @@ class Game {
     }
     dealFirstCards() {
         for (let i = 0; i < 2; i++) {
-            for (let [player, hand] of this.playersHands) {
-                hand.push(this.deck.pop()); // remove last card from deck and add to players hands
+            for (let [player, hand] of this.state.playersHands) {
+                hand.push(this.state.deck.pop()); // remove last card from deck and add to players hands
             }
-            this.dealersHand.push(this.deck.pop());
+            this.state.dealersHand.push(this.state.deck.pop());
         }
     }
     addPlayer(player) {
-        this.playersHands.set(player, []);
+        this.state.playersHands.set(player, []);
     }
 }
 exports.default = Game;
