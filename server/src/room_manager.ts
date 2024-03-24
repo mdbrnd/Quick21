@@ -1,3 +1,5 @@
+import Room from "./room";
+
 class RoomManager {
   private rooms: Map<string, Room> = new Map();
 
@@ -5,27 +7,29 @@ class RoomManager {
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
-  createRoom(playerSocketId: string): Room {
+  createRoom(playerSocketId: string, playerName: string): Room {
     const roomId = this.generateRoomId();
-    const room = new Room(roomId, playerSocketId);
+    const room = new Room(roomId, playerSocketId, playerName);
     this.rooms.set(roomId, room);
     return room;
   }
 
-  joinRoom(roomId: string, playerSocketId: string): boolean {
+  joinRoom(roomId: string, playerSocketId: string, playerName: string): boolean {
     const room = this.rooms.get(roomId);
     if (room) {
-      room.addPlayer(playerSocketId);
+      room.addPlayer(playerSocketId, playerName);
       return true;
     }
     return false;
   }
 
-  getRoom(roomId: string) {
+  getRoom(roomId: string): Room | undefined {
     return this.rooms.get(roomId);
   }
 
-  closeRoom(roomId: string) {
-    this.rooms.delete(roomId);
+  closeRoom(roomId: string): boolean {
+    return this.rooms.delete(roomId);
   }
 }
+
+export default RoomManager;
