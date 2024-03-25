@@ -10,10 +10,14 @@ class Game {
   };
 
   constructor(firstPlayer: Player) {
+    this.state.playersHands.set(firstPlayer, []);
+  }
+
+  public start() {
     this.initializeDeck();
     this.state.deck = this.shuffleDeck(this.state.deck);
-    this.state.playersHands.set(firstPlayer, []);
     this.dealFirstCards();
+    console.log("game started");
   }
 
   private initializeDeck() {

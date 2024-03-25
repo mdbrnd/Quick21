@@ -7,10 +7,13 @@ class Game {
             playersHands: new Map(),
             dealersHand: [],
         };
+        this.state.playersHands.set(firstPlayer, []);
+    }
+    start() {
         this.initializeDeck();
         this.state.deck = this.shuffleDeck(this.state.deck);
-        this.state.playersHands.set(firstPlayer, []);
         this.dealFirstCards();
+        console.log("game started");
     }
     initializeDeck() {
         const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];

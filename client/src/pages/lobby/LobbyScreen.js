@@ -13,12 +13,11 @@ const LobbyScreen = () => {
     socket.emit("create-room", "player 1");
 
     socket.once("create-room-response", (response) => {
-      consloge.log(response.success);
+      console.log(response.success);
       console.log(response.roomCode);
+      navigate("/game", { state: { roomCode: response.roomCode, isOwner: true } });
+      gameLoop();
     });
-
-    navigate("/game");
-    gameLoop();
   };
 
   const toggleRules = () => {
@@ -37,7 +36,7 @@ const LobbyScreen = () => {
       if (response.success === false) {
         alert("Room not found or full");
       } else {
-        navigate("/game");
+        navigate("/game", { state: { roomCode: roomCode, isOwner: false } });
         gameLoop();
       }
     });

@@ -8,18 +8,18 @@ class RoomManager {
     constructor() {
         this.rooms = new Map();
     }
-    generateRoomId() {
+    generateRoomCode() {
         // Random 6-digit number from 100k to 999k
         return Math.floor(100000 + Math.random() * 900000).toString();
     }
     createRoom(initialPlayer) {
-        const roomId = this.generateRoomId();
-        const room = new room_1.default(roomId, initialPlayer);
-        this.rooms.set(roomId, room);
+        const roomCode = this.generateRoomCode();
+        const room = new room_1.default(roomCode, initialPlayer);
+        this.rooms.set(roomCode, room);
         return room;
     }
-    joinRoom(roomId, player) {
-        const room = this.rooms.get(roomId);
+    joinRoom(roomCode, player) {
+        const room = this.rooms.get(roomCode);
         if (room) {
             // Only add player if room is not full and player is not already in room
             if (room.players.length > 4 || room.hasPlayer(player.socketId)) {
@@ -30,14 +30,14 @@ class RoomManager {
         }
         return false;
     }
-    getRoom(roomId) {
-        return this.rooms.get(roomId);
+    getRoom(roomCode) {
+        return this.rooms.get(roomCode);
     }
-    closeRoom(roomId) {
-        return this.rooms.delete(roomId);
+    closeRoom(roomCode) {
+        return this.rooms.delete(roomCode);
     }
     getRoomThatPlayerIsIn(playerSocketId) {
-        for (let [roomId, room] of this.rooms) {
+        for (let [roomCode, room] of this.rooms) {
             if (room.players.find((player) => player.socketId === playerSocketId)) {
                 return room;
             }

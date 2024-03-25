@@ -8,27 +8,28 @@ enum PlayerAction { // no double for now
   Insurance = "insurance",
 }
 
-interface GameActionResponse {
-  success: boolean;
-  updatedGameState: GameState;
-}
-
 class Room {
-  public id: string;
+  public code: string;
   public players: Player[] = [];
   public currentPlayer: Player;
+  public owner: Player;
   public game: Game;
 
-  constructor(roomId: string, initialPlayer: Player) {
+  constructor(roomCode: string, initialPlayer: Player) {
     // The initial playerSocketId is the player who created the room
-    this.id = roomId;
+    this.code = roomCode;
     this.players.push(initialPlayer);
     this.currentPlayer = this.players[0];
+    this.owner = initialPlayer;
     this.game = new Game(initialPlayer);
   }
 
   addPlayer(player: Player) {
     this.players.push(player);
+  }
+
+  getPlayer(playerSocketId: string): Player | undefined {
+    return this.players.find((player) => player.socketId === playerSocketId);
   }
 
   removePlayer(playerSocketId: string) {
@@ -44,9 +45,12 @@ class Room {
     return this.players.some((player) => player.socketId === playerSocketId);
   }
 
-  performAction(playerSocketId: string, action: PlayerAction): GameActionResponse {
+  performAction(
+    playerSocketId: string,
+    action: PlayerAction
+  ): GameState {
     if (this.currentPlayer.socketId !== playerSocketId) {
-      return { success: false, updatedGameState: this.game.state };
+      return this.game.state;
     }
 
     switch (action) {
@@ -58,7 +62,7 @@ class Room {
         break;
     }
 
-    return { success: true, updatedGameState: this.game.state };
+    return this.game.state;
   }
 }
 

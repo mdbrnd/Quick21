@@ -21,9 +21,9 @@ const io = new Server(server, {
 
 const roomManager = new RoomManager();
 
-function joinRoom(socket: any, roomId: string, playerName: string) {
-  console.log("joining room " + roomId);
-  let couldJoin: boolean = roomManager.joinRoom(roomId, {
+function joinRoom(socket: any, roomCode: string, playerName: string) {
+  console.log("joining room " + roomCode);
+  let couldJoin: boolean = roomManager.joinRoom(roomCode, {
     socketId: socket.id,
     name: playerName,
   });
@@ -31,29 +31,46 @@ function joinRoom(socket: any, roomId: string, playerName: string) {
   socket.emit("join-room-response", { success: couldJoin });
 
   if (couldJoin) {
-    socket.join(roomId);
+    socket.join(roomCode);
     console.log("player added to room");
   } else {
     console.log("could not add player to room");
   }
 }
 
-function leaveRoom(socket: any, roomId: string) {
-  let room = roomManager.getRoom(roomId);
+function leaveRoom(socket: any, roomCode: string) {
+  let room = roomManager.getRoom(roomCode);
 
   if (room) {
     room.removePlayer(socket.id);
-    socket.leave(roomId);
+    socket.leave(roomCode);
     socket.emit("leave-room-response", { success: true });
 
     console.log("player removed from room");
 
     if (room.players.length === 0) {
       console.log("closing room");
-      roomManager.closeRoom(roomId);
+      roomManager.closeRoom(roomCode);
     }
   } else {
     socket.emit("leave-room-response", { success: false });
+  }
+}
+
+function startGame(socket: any, roomCode: string) {
+  let room = roomManager.getRoom(roomCode);
+
+  if (room) {
+    if (
+      room.hasPlayer(socket.id) == false ||
+      room.owner.socketId !== socket.id
+    ) {
+      console.log("player not in room or not owner");
+      return;
+    }
+
+    room.game.start();
+    socket.to(roomCode).emit("game-started", { success: true });
   }
 }
 
@@ -66,27 +83,46 @@ io.on("connection", (socket) => {
       socketId: socket.id,
       name: playerName,
     });
-    console.log("room created with id: " + createdRoom.id);
+    console.log("room created with id: " + createdRoom.code);
 
-    roomManager.joinRoom(createdRoom.id, {
+    socket.emit("create-room-response", {
+      success: true,
+      roomCode: createdRoom.code,
+    });
+
+    roomManager.joinRoom(createdRoom.code, {
       socketId: socket.id,
       name: playerName,
     });
   });
 
-  socket.on("join-room", (roomId: string, playerName: string) => {
-    joinRoom(socket, roomId, playerName);
+  socket.on("join-room", (roomCode: string, playerName: string) => {
+    joinRoom(socket, roomCode, playerName);
   });
 
-  socket.on("leave-room", (roomId) => {
-    leaveRoom(socket, roomId);
+  socket.on("leave-room", (roomCode) => {
+    leaveRoom(socket, roomCode);
+  });
+
+  socket.on("start-game", (roomCode) => {
+    console.log("start game event received");
+    startGame(socket, roomCode);
+  });
+
+  socket.on("action", (roomCode, action) => {
+    console.log("action received");
+    let room = roomManager.getRoom(roomCode);
+    if (room) {
+      let updatedGameState = room.performAction(socket.id, action);
+      io.to(roomCode).emit("game-state-update", updatedGameState);
+    }
   });
 
   socket.on("disconnect", () => {
     console.log("user disconnected");
     let room = roomManager.getRoomThatPlayerIsIn(socket.id);
     if (room) {
-      leaveRoom(socket, room.id);
+      leaveRoom(socket, room.code);
     }
   });
 });
