@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import RulesModal from "./components/Rules";
-import { socket } from "./socket";
+import RulesModal from "../../components/Rules";
+import { socket } from "../../socket";
+import "./Lobby.css";
 
-const MainScreen = () => {
+const LobbyScreen = () => {
   let navigate = useNavigate();
   const [showRules, setShowRules] = useState(false);
   const [roomCode, setRoomCode] = useState("");
 
   const newGame = () => {
     socket.emit("create-room", "player 1");
-    navigate("/bet");
+    navigate("/game");
     gameLoop();
   };
 
@@ -30,7 +31,7 @@ const MainScreen = () => {
       if (response.success === false) {
         alert("Room not found or full");
       } else {
-        navigate("/bet");
+        navigate("/game");
         gameLoop();
       }
     });
@@ -47,10 +48,10 @@ const MainScreen = () => {
     socket.on("game-state-update", (gameState) => {
       console.log(gameState);
     });
-  }
+  };
 
   return (
-    <div className="mainScreenStyle">
+    <div className="lobbyScreenStyle">
       <h1>Welcome to Quick21</h1>
       <button onClick={newGame} className="buttonStyle">
         New Game
@@ -79,4 +80,4 @@ const MainScreen = () => {
   );
 };
 
-export default MainScreen;
+export default LobbyScreen;

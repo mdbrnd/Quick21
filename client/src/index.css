@@ -12,21 +12,9 @@ code {
     monospace;
 }
 
-/* Styles for Main Screen */
-.mainScreenStyle {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #282c34;
-  color: white;
-  text-align: center;
-}
-
 /* Styles for Buttons */
 .buttonStyle {
-  background-color: #61dafb;
+  background-color: #61dafb; /* Light blue */
   color: #282c34;
   padding: 10px 20px;
   border: none;
@@ -36,57 +24,10 @@ code {
   margin: 5px;
   font-weight: 600;
   display: inline-block;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .buttonStyle:hover {
-  background-color: #4a90e2; /* Slightly darker blue on hover for interactive feedback */
-}
-
-.leftShiftButton {
-  margin-left: 0; /* Override the left margin to align items on rule page */
-}
-
-/* Styles for Rules Modal */
-.overlayStyle {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 1000;
-}
-
-.modalTextStyle {
-  color: white;
-}
-
-.modalStyle {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #282c34;
-  padding: 50px;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  width: 80%;
-  max-width: 1000px;
-  color: white;
-  text-align: left;
-}
-
-/* Rules */
-.ruleImageStyle {
-  width: 200px;
-  height: 200px;
-  margin-right: 10px;
-}
-
-.ruleStyle {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
+  background-color: #53c4f3; /* A slightly darker shade of the original light blue */
+  box-shadow: 0 0 8px 3px rgba(83, 196, 243, 0.6); /* Glow effect with a color similar to the hover background */
 }
