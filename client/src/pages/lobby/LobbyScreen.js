@@ -11,6 +11,12 @@ const LobbyScreen = () => {
 
   const newGame = () => {
     socket.emit("create-room", "player 1");
+
+    socket.once("create-room-response", (response) => {
+      consloge.log(response.success);
+      console.log(response.roomCode);
+    });
+
     navigate("/game");
     gameLoop();
   };
@@ -27,7 +33,7 @@ const LobbyScreen = () => {
 
     socket.emit("join-room", roomCode);
 
-    socket.on("join-room-response", (response) => {
+    socket.once("join-room-response", (response) => {
       if (response.success === false) {
         alert("Room not found or full");
       } else {
