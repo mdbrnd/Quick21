@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LobbyScreen from "../pages/lobby/LobbyScreen";
 import GameScreen from "../pages/game/GameScreen";
 
-function App() {
+const App: React.FC = () => {
   return (
     <Router>
       <Routes>
@@ -12,6 +12,6 @@ function App() {
       </Routes>
     </Router>
   );
-}
+};
 
 export default App;

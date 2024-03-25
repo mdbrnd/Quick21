@@ -1,11 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { socket } from "../../socket";
-import { useLocation } from "react-router-dom";
+import { Location, useLocation } from "react-router-dom";
 
-const GameScreen = () => {
-  const location = useLocation(); // params passed from LobbyScreen in navigate() can be accessed here
-  const [gameStarted, setGameStarted] = useState(false);
-  const [gameState, setGameState] = useState({});
+interface GameState {
+}
+
+type LocationState = {
+  roomCode: string;
+  isOwner: boolean;
+};
+
+const GameScreen: React.FC = () => {
+  const location: Location<LocationState> = useLocation();
+  const [gameStarted, setGameStarted] = useState<boolean>(false);
+  const [gameState, setGameState] = useState<GameState>({});
 
   let isRoomOwner = location.state.isOwner;
 
@@ -14,7 +22,7 @@ const GameScreen = () => {
       setGameStarted(true);
     }
 
-    function onGameStateUpdate(gameState) {
+    function onGameStateUpdate(gameState: GameState) {
       console.log(gameState);
       setGameState(gameState);
     }
@@ -22,7 +30,7 @@ const GameScreen = () => {
     socket.on("game-started", onStartGame);
     socket.on("game-state-update", onGameStateUpdate);
 
-    // remove event listener when component unmounts
+    // Remove event listener when component unmounts
     return () => {
       socket.off("game-started", onStartGame);
       socket.off("game-state-update", onGameStateUpdate);
@@ -34,19 +42,17 @@ const GameScreen = () => {
     setGameStarted(true);
   };
 
-  const handleHit = () => {};
-
-  const handleStand = () => {};
-
-  const handleDouble = () => {};
-
   return (
     <div style={{ textAlign: "center" }}>
       <h2>Quick21</h2>
       <h3>Room Code: {location.state.roomCode}</h3>
       <h3>
         {gameStarted ? (
-          <GameControls></GameControls>
+          <GameControls
+            onHit={() => {}}
+            onStand={() => {}}
+            onDouble={() => {}}
+          />
         ) : (
           "Waiting for host to start..."
         )}
@@ -58,8 +64,20 @@ const GameScreen = () => {
   );
 };
 
-// Component to hit, stand, double and etc. (also place bet) + game state
-const GameControls = ({ onHit, onStand, onDouble }) => {
+export default GameScreen;
+
+
+interface GameControlsProps {
+  onHit: () => void;
+  onStand: () => void;
+  onDouble: () => void;
+}
+
+const GameControls: React.FC<GameControlsProps> = ({
+  onHit,
+  onStand,
+  onDouble,
+}) => {
   return (
     <div>
       <button onClick={onHit}>Hit</button>
@@ -68,5 +86,3 @@ const GameControls = ({ onHit, onStand, onDouble }) => {
     </div>
   );
 };
-
-export default GameScreen;

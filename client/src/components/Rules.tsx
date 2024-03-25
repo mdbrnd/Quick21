@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import "./Rules.css";
 
-const rules = [
+interface Rule {
+  image: string;
+  altText: string;
+  text: string;
+}
+
+const rules: Rule[] = [
   {
     image: "/assets/images/beat-dealer.png",
     altText: "Beat the Dealer",
@@ -29,7 +35,11 @@ const rules = [
   },
 ];
 
-const RulesModal = ({ onClose }) => {
+interface RulesModalProps {
+  onClose: () => void; // Specifies that onClose is a function that returns void
+}
+
+const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
   const [currentRule, setCurrentRule] = useState(0);
 
   const nextRule = () => {
