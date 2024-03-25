@@ -77,7 +77,7 @@ function startGame(socket: any, roomCode: string) {
 io.on("connection", (socket) => {
   console.log("a user connected with socket id: ", socket.id);
 
-  socket.on("create-room", (playerName: string) => {
+  socket.on("create-room", (playerName: string, callback) => {
     console.log("creating room");
     let createdRoom: Room = roomManager.createRoom({
       socketId: socket.id,
@@ -85,7 +85,7 @@ io.on("connection", (socket) => {
     });
     console.log("room created with id: " + createdRoom.code);
 
-    socket.emit("create-room-response", {
+    callback({
       success: true,
       roomCode: createdRoom.code,
     });

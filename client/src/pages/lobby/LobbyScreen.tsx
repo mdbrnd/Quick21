@@ -9,20 +9,19 @@ const LobbyScreen: React.FC = () => {
   const [showRules, setShowRules] = useState<boolean>(false);
   const [roomCode, setRoomCode] = useState<string>("");
 
-  const newGame = () => {
-    socket.emit("create-room", "player 1");
+  const newGame = async () => {
+    const response = await socket.emitWithAck("create-room", "player 1");
 
-    socket.once(
-      "create-room-response",
-      (response: { success: boolean; roomCode: string }) => {
-        console.log(response.success);
-        console.log(response.roomCode);
-        navigate("/game", {
-          state: { roomCode: response.roomCode, isOwner: true },
-        });
-        gameLoop();
-      }
-    );
+    if (!response.success) {
+      alert("Failed to create room");
+      return;
+    }
+
+    navigate("/game", {
+      state: { roomCode: response.roomCode, isOwner: true },
+    });
+    gameLoop();
+
   };
 
   const toggleRules = () => {

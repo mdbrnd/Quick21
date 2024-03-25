@@ -4,7 +4,7 @@ import Room from "./room";
 class RoomManager {
   private rooms: Map<string, Room> = new Map();
 
-  generateRoomCode(): string {
+  generateRoomCode(): string { // TODO: add check to make sure room code is unique
     // Random 6-digit number from 100k to 999k
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
