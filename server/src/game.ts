@@ -5,12 +5,16 @@ import Player from "./player";
 class Game {
   public state: GameState = {
     deck: [],
+    currentTurn: { socketId: "", name: "" },
     playersHands: new Map(),
     dealersHand: [],
+    currentPhase: "Betting",
+    bets: new Map(),
   };
 
   constructor(firstPlayer: Player) {
     this.state.playersHands.set(firstPlayer, []);
+    this.state.currentTurn = firstPlayer;
   }
 
   public start() {

@@ -5,13 +5,12 @@ import Player from "./player";
 enum PlayerAction { // no double for now
   Hit = "hit",
   Stand = "stand",
-  Insurance = "insurance",
+  Insurance = "insurance", // TODO: extract this to a separate enum
 }
 
 class Room {
   public code: string;
   public players: Player[] = [];
-  public currentPlayer: Player;
   public owner: Player;
   public game: Game;
 
@@ -19,7 +18,6 @@ class Room {
     // The initial playerSocketId is the player who created the room
     this.code = roomCode;
     this.players.push(initialPlayer);
-    this.currentPlayer = this.players[0];
     this.owner = initialPlayer;
     this.game = new Game(initialPlayer);
   }
@@ -49,7 +47,7 @@ class Room {
     playerSocketId: string,
     action: PlayerAction
   ): GameState {
-    if (this.currentPlayer.socketId !== playerSocketId) {
+    if (this.game.state.currentTurn.socketId !== playerSocketId) {
       return this.game.state;
     }
 
