@@ -1,15 +1,87 @@
 import express from "express";
 import { createServer } from "http";
-import { join } from "path";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { Server } from "socket.io";
 import RoomManager from "./room_manager";
 import Room from "./room";
-import { GameState } from "./game_state";
+import { DBManager } from "./dbmanager";
+import "dotenv/config";
 
 const app = express();
 const server = createServer(app);
 const SERVER_PORT = 4000;
 const CLIENT_PORT = 3000;
+const dbManager = new DBManager();
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  console.error(
+    "JWT_SECRET is not defined. Set JWT_SECRET environment variable."
+  );
+  process.exit(1);
+}
+
+
+app.use(express.json()); // Middleware to parse JSON bodies
+
+app.post("/register", async (req, res) => {
+  const { name, password } = req.body;
+  if (!name || !password) {
+    return res.status(400).send({ message: "Name and password are required." });
+  }
+
+  try {
+    const alreadyExists = await dbManager.userExists(name);
+    if (alreadyExists) {
+      return res.status(400).send({ message: "User already exists." });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await dbManager.addUser(name, hashedPassword, 1000);
+    res.status(201).send({ message: "User registered successfully." });
+  } catch (error) {
+    res
+      .status(500)
+      .send({ message: "Failed to register user.", error: error });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  const { name, password } = req.body;
+  if (!name || !password) {
+    return res.status(400).send({ message: "Name and password are required." });
+  }
+
+  try {
+    const user = await dbManager.getUserByName(name);
+    if (!user) {
+      return res.status(404).send({ message: "User not found." });
+    }
+
+    
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const match = await bcrypt.compare(hashedPassword, user.password);
+    if (match) {
+      // Generate an auth token
+      const token = jwt.sign(
+        { id: user.id, name: user.name },
+        JWT_SECRET,
+        { expiresIn: "14d" }
+      );
+
+      res.send({
+        message: "Login successful.",
+        token,
+        user: { id: user.id, name: user.name, balance: user.balance },
+      });
+    } else {
+      res.status(401).send({ message: "Password is incorrect." });
+    }
+  } catch (error) {
+    res.status(500).send({ message: "Login failed.", error: error });
+  }
+});
 
 const io = new Server(server, {
   cors: {
@@ -105,22 +177,27 @@ io.on("connection", (socket) => {
     joinRoom(socket, roomCode, playerName);
   });
 
-  socket.on("leave-room", (roomCode) => {
+  socket.on("leave-room", (roomCode: string) => {
     leaveRoom(socket, roomCode);
   });
 
-  socket.on("start-game", (roomCode) => {
+  socket.on("start-game", (roomCode: string) => {
     console.log("start game event received");
     startGame(socket, roomCode);
   });
 
-  socket.on("action", (roomCode, action) => {
+  socket.on("action", (roomCode: string, action) => {
     console.log("action received");
     let room = roomManager.getRoom(roomCode);
     if (room) {
       let updatedGameState = room.performAction(socket.id, action);
       io.to(roomCode).emit("game-state-update", updatedGameState);
     }
+  });
+
+  socket.on("updateBalance", (id: number, balance: number) => {
+    dbManager.updateUserBalance(id, balance);
+    socket.emit("balanceUpdated", { id, balance });
   });
 
   socket.on("disconnect", () => {
