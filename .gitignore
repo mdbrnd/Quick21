@@ -12,7 +12,7 @@
 
 # production
 /build
-/server/src/db
+/server/db
 /server/.env
 
 # misc

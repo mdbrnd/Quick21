@@ -1,16 +1,85 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const http_1 = require("http");
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const socket_io_1 = require("socket.io");
 const room_manager_1 = __importDefault(require("./room_manager"));
+const dbmanager_1 = require("./dbmanager");
+require("dotenv/config");
 const app = (0, express_1.default)();
 const server = (0, http_1.createServer)(app);
 const SERVER_PORT = 4000;
 const CLIENT_PORT = 3000;
+const dbManager = new dbmanager_1.DBManager();
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+    console.error("JWT_SECRET is not defined. Set JWT_SECRET environment variable.");
+    process.exit(1);
+}
+app.use(express_1.default.json()); // Middleware to parse JSON bodies
+app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, password } = req.body;
+    if (!name || !password) {
+        return res.status(400).send({ message: "Name and password are required." });
+    }
+    try {
+        const alreadyExists = yield dbManager.userExists(name);
+        if (alreadyExists) {
+            return res.status(400).send({ message: "User already exists." });
+        }
+        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+        yield dbManager.addUser(name, hashedPassword, 1000);
+        res.status(201).send({ message: "User registered successfully." });
+    }
+    catch (error) {
+        res
+            .status(500)
+            .send({ message: "Failed to register user.", error: error });
+    }
+}));
+app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { name, password } = req.body;
+    if (!name || !password) {
+        return res.status(400).send({ message: "Name and password are required." });
+    }
+    try {
+        const user = yield dbManager.getUserByName(name);
+        if (!user) {
+            return res.status(404).send({ message: "User not found." });
+        }
+        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+        const match = yield bcrypt_1.default.compare(hashedPassword, user.password);
+        if (match) {
+            // Generate an auth token
+            const token = jsonwebtoken_1.default.sign({ id: user.id, name: user.name }, JWT_SECRET, { expiresIn: "14d" });
+            res.send({
+                message: "Login successful.",
+                token,
+                user: { id: user.id, name: user.name, balance: user.balance },
+            });
+        }
+        else {
+            res.status(401).send({ message: "Password is incorrect." });
+        }
+    }
+    catch (error) {
+        res.status(500).send({ message: "Login failed.", error: error });
+    }
+}));
 const io = new socket_io_1.Server(server, {
     cors: {
         origin: process.env.NODE_ENV === "production"
@@ -100,6 +169,10 @@ io.on("connection", (socket) => {
             let updatedGameState = room.performAction(socket.id, action);
             io.to(roomCode).emit("game-state-update", updatedGameState);
         }
+    });
+    socket.on("updateBalance", (id, balance) => {
+        dbManager.updateUserBalance(id, balance);
+        socket.emit("balanceUpdated", { id, balance });
     });
     socket.on("disconnect", () => {
         console.log("user disconnected");
