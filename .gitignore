@@ -13,6 +13,7 @@
 # production
 /build
 /server/src/db
+/server/.env
 
 # misc
 .DS_Store
