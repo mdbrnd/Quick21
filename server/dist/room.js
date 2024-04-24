@@ -16,7 +16,6 @@ class Room {
         // The initial playerSocketId is the player who created the room
         this.code = roomCode;
         this.players.push(initialPlayer);
-        this.currentPlayer = this.players[0];
         this.owner = initialPlayer;
         this.game = new game_1.default(initialPlayer);
     }
@@ -36,7 +35,7 @@ class Room {
         return this.players.some((player) => player.socketId === playerSocketId);
     }
     performAction(playerSocketId, action) {
-        if (this.currentPlayer.socketId !== playerSocketId) {
+        if (this.game.state.currentTurn.socketId !== playerSocketId) {
             return this.game.state;
         }
         switch (action) {

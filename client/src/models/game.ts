@@ -17,12 +17,11 @@ class Game {
     this.state.currentTurn = firstPlayer;
   }
 
-  public start(): GameState {
+  public start() {
     this.initializeDeck();
     this.state.deck = this.shuffleDeck(this.state.deck);
     this.dealFirstCards();
     console.log("game started");
-    return this.state;
   }
 
   private initializeDeck() {

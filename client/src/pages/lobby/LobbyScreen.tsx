@@ -20,8 +20,6 @@ const LobbyScreen: React.FC = () => {
     navigate("/game", {
       state: { roomCode: response.roomCode, isOwner: true },
     });
-    gameLoop();
-
   };
 
   const toggleRules = () => {
@@ -41,7 +39,6 @@ const LobbyScreen: React.FC = () => {
         alert("Room not found or full");
       } else {
         navigate("/game", { state: { roomCode: roomCode, isOwner: false } });
-        gameLoop();
       }
     });
   };
@@ -51,13 +48,6 @@ const LobbyScreen: React.FC = () => {
     if (/^\d*$/.test(changed) && changed.length <= 6) {
       setRoomCode(changed);
     }
-  };
-
-  const gameLoop = () => {
-    socket.on("game-state-update", (gameState: any) => {
-      // Consider defining a more specific type for gameState
-      console.log(gameState);
-    });
   };
 
   return (

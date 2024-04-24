@@ -58,8 +58,10 @@ function startGame(socket, roomCode) {
             console.log("player not in room or not owner");
             return;
         }
-        room.game.start();
-        socket.to(roomCode).emit("game-started", { success: true });
+        let initialGameState = room.game.start();
+        io.to(roomCode).emit("game-started", {
+            initialGameState: initialGameState,
+        }); // send to all players in room. socket.to would exclude the sender
     }
 }
 io.on("connection", (socket) => {
@@ -79,6 +81,7 @@ io.on("connection", (socket) => {
             socketId: socket.id,
             name: playerName,
         });
+        socket.join(createdRoom.code);
     });
     socket.on("join-room", (roomCode, playerName) => {
         joinRoom(socket, roomCode, playerName);

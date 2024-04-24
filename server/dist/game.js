@@ -4,16 +4,21 @@ class Game {
     constructor(firstPlayer) {
         this.state = {
             deck: [],
+            currentTurn: { socketId: "", name: "" },
             playersHands: new Map(),
             dealersHand: [],
+            currentPhase: "Betting",
+            bets: new Map(),
         };
         this.state.playersHands.set(firstPlayer, []);
+        this.state.currentTurn = firstPlayer;
     }
     start() {
         this.initializeDeck();
         this.state.deck = this.shuffleDeck(this.state.deck);
         this.dealFirstCards();
         console.log("game started");
+        return this.state;
     }
     initializeDeck() {
         const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];

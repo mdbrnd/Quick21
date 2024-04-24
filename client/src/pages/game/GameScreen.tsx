@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { socket } from "../../socket";
 import { Location, useLocation } from "react-router-dom";
-
-interface GameState {
-}
+import { GameState } from "../../models/game_state";
 
 type LocationState = {
   roomCode: string;
@@ -13,13 +11,22 @@ type LocationState = {
 const GameScreen: React.FC = () => {
   const location: Location<LocationState> = useLocation();
   const [gameStarted, setGameStarted] = useState<boolean>(false);
-  const [gameState, setGameState] = useState<GameState>({});
+  const [gameState, setGameState] = useState<GameState>({
+    deck: [],
+    currentTurn: null,
+    playersHands: new Map(),
+    dealersHand: [],
+    currentPhase: "Betting",
+    bets: new Map(),
+  });
 
   let isRoomOwner = location.state.isOwner;
 
   useEffect(() => {
-    function onStartGame() {
+    function onStartGame(initialGameState: GameState) {
       setGameStarted(true);
+      console.log(initialGameState);
+      setGameState(initialGameState);
     }
 
     function onGameStateUpdate(gameState: GameState) {
@@ -27,8 +34,12 @@ const GameScreen: React.FC = () => {
       setGameState(gameState);
     }
 
-    socket.on("game-started", onStartGame);
-    socket.on("game-state-update", onGameStateUpdate);
+    socket.on("game-started", (response: { initialGameState: GameState }) =>
+      onStartGame(response.initialGameState)
+    );
+    socket.on("game-state-update", (response: { gameState: GameState }) =>
+      onGameStateUpdate(response.gameState)
+    );
 
     // Remove event listener when component unmounts
     return () => {
@@ -39,7 +50,6 @@ const GameScreen: React.FC = () => {
 
   const handleStartGameButton = () => {
     socket.emit("start-game", location.state.roomCode);
-    setGameStarted(true);
   };
 
   return (
@@ -65,7 +75,6 @@ const GameScreen: React.FC = () => {
 };
 
 export default GameScreen;
-
 
 interface GameControlsProps {
   onHit: () => void;
