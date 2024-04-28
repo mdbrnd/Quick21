@@ -186,6 +186,14 @@ io.on("connection", (socket) => {
     startGame(socket, roomCode);
   });
 
+  socket.on("place-bet", (roomCode: string, betAmount: number) => {
+    let room = roomManager.getRoom(roomCode);
+    if (room) {
+      let updatedGameState = room.placeBet(socket.id, betAmount);
+      io.to(roomCode).emit("game-state-update", updatedGameState);
+    }
+  });
+
   socket.on("action", (roomCode: string, action) => {
     console.log("action received");
     let room = roomManager.getRoom(roomCode);

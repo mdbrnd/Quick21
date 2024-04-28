@@ -62,6 +62,17 @@ class Room {
 
     return this.game.state;
   }
+
+  placeBet(playerSocketId: string, betAmount: number): GameState { //TODO: implement this
+    const player = this.getPlayer(playerSocketId);
+    if (!player) {
+      return this.game.state;
+    }
+
+    //this.game.placeBet(player, betAmount);
+
+    return this.game.state;
+  }
 }
 
 export default Room;
