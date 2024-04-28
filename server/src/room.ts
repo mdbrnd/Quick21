@@ -1,5 +1,5 @@
 import Game from "./game";
-import { GameState } from "./game_state";
+import { ServerGameState } from "./game_state";
 import Player from "./player";
 
 enum PlayerAction { // no double for now
@@ -43,10 +43,7 @@ class Room {
     return this.players.some((player) => player.socketId === playerSocketId);
   }
 
-  performAction(
-    playerSocketId: string,
-    action: PlayerAction
-  ): GameState {
+  performAction(playerSocketId: string, action: PlayerAction): ServerGameState {
     if (this.game.state.currentTurn.socketId !== playerSocketId) {
       return this.game.state;
     }
@@ -63,7 +60,8 @@ class Room {
     return this.game.state;
   }
 
-  placeBet(playerSocketId: string, betAmount: number): GameState { //TODO: implement this
+  placeBet(playerSocketId: string, betAmount: number): ServerGameState {
+    //TODO: implement this
     const player = this.getPlayer(playerSocketId);
     if (!player) {
       return this.game.state;

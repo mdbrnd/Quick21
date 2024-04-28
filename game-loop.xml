@@ -1,0 +1,109 @@
+<mxfile host="app.diagrams.net" modified="2024-04-28T15:20:26.899Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="oqRTz4oUnFGQiDowalPD" version="24.2.7" type="device">
+  <diagram name="Page-1" id="Dar2J2NtlHs_w-eXua3K">
+    <mxGraphModel dx="2578" dy="915" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="9ZdMkcM3FZ5pH_9xBx0A-20" target="9ZdMkcM3FZ5pH_9xBx0A-26">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-20" value="Client sends action socket.emit(&quot;action&quot;, roomCode, playerAction)" style="ellipse;whiteSpace=wrap;html=1;rounded=0;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="330" y="193.5" width="160" height="83" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-21" value="io.to(roomCode).emit(&quot;game-state-update&quot;, updatedGameState)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="230" y="332" width="360" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="9ZdMkcM3FZ5pH_9xBx0A-24" target="9ZdMkcM3FZ5pH_9xBx0A-20">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.542;entryY=0;entryDx=0;entryDy=0;exitX=0.25;exitY=1;exitDx=0;exitDy=0;entryPerimeter=0;" edge="1" parent="1" source="9ZdMkcM3FZ5pH_9xBx0A-24" target="9ZdMkcM3FZ5pH_9xBx0A-28">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-24" value="Client listening for updated game state:&lt;br&gt;socket.on(&quot;game-state-update&quot;, onGameStateUpdate)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="30" y="195" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="9ZdMkcM3FZ5pH_9xBx0A-26" target="9ZdMkcM3FZ5pH_9xBx0A-24">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="685" y="362" />
+              <mxPoint x="160" y="362" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-26" value="Server listening for action from client:&lt;br&gt;socket.on(&quot;action&quot;, (roomCode, action)) =&amp;gt; {});" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="545" y="190" width="280" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-27" value="Server sends back updated game state if the action was valid" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="225" y="362" width="350" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-28" value="Render updated game state" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="30" y="372" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-30" value="Step 2: &quot;Playing&quot; phase. Here the player actions are gathered (like hit or stand for example) and then an updated game state is sent back (next players turn, update hands)" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="5" y="150" width="930" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-31" value="Step 1: &quot;Betting&quot; phase." style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="10" y="10" width="150" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-37" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="9ZdMkcM3FZ5pH_9xBx0A-33" target="9ZdMkcM3FZ5pH_9xBx0A-36">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-33" value="Each player places their bets" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="10" y="40" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="9ZdMkcM3FZ5pH_9xBx0A-36" target="9ZdMkcM3FZ5pH_9xBx0A-38">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-36" value="Each player on their frontend enters the amount/clicks the chips and then socket.emit(&quot;place-bet&quot;, roomCode, betAmount)" style="ellipse;whiteSpace=wrap;html=1;fillColor=#f5f5f5;fontColor=#333333;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="350" y="40" width="280" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-38" value="Server registers bets in game state and sends back updated game state. If the current phase was changed to &quot;Playing&quot;, then the client knows that all bets have been placed and the round can begin" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="700" y="35" width="380" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-40" value="Step 3: &quot;RoundOver&quot; phase (originally &quot;GameOver&quot;):&amp;nbsp;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="10" y="500" width="310" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-43" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="9ZdMkcM3FZ5pH_9xBx0A-41" target="9ZdMkcM3FZ5pH_9xBx0A-42">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-41" value="Once the last player played their turn/sent their action, the results are now evaluated" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="30" y="530" width="250" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-42" value="The server recognizes that it was the last player and accordingly sends the updated game state and changes the current phase to &quot;RoundOver&quot;. The server updates the balance and emits a &quot;round-over&quot; event which contains the results and updated balances. Internally a new round is started/the game state is reset." style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;recursiveResize=1;labelPadding=7;spacing=6;" vertex="1" parent="1">
+          <mxGeometry x="350" y="520" width="670" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-48" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="9ZdMkcM3FZ5pH_9xBx0A-46" target="9ZdMkcM3FZ5pH_9xBx0A-47">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-46" value="Client listening for &quot;round-over&quot; event" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="35" y="630" width="250" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-47" value="Render changes in balance and show win/loss, wait some seconds and then begin game loop again" style="whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="430" y="630" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-49" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.037;entryY=0.406;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="9ZdMkcM3FZ5pH_9xBx0A-47" target="9ZdMkcM3FZ5pH_9xBx0A-33">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="800" y="660" />
+              <mxPoint x="800" y="790" />
+              <mxPoint x="-70" y="790" />
+              <mxPoint x="-70" y="73" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-50" value="Classes:&lt;div&gt;For security reasons, the game state on the server side and the one on the client side should be differentiated.&lt;/div&gt;&lt;div&gt;&amp;nbsp;It is not wise if the client knows the whole deck and the dealers hand as this can be exploited.&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="-70" y="820" width="610" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-51" value="&lt;div style=&quot;color: rgb(220, 215, 186); background-color: rgb(31, 31, 40); font-family: &amp;quot;CaskaydiaCove Nerd Font&amp;quot;, Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 16px; line-height: 22px; white-space: pre;&quot;&gt;&lt;div style=&quot;line-height: 22px;&quot;&gt;&lt;div&gt;&lt;span style=&quot;color: #957fb8;&quot;&gt;interface&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;ServerGameState&lt;/span&gt; &lt;span style=&quot;color: #9cabca;&quot;&gt;{&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;deck&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Card&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;[];&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;dealersHand&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Card&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;[];&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;currentTurn&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Player&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;playersHands&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Map&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;color: #7aa89f;&quot;&gt;Player&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Card&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;[]&amp;gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;currentPhase&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Betting&quot;&lt;/span&gt; &lt;span style=&quot;color: #c0a36e;&quot;&gt;|&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Playing&quot;&lt;/span&gt; &lt;span style=&quot;color: #c0a36e;&quot;&gt;|&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;RoundOver&quot;&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;bets&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Map&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;color: #7aa89f;&quot;&gt;Player&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;number&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="930" width="20" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-53" value="&lt;div style=&quot;color: #dcd7ba;background-color: #1f1f28;font-family: &#39;CaskaydiaCove Nerd Font&#39;, Consolas, &#39;Courier New&#39;, monospace;font-weight: 400;font-size: 16px;line-height: 22px;white-space: pre;&quot;&gt;&lt;div&gt;&lt;div style=&quot;line-height: 22px;&quot;&gt;&lt;div&gt;&lt;span style=&quot;color: #957fb8;&quot;&gt;interface&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;ClientGameState&lt;/span&gt; &lt;span style=&quot;color: #9cabca;&quot;&gt;{&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;dealersVisibleCard&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Card&lt;/span&gt; &lt;span style=&quot;color: #c0a36e;&quot;&gt;|&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;null&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;currentTurn&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Player&lt;/span&gt; &lt;span style=&quot;color: #c0a36e;&quot;&gt;|&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;null&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;playersHands&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Map&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;color: #7aa89f;&quot;&gt;Player&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Card&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;[]&amp;gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;currentPhase&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Betting&quot;&lt;/span&gt; &lt;span style=&quot;color: #c0a36e;&quot;&gt;|&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Playing&quot;&lt;/span&gt; &lt;span style=&quot;color: #c0a36e;&quot;&gt;|&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;RoundOver&quot;&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;bets&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Map&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;color: #7aa89f;&quot;&gt;Player&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;number&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;br&gt;&lt;/div&gt;" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="880" width="520" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-54" value="&lt;div style=&quot;color: rgb(220, 215, 186); background-color: rgb(31, 31, 40); font-family: &amp;quot;CaskaydiaCove Nerd Font&amp;quot;, Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 16px; line-height: 22px; white-space-collapse: preserve;&quot;&gt;&lt;div&gt;&lt;span style=&quot;color: #957fb8;&quot;&gt;enum&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;RoundResult&lt;/span&gt; &lt;span style=&quot;color: #9cabca;&quot;&gt;{&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; Win &lt;span style=&quot;color: #c0a36e;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Win&quot;&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; Lose &lt;span style=&quot;color: #c0a36e;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Lose&quot;&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; Tie &lt;span style=&quot;color: #c0a36e;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Tie&quot;&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; Blackjack &lt;span style=&quot;color: #c0a36e;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Blackjack&quot;&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #727169;&quot;&gt;// player won with blackjack&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;}&lt;/span&gt;&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;span style=&quot;color: #957fb8;&quot;&gt;interface&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;RoundOverInfo&lt;/span&gt; &lt;span style=&quot;color: #9cabca;&quot;&gt;{&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;results&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Map&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;color: #7aa89f;&quot;&gt;string&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;RoundResult&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;dealerHand&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Card&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;[];&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;updatedBalances&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Map&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;color: #7aa89f;&quot;&gt;string&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;number&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="-40" y="1080" width="540" height="280" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

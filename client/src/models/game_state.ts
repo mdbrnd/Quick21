@@ -1,11 +1,10 @@
 import { Card } from "./card";
 import Player from "./player";
 
-export interface GameState {
-  deck: Card[];
+export interface ClientGameState {
+  dealersVisibleCard: Card | null;
   currentTurn: Player | null;
   playersHands: Map<Player, Card[]>;
-  dealersHand: Card[];
-  currentPhase: "Betting" | "Playing" | "GameOver";
+  currentPhase: "Betting" | "Playing" | "RoundOver";
   bets: Map<Player, number>;
 }

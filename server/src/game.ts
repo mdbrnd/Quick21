@@ -1,9 +1,9 @@
 import { Card } from "./card";
-import { GameState } from "./game_state";
+import { ServerGameState } from "./game_state";
 import Player from "./player";
 
 class Game {
-  public state: GameState = {
+  public state: ServerGameState = {
     deck: [],
     currentTurn: { socketId: "", name: "" },
     playersHands: new Map(),
@@ -17,7 +17,7 @@ class Game {
     this.state.currentTurn = firstPlayer;
   }
 
-  public start(): GameState {
+  public start(): ServerGameState {
     this.initializeDeck();
     this.state.deck = this.shuffleDeck(this.state.deck);
     this.dealFirstCards();

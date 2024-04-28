@@ -22,7 +22,6 @@ if (!JWT_SECRET) {
   process.exit(1);
 }
 
-
 app.use(express.json()); // Middleware to parse JSON bodies
 
 app.post("/register", async (req, res) => {
@@ -41,9 +40,7 @@ app.post("/register", async (req, res) => {
     await dbManager.addUser(name, hashedPassword, 1000);
     res.status(201).send({ message: "User registered successfully." });
   } catch (error) {
-    res
-      .status(500)
-      .send({ message: "Failed to register user.", error: error });
+    res.status(500).send({ message: "Failed to register user.", error: error });
   }
 });
 
@@ -59,16 +56,13 @@ app.post("/login", async (req, res) => {
       return res.status(404).send({ message: "User not found." });
     }
 
-    
     const hashedPassword = await bcrypt.hash(password, 10);
     const match = await bcrypt.compare(hashedPassword, user.password);
     if (match) {
       // Generate an auth token
-      const token = jwt.sign(
-        { id: user.id, name: user.name },
-        JWT_SECRET,
-        { expiresIn: "14d" }
-      );
+      const token = jwt.sign({ id: user.id, name: user.name }, JWT_SECRET, {
+        expiresIn: "14d",
+      });
 
       res.send({
         message: "Login successful.",
@@ -189,7 +183,7 @@ io.on("connection", (socket) => {
   socket.on("place-bet", (roomCode: string, betAmount: number) => {
     let room = roomManager.getRoom(roomCode);
     if (room) {
-      let updatedGameState = room.placeBet(socket.id, betAmount);
+      let updatedGameState = room.placeBet(socket.id, betAmount); //TODO: change these methods to return ClientGameState
       io.to(roomCode).emit("game-state-update", updatedGameState);
     }
   });
@@ -198,14 +192,9 @@ io.on("connection", (socket) => {
     console.log("action received");
     let room = roomManager.getRoom(roomCode);
     if (room) {
-      let updatedGameState = room.performAction(socket.id, action);
+      let updatedGameState = room.performAction(socket.id, action); //TODO: add round over event if last action was made
       io.to(roomCode).emit("game-state-update", updatedGameState);
     }
-  });
-
-  socket.on("updateBalance", (id: number, balance: number) => {
-    dbManager.updateUserBalance(id, balance);
-    socket.emit("balanceUpdated", { id, balance });
   });
 
   socket.on("disconnect", () => {
