@@ -3,14 +3,14 @@ import { ServerGameState } from "./game_state";
 import Player from "./player";
 
 class Game {
-  public state: ServerGameState = {
-    deck: [],
-    currentTurn: { socketId: "", name: "" },
-    playersHands: new Map(),
-    dealersHand: [],
-    currentPhase: "Betting",
-    bets: new Map(),
-  };
+  public state: ServerGameState = new ServerGameState(
+    [], // deck
+    [], // dealersHand
+    { socketId: "", name: "" }, // currentTurn
+    new Map(), // playersHands
+    "Betting", // currentPhase
+    new Map() // bets
+  );
 
   constructor(firstPlayer: Player) {
     this.state.playersHands.set(firstPlayer, []);
@@ -89,6 +89,10 @@ class Game {
 
   public addPlayer(player: Player) {
     this.state.playersHands.set(player, []);
+  }
+
+  public placeBet(player: Player, betAmount: number) {
+    // TODO: implement
   }
 }
 

@@ -183,7 +183,7 @@ io.on("connection", (socket) => {
   socket.on("place-bet", (roomCode: string, betAmount: number) => {
     let room = roomManager.getRoom(roomCode);
     if (room) {
-      let updatedGameState = room.placeBet(socket.id, betAmount); //TODO: change these methods to return ClientGameState
+      let updatedGameState = room.placeBet(socket.id, betAmount).toClientGameState();
       io.to(roomCode).emit("game-state-update", updatedGameState);
     }
   });
@@ -192,7 +192,7 @@ io.on("connection", (socket) => {
     console.log("action received");
     let room = roomManager.getRoom(roomCode);
     if (room) {
-      let updatedGameState = room.performAction(socket.id, action); //TODO: add round over event if last action was made
+      let updatedGameState = room.performAction(socket.id, action).toClientGameState(); //TODO: add round over event if last action was made
       io.to(roomCode).emit("game-state-update", updatedGameState);
     }
   });

@@ -5,7 +5,6 @@ import Player from "./player";
 enum PlayerAction { // no double for now
   Hit = "hit",
   Stand = "stand",
-  Insurance = "insurance", // TODO: extract this to a separate enum
 }
 
 class Room {
@@ -53,21 +52,18 @@ class Room {
         break;
       case PlayerAction.Stand:
         break;
-      case PlayerAction.Insurance:
-        break;
     }
 
     return this.game.state;
   }
 
   placeBet(playerSocketId: string, betAmount: number): ServerGameState {
-    //TODO: implement this
     const player = this.getPlayer(playerSocketId);
     if (!player) {
       return this.game.state;
     }
 
-    //this.game.placeBet(player, betAmount);
+    this.game.placeBet(player, betAmount);
 
     return this.game.state;
   }
