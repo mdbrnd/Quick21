@@ -9,7 +9,14 @@ export class ServerGameState {
   currentPhase: "Betting" | "Playing" | "RoundOver";
   bets: Map<Player, number>;
 
-  constructor(deck: Card[], dealersHand: Card[], currentTurn: Player, playersHands: Map<Player, Card[]>, currentPhase: "Betting" | "Playing" | "RoundOver", bets: Map<Player, number>) {
+  constructor(
+    deck: Card[],
+    dealersHand: Card[],
+    currentTurn: Player,
+    playersHands: Map<Player, Card[]>,
+    currentPhase: "Betting" | "Playing" | "RoundOver",
+    bets: Map<Player, number>
+  ) {
     this.deck = deck;
     this.dealersHand = dealersHand;
     this.currentTurn = currentTurn;
@@ -24,7 +31,7 @@ export class ServerGameState {
       currentTurn: this.currentTurn,
       playersHands: this.playersHands,
       currentPhase: this.currentPhase,
-      bets: this.bets
+      bets: this.bets,
     };
   }
 }
@@ -36,4 +43,3 @@ export interface ClientGameState {
   currentPhase: "Betting" | "Playing" | "RoundOver";
   bets: Map<Player, number>;
 }
-

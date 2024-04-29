@@ -18,7 +18,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const socket_io_1 = require("socket.io");
 const room_manager_1 = __importDefault(require("./room_manager"));
-const dbmanager_1 = require("./dbmanager");
+const dbmanager_1 = require("./database/dbmanager");
 require("dotenv/config");
 const app = (0, express_1.default)();
 const server = (0, http_1.createServer)(app);

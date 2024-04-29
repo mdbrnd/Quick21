@@ -1,6 +1,6 @@
-import { Card } from "./card";
-import { ServerGameState } from "./game_state";
-import Player from "./player";
+import { Card } from "./models/card";
+import { ServerGameState } from "./models/game_state";
+import Player from "./models/player";
 
 class Game {
   public state: ServerGameState = new ServerGameState(

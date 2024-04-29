@@ -1,4 +1,4 @@
-import Player from "./player";
+import Player from "./models/player";
 import Room from "./room";
 
 class RoomManager {

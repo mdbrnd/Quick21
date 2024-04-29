@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 import { Server } from "socket.io";
 import RoomManager from "./room_manager";
 import Room from "./room";
-import { DBManager } from "./dbmanager";
+import { DBManager } from "./database/dbmanager";
 import "dotenv/config";
 
 const app = express();
