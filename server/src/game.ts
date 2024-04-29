@@ -92,7 +92,7 @@ class Game {
   }
 
   public placeBet(player: Player, betAmount: number) {
-    // TODO: implement
+    this.state.bets.set(player, betAmount);
   }
 }
 

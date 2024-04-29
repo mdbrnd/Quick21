@@ -59,11 +59,16 @@ const GameScreen: React.FC = () => {
       <h3>Room Code: {location.state.roomCode}</h3>
       <h3>
         {gameStarted ? (
-          <GameControls
-            onHit={() => {}}
-            onStand={() => {}}
-            onDouble={() => {}}
-          />
+          // Add null check for gameState before accessing currentPhase
+          gameState && gameState.currentPhase === "Betting" ? (
+            <BettingControls />
+          ) : (
+            <GameControls
+              onHit={() => {}}
+              onStand={() => {}}
+              onDouble={() => {}}
+            />
+          )
         ) : (
           "Waiting for host to start..."
         )}
@@ -96,3 +101,18 @@ const GameControls: React.FC<GameControlsProps> = ({
     </div>
   );
 };
+const BettingControls: React.FC = () => {
+  const location: Location<LocationState> = useLocation();
+  const handlePlaceBet = () => {
+    const betAmount = parseInt((document.getElementById("betInput") as HTMLInputElement)?.value || "0");
+    socket.emit("place-bet", location.state.roomCode, betAmount);
+  };
+
+  return (
+    <div>
+      <input type="number" id="betInput" />
+      <button onClick={handlePlaceBet}>Place Bet</button>
+    </div>
+  );
+};
+

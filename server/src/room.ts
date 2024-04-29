@@ -1,6 +1,7 @@
 import Game from "./game";
 import { ServerGameState } from "./game_state";
 import Player from "./player";
+import { User } from "./user";
 
 enum PlayerAction { // no double for now
   Hit = "hit",
@@ -57,11 +58,20 @@ class Room {
     return this.game.state;
   }
 
-  placeBet(playerSocketId: string, betAmount: number): ServerGameState {
+  placeBet(
+    playerSocketId: string,
+    betAmount: number,
+    user: User
+  ): ServerGameState {
     const player = this.getPlayer(playerSocketId);
     if (!player) {
       return this.game.state;
     }
+
+    // Check if player has enough balance to place bet
+    // if (user.balance < betAmount) { TODO: uncomment in prod
+    //   return this.game.state;
+    // }
 
     this.game.placeBet(player, betAmount);
 

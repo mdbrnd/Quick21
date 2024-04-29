@@ -46,9 +46,7 @@ app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(201).send({ message: "User registered successfully." });
     }
     catch (error) {
-        res
-            .status(500)
-            .send({ message: "Failed to register user.", error: error });
+        res.status(500).send({ message: "Failed to register user.", error: error });
     }
 }));
 app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,7 +63,9 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const match = yield bcrypt_1.default.compare(hashedPassword, user.password);
         if (match) {
             // Generate an auth token
-            const token = jsonwebtoken_1.default.sign({ id: user.id, name: user.name }, JWT_SECRET, { expiresIn: "14d" });
+            const token = jsonwebtoken_1.default.sign({ id: user.id, name: user.name }, JWT_SECRET, {
+                expiresIn: "14d",
+            });
             res.send({
                 message: "Login successful.",
                 token,
@@ -127,7 +127,7 @@ function startGame(socket, roomCode) {
             console.log("player not in room or not owner");
             return;
         }
-        let initialGameState = room.game.start();
+        let initialGameState = room.game.start().toClientGameState();
         io.to(roomCode).emit("game-started", {
             initialGameState: initialGameState,
         }); // send to all players in room. socket.to would exclude the sender
@@ -162,17 +162,34 @@ io.on("connection", (socket) => {
         console.log("start game event received");
         startGame(socket, roomCode);
     });
+    socket.on("place-bet", (roomCode, betAmount) => __awaiter(void 0, void 0, void 0, function* () {
+        // TODO: change this to emitWithAck instead of game-state-update
+        let room = roomManager.getRoom(roomCode);
+        if (room) {
+            let player = room.getPlayer(socket.id);
+            if (!player) {
+                return;
+            }
+            let user = yield dbManager.getUserByName(player.name);
+            // if (!user) { //TODO: uncomment in prod
+            //   return;
+            // }
+            let updatedGameState = room
+                .placeBet(socket.id, betAmount, user)
+                .toClientGameState();
+            console.log("bet placed, game state: ", updatedGameState);
+            io.to(roomCode).emit("game-state-update", updatedGameState);
+        }
+    }));
     socket.on("action", (roomCode, action) => {
         console.log("action received");
         let room = roomManager.getRoom(roomCode);
         if (room) {
-            let updatedGameState = room.performAction(socket.id, action);
+            let updatedGameState = room
+                .performAction(socket.id, action)
+                .toClientGameState(); //TODO: add round over event if last action was made
             io.to(roomCode).emit("game-state-update", updatedGameState);
         }
-    });
-    socket.on("updateBalance", (id, balance) => {
-        dbManager.updateUserBalance(id, balance);
-        socket.emit("balanceUpdated", { id, balance });
     });
     socket.on("disconnect", () => {
         console.log("user disconnected");

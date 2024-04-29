@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const game_state_1 = require("./game_state");
 class Game {
     constructor(firstPlayer) {
-        this.state = {
-            deck: [],
-            currentTurn: { socketId: "", name: "" },
-            playersHands: new Map(),
-            dealersHand: [],
-            currentPhase: "Betting",
-            bets: new Map(),
-        };
+        this.state = new game_state_1.ServerGameState([], // deck
+        [], // dealersHand
+        { socketId: "", name: "" }, // currentTurn
+        new Map(), // playersHands
+        "Betting", // currentPhase
+        new Map() // bets
+        );
         this.state.playersHands.set(firstPlayer, []);
         this.state.currentTurn = firstPlayer;
     }
@@ -77,6 +77,9 @@ class Game {
     }
     addPlayer(player) {
         this.state.playersHands.set(player, []);
+    }
+    placeBet(player, betAmount) {
+        this.state.bets.set(player, betAmount);
     }
 }
 exports.default = Game;

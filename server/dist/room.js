@@ -8,7 +8,6 @@ var PlayerAction;
 (function (PlayerAction) {
     PlayerAction["Hit"] = "hit";
     PlayerAction["Stand"] = "stand";
-    PlayerAction["Insurance"] = "insurance";
 })(PlayerAction || (PlayerAction = {}));
 class Room {
     constructor(roomCode, initialPlayer) {
@@ -43,9 +42,19 @@ class Room {
                 break;
             case PlayerAction.Stand:
                 break;
-            case PlayerAction.Insurance:
-                break;
         }
+        return this.game.state;
+    }
+    placeBet(playerSocketId, betAmount, user) {
+        const player = this.getPlayer(playerSocketId);
+        if (!player) {
+            return this.game.state;
+        }
+        // Check if player has enough balance to place bet
+        // if (user.balance < betAmount) { TODO: uncomment in prod
+        //   return this.game.state;
+        // }
+        this.game.placeBet(player, betAmount);
         return this.game.state;
     }
 }

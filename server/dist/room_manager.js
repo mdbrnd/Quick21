@@ -9,8 +9,16 @@ class RoomManager {
         this.rooms = new Map();
     }
     generateRoomCode() {
-        // Random 6-digit number from 100k to 999k
-        return Math.floor(100000 + Math.random() * 900000).toString();
+        let isUnique = false;
+        let roomCode = "";
+        while (isUnique === false) {
+            // Random 6-digit number from 100k to 999k
+            roomCode = Math.floor(100000 + Math.random() * 900000).toString();
+            if (this.rooms.has(roomCode) === false) {
+                isUnique = true;
+            }
+        }
+        return roomCode;
     }
     createRoom(initialPlayer) {
         const roomCode = this.generateRoomCode();

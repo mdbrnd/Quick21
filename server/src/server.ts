@@ -136,7 +136,7 @@ function startGame(socket: any, roomCode: string) {
       return;
     }
 
-    let initialGameState = room.game.start();
+    let initialGameState = room.game.start().toClientGameState();
     io.to(roomCode).emit("game-started", {
       initialGameState: initialGameState,
     }); // send to all players in room. socket.to would exclude the sender
@@ -180,10 +180,24 @@ io.on("connection", (socket) => {
     startGame(socket, roomCode);
   });
 
-  socket.on("place-bet", (roomCode: string, betAmount: number) => {
+  socket.on("place-bet", async (roomCode: string, betAmount: number) => {
+    // TODO: change this to emitWithAck instead of game-state-update
     let room = roomManager.getRoom(roomCode);
     if (room) {
-      let updatedGameState = room.placeBet(socket.id, betAmount).toClientGameState();
+      let player = room.getPlayer(socket.id);
+      if (!player) {
+        return;
+      }
+
+      let user = await dbManager.getUserByName(player.name);
+      // if (!user) { //TODO: uncomment in prod
+      //   return;
+      // }
+
+      let updatedGameState = room
+        .placeBet(socket.id, betAmount, user!)
+        .toClientGameState();
+      console.log("bet placed, game state: ", updatedGameState);
       io.to(roomCode).emit("game-state-update", updatedGameState);
     }
   });
@@ -192,7 +206,9 @@ io.on("connection", (socket) => {
     console.log("action received");
     let room = roomManager.getRoom(roomCode);
     if (room) {
-      let updatedGameState = room.performAction(socket.id, action).toClientGameState(); //TODO: add round over event if last action was made
+      let updatedGameState = room
+        .performAction(socket.id, action)
+        .toClientGameState(); //TODO: add round over event if last action was made
       io.to(roomCode).emit("game-state-update", updatedGameState);
     }
   });
