@@ -54,7 +54,16 @@ const GameScreen: React.FC = () => {
   return (
     <div style={{ textAlign: "center" }}>
       <h2>Quick21</h2>
-      <h3>Room Code: {location.state.roomCode}</h3>
+      <h3>
+        Room Code: {location.state.roomCode} &nbsp;
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(location.state.roomCode);
+          }}
+        >
+          Copy
+        </button>
+      </h3>
       <h3>
         {gameStarted ? (
           gameState.currentPhase === "Betting" ? (
