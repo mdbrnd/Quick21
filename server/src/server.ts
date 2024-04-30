@@ -95,7 +95,7 @@ function joinRoom(socket: any, roomCode: string, playerName: string) {
     name: playerName,
   });
 
-  socket.emit("join-room-response", { success: couldJoin });
+  socket.emit("join-room-response", couldJoin);
 
   if (couldJoin) {
     socket.join(roomCode);
@@ -111,7 +111,7 @@ function leaveRoom(socket: any, roomCode: string) {
   if (room) {
     room.removePlayer(socket.id);
     socket.leave(roomCode);
-    socket.emit("leave-room-response", { success: true });
+    socket.emit("leave-room-response", true);
 
     console.log("player removed from room");
 
@@ -120,7 +120,7 @@ function leaveRoom(socket: any, roomCode: string) {
       roomManager.closeRoom(roomCode);
     }
   } else {
-    socket.emit("leave-room-response", { success: false });
+    socket.emit("leave-room-response", false);
   }
 }
 
@@ -137,9 +137,7 @@ function startGame(socket: any, roomCode: string) {
     }
 
     let initialGameState = room.game.start().toClientGameState();
-    io.to(roomCode).emit("game-started", {
-      initialGameState: initialGameState,
-    }); // send to all players in room. socket.to would exclude the sender
+    io.to(roomCode).emit("game-started", initialGameState); // send to all players in room. socket.to would exclude the sender
   }
 }
 

@@ -94,7 +94,7 @@ function joinRoom(socket, roomCode, playerName) {
         socketId: socket.id,
         name: playerName,
     });
-    socket.emit("join-room-response", { success: couldJoin });
+    socket.emit("join-room-response", couldJoin);
     if (couldJoin) {
         socket.join(roomCode);
         console.log("player added to room");
@@ -108,7 +108,7 @@ function leaveRoom(socket, roomCode) {
     if (room) {
         room.removePlayer(socket.id);
         socket.leave(roomCode);
-        socket.emit("leave-room-response", { success: true });
+        socket.emit("leave-room-response", true);
         console.log("player removed from room");
         if (room.players.length === 0) {
             console.log("closing room");
@@ -116,7 +116,7 @@ function leaveRoom(socket, roomCode) {
         }
     }
     else {
-        socket.emit("leave-room-response", { success: false });
+        socket.emit("leave-room-response", false);
     }
 }
 function startGame(socket, roomCode) {
@@ -128,9 +128,7 @@ function startGame(socket, roomCode) {
             return;
         }
         let initialGameState = room.game.start().toClientGameState();
-        io.to(roomCode).emit("game-started", {
-            initialGameState: initialGameState,
-        }); // send to all players in room. socket.to would exclude the sender
+        io.to(roomCode).emit("game-started", initialGameState); // send to all players in room. socket.to would exclude the sender
     }
 }
 io.on("connection", (socket) => {

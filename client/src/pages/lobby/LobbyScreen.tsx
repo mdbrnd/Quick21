@@ -34,8 +34,8 @@ const LobbyScreen: React.FC = () => {
 
     socket.emit("join-room", roomCode);
 
-    socket.once("join-room-response", (response: { success: boolean }) => {
-      if (!response.success) {
+    socket.once("join-room-response", (success: boolean) => {
+      if (!success) {
         alert("Room not found or full");
       } else {
         navigate("/game", { state: { roomCode: roomCode, isOwner: false } });

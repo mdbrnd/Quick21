@@ -33,13 +33,11 @@ const GameScreen: React.FC = () => {
       setGameState(gameState);
     }
 
-    socket.on(
-      "game-started",
-      (response: { initialGameState: ClientGameState }) =>
-        onStartGame(response.initialGameState)
+    socket.on("game-started", (initialGameState: ClientGameState) =>
+      onStartGame(initialGameState)
     );
-    socket.on("game-state-update", (response: { gameState: ClientGameState }) =>
-      onGameStateUpdate(response.gameState)
+    socket.on("game-state-update", (gameState: ClientGameState) =>
+      onGameStateUpdate(gameState)
     );
 
     // Remove event listener when component unmounts
@@ -59,8 +57,7 @@ const GameScreen: React.FC = () => {
       <h3>Room Code: {location.state.roomCode}</h3>
       <h3>
         {gameStarted ? (
-          // Add null check for gameState before accessing currentPhase
-          gameState && gameState.currentPhase === "Betting" ? (
+          gameState.currentPhase === "Betting" ? (
             <BettingControls />
           ) : (
             <GameControls
@@ -104,7 +101,9 @@ const GameControls: React.FC<GameControlsProps> = ({
 const BettingControls: React.FC = () => {
   const location: Location<LocationState> = useLocation();
   const handlePlaceBet = () => {
-    const betAmount = parseInt((document.getElementById("betInput") as HTMLInputElement)?.value || "0");
+    const betAmount = parseInt(
+      (document.getElementById("betInput") as HTMLInputElement)?.value || "0"
+    );
     socket.emit("place-bet", location.state.roomCode, betAmount);
   };
 
@@ -115,4 +114,3 @@ const BettingControls: React.FC = () => {
     </div>
   );
 };
-

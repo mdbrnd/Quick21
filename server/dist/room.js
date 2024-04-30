@@ -50,12 +50,22 @@ class Room {
         if (!player) {
             return this.game.state;
         }
+        if (this.game.state.bets.has(player)) {
+            return this.game.state;
+        }
         // Check if player has enough balance to place bet
         // if (user.balance < betAmount) { TODO: uncomment in prod
         //   return this.game.state;
         // }
+        console.log("players in room: ", this.players);
         this.game.placeBet(player, betAmount);
+        if (this.allBetsPlaced()) {
+            this.game.state.currentPhase = "Playing";
+        }
         return this.game.state;
+    }
+    allBetsPlaced() {
+        return this.players.every((player) => this.game.state.bets.has(player));
     }
 }
 exports.default = Room;

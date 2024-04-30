@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const game_state_1 = require("./game_state");
+const game_state_1 = require("./models/game_state");
 class Game {
     constructor(firstPlayer) {
         this.state = new game_state_1.ServerGameState([], // deck
