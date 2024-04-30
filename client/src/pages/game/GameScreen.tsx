@@ -70,6 +70,7 @@ const GameScreen: React.FC = () => {
             <BettingControls />
           ) : (
             <GameControls
+              gameState={gameState}
               onHit={() => {}}
               onStand={() => {}}
               onDouble={() => {}}
@@ -89,23 +90,46 @@ const GameScreen: React.FC = () => {
 export default GameScreen;
 
 interface GameControlsProps {
+  gameState: ClientGameState;
   onHit: () => void;
   onStand: () => void;
   onDouble: () => void;
 }
-
 const GameControls: React.FC<GameControlsProps> = ({
+  gameState,
   onHit,
   onStand,
   onDouble,
 }) => {
-  return (
-    <div>
-      <button onClick={onHit}>Hit</button>
-      <button onClick={onStand}>Stand</button>
-      <button onClick={onDouble}>Double</button>
-    </div>
-  );
+  console.log(gameState);
+  // gen with help from gpt4
+   const playersHandsArray =
+     gameState.playersHands instanceof Map
+       ? Array.from(gameState.playersHands.entries())
+       : [];
+   return (
+     <div>
+       <button onClick={onHit}>Hit</button>
+       <button onClick={onStand}>Stand</button>
+       <button onClick={onDouble}>Double</button>
+       <div>Current Phase: {gameState.currentPhase}</div>
+       {gameState.dealersVisibleCard && (
+         <div>
+           Dealer's Visible Card: {gameState.dealersVisibleCard.value} of{" "}
+           {gameState.dealersVisibleCard.suit}
+         </div>
+       )}
+       <div>Players' Hands:</div>
+       {playersHandsArray.map(([player, cards]) => (
+         <div key={player.socketId}>
+           {player.name}'s Hand:{" "}
+           {cards.map((card) => `${card.value} of ${card.suit}`).join(", ")}
+           <br />
+           Bet: {gameState.bets.get(player)}
+         </div>
+       ))}
+     </div>
+   );
 };
 const BettingControls: React.FC = () => {
   const location: Location<LocationState> = useLocation();
