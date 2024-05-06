@@ -165,10 +165,12 @@ io.on("connection", (socket) => {
     socket.join(createdRoom.code);
   });
 
+  // TODO: change to emit with ack
   socket.on("join-room", (roomCode: string, playerName: string) => {
     joinRoom(socket, roomCode, playerName);
   });
 
+  // TODO: change to emit with ack
   socket.on("leave-room", (roomCode: string) => {
     leaveRoom(socket, roomCode);
   });
@@ -178,27 +180,36 @@ io.on("connection", (socket) => {
     startGame(socket, roomCode);
   });
 
-  socket.on("place-bet", async (roomCode: string, betAmount: number) => {
-    // TODO: change this to emitWithAck instead of game-state-update
-    let room = roomManager.getRoom(roomCode);
-    if (room) {
-      let player = room.getPlayer(socket.id);
-      if (!player) {
-        return;
+  socket.on(
+    "place-bet",
+    async (roomCode: string, betAmount: number, callback) => {
+      let room = roomManager.getRoom(roomCode);
+      if (room) {
+        let player = room.getPlayer(socket.id);
+        if (!player) {
+          return;
+        }
+
+        let user = await dbManager.getUserByName(player.name);
+        // if (!user) { //TODO: uncomment in prod
+        //   return;
+        // }
+
+        let oldGameState = room.game.state.toClientGameState();
+
+        let updatedGameState = room
+          .placeBet(socket.id, betAmount, user!)
+          .toClientGameState();
+        console.log("bet placed, game state: ", updatedGameState);
+
+        const success = updatedGameState !== oldGameState;
+
+        callback({ success: success });
+
+        io.to(roomCode).emit("game-state-update", updatedGameState);
       }
-
-      let user = await dbManager.getUserByName(player.name);
-      // if (!user) { //TODO: uncomment in prod
-      //   return;
-      // }
-
-      let updatedGameState = room
-        .placeBet(socket.id, betAmount, user!)
-        .toClientGameState();
-      console.log("bet placed, game state: ", updatedGameState);
-      io.to(roomCode).emit("game-state-update", updatedGameState);
     }
-  });
+  );
 
   socket.on("action", (roomCode: string, action) => {
     console.log("action received");

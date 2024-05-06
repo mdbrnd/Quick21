@@ -21,29 +21,29 @@ const GameScreen: React.FC = () => {
 
   let isRoomOwner = location.state.isOwner;
 
+  function updateGameState(gameState: ClientGameState) {
+    console.log("updating game state to:");
+    console.log(gameState);
+    setGameState(gameState);
+  }
+
   useEffect(() => {
     function onStartGame(initialGameState: ClientGameState) {
       setGameStarted(true);
-      console.log(initialGameState);
       setGameState(initialGameState);
-    }
-
-    function onGameStateUpdate(gameState: ClientGameState) {
-      console.log(gameState);
-      setGameState(gameState);
     }
 
     socket.on("game-started", (initialGameState: ClientGameState) =>
       onStartGame(initialGameState)
     );
     socket.on("game-state-update", (gameState: ClientGameState) =>
-      onGameStateUpdate(gameState)
+      updateGameState(gameState)
     );
 
     // Remove event listener when component unmounts
     return () => {
       socket.off("game-started", onStartGame);
-      socket.off("game-state-update", onGameStateUpdate);
+      socket.off("game-state-update", updateGameState);
     };
   }, []);
 
@@ -71,6 +71,7 @@ const GameScreen: React.FC = () => {
           ) : (
             <GameControls
               gameState={gameState}
+              updateGameState={updateGameState}
               onHit={() => {}}
               onStand={() => {}}
               onDouble={() => {}}
@@ -91,10 +92,12 @@ export default GameScreen;
 
 interface GameControlsProps {
   gameState: ClientGameState;
+  updateGameState: (gameState: ClientGameState) => void;
   onHit: () => void;
   onStand: () => void;
   onDouble: () => void;
 }
+
 const GameControls: React.FC<GameControlsProps> = ({
   gameState,
   onHit,
@@ -103,41 +106,49 @@ const GameControls: React.FC<GameControlsProps> = ({
 }) => {
   console.log(gameState);
   // gen with help from gpt4
-   const playersHandsArray =
-     gameState.playersHands instanceof Map
-       ? Array.from(gameState.playersHands.entries())
-       : [];
-   return (
-     <div>
-       <button onClick={onHit}>Hit</button>
-       <button onClick={onStand}>Stand</button>
-       <button onClick={onDouble}>Double</button>
-       <div>Current Phase: {gameState.currentPhase}</div>
-       {gameState.dealersVisibleCard && (
-         <div>
-           Dealer's Visible Card: {gameState.dealersVisibleCard.value} of{" "}
-           {gameState.dealersVisibleCard.suit}
-         </div>
-       )}
-       <div>Players' Hands:</div>
-       {playersHandsArray.map(([player, cards]) => (
-         <div key={player.socketId}>
-           {player.name}'s Hand:{" "}
-           {cards.map((card) => `${card.value} of ${card.suit}`).join(", ")}
-           <br />
-           Bet: {gameState.bets.get(player)}
-         </div>
-       ))}
-     </div>
-   );
+  const playersHandsArray =
+    gameState.playersHands instanceof Map
+      ? Array.from(gameState.playersHands.entries())
+      : [];
+  return (
+    <div>
+      <button onClick={onHit}>Hit</button>
+      <button onClick={onStand}>Stand</button>
+      <button onClick={onDouble}>Double</button>
+      <div>Current Phase: {gameState.currentPhase}</div>
+      {gameState.dealersVisibleCard && (
+        <div>
+          Dealer's Visible Card: {gameState.dealersVisibleCard.value} of{" "}
+          {gameState.dealersVisibleCard.suit}
+        </div>
+      )}
+      <div>Players' Hands:</div>
+      {playersHandsArray.map(([player, cards]) => (
+        <div key={player.socketId}>
+          {player.name}'s Hand:{" "}
+          {cards.map((card) => `${card.value} of ${card.suit}`).join(", ")}
+          <br />
+          Bet: {gameState.bets.get(player)}
+        </div>
+      ))}
+    </div>
+  );
 };
+
 const BettingControls: React.FC = () => {
   const location: Location<LocationState> = useLocation();
-  const handlePlaceBet = () => {
+  const handlePlaceBet = async () => {
     const betAmount = parseInt(
       (document.getElementById("betInput") as HTMLInputElement)?.value || "0"
     );
-    socket.emit("place-bet", location.state.roomCode, betAmount);
+    const response = await socket.emitWithAck(
+      "place-bet",
+      location.state.roomCode,
+      betAmount
+    );
+    if (!response.success) {
+      alert("Failed to place bet");
+    }
   };
 
   return (

@@ -62,7 +62,7 @@ class Room {
     playerSocketId: string,
     betAmount: number,
     user: User
-  ): ServerGameState {
+  ): ServerGameState { // if same state is returned, then bet was not placed
     const player = this.getPlayer(playerSocketId);
     if (!player) {
       return this.game.state;
@@ -76,12 +76,11 @@ class Room {
     //   return this.game.state;
     // }
 
-    console.log("players in room: ", this.players);
-
     this.game.placeBet(player, betAmount);
 
     if (this.allBetsPlaced()) {
       this.game.state.currentPhase = "Playing";
+      this.game.dealFirstCards();
     }
 
     return this.game.state;

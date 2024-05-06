@@ -150,9 +150,11 @@ io.on("connection", (socket) => {
         });
         socket.join(createdRoom.code);
     });
+    // TODO: change to emit with ack
     socket.on("join-room", (roomCode, playerName) => {
         joinRoom(socket, roomCode, playerName);
     });
+    // TODO: change to emit with ack
     socket.on("leave-room", (roomCode) => {
         leaveRoom(socket, roomCode);
     });
@@ -160,8 +162,7 @@ io.on("connection", (socket) => {
         console.log("start game event received");
         startGame(socket, roomCode);
     });
-    socket.on("place-bet", (roomCode, betAmount) => __awaiter(void 0, void 0, void 0, function* () {
-        // TODO: change this to emitWithAck instead of game-state-update
+    socket.on("place-bet", (roomCode, betAmount, callback) => __awaiter(void 0, void 0, void 0, function* () {
         let room = roomManager.getRoom(roomCode);
         if (room) {
             let player = room.getPlayer(socket.id);
@@ -172,10 +173,13 @@ io.on("connection", (socket) => {
             // if (!user) { //TODO: uncomment in prod
             //   return;
             // }
+            let oldGameState = room.game.state.toClientGameState();
             let updatedGameState = room
                 .placeBet(socket.id, betAmount, user)
                 .toClientGameState();
             console.log("bet placed, game state: ", updatedGameState);
+            const success = updatedGameState !== oldGameState;
+            callback({ success: success });
             io.to(roomCode).emit("game-state-update", updatedGameState);
         }
     }));

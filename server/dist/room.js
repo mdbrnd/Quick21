@@ -57,10 +57,10 @@ class Room {
         // if (user.balance < betAmount) { TODO: uncomment in prod
         //   return this.game.state;
         // }
-        console.log("players in room: ", this.players);
         this.game.placeBet(player, betAmount);
         if (this.allBetsPlaced()) {
             this.game.state.currentPhase = "Playing";
+            this.game.dealFirstCards();
         }
         return this.game.state;
     }
