@@ -20,6 +20,7 @@ class Room {
     }
     addPlayer(player) {
         this.players.push(player);
+        this.game.addPlayer(player);
     }
     getPlayer(playerSocketId) {
         return this.players.find((player) => player.socketId === playerSocketId);
@@ -29,6 +30,7 @@ class Room {
         if (index !== -1) {
             this.players.splice(index, 1);
         }
+        this.game.removePlayer(playerSocketId);
     }
     hasPlayer(playerSocketId) {
         return this.players.some((player) => player.socketId === playerSocketId);
@@ -46,6 +48,7 @@ class Room {
         return this.game.state;
     }
     placeBet(playerSocketId, betAmount, user) {
+        // if same state is returned, then bet was not placed
         const player = this.getPlayer(playerSocketId);
         if (!player) {
             return this.game.state;

@@ -98,6 +98,14 @@ class Game {
     this.state.playersHands.set(player, []);
   }
 
+  removePlayer(playerSocketId: string) {
+    for (let [player, hand] of this.state.playersHands.entries()) {
+      if (player.socketId === playerSocketId) {
+        this.state.playersHands.delete(player);
+        return;
+      }
+    }
+  }
   public placeBet(player: Player, betAmount: number) {
     this.state.bets.set(player, betAmount);
   }

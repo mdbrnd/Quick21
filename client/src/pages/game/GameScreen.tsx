@@ -104,11 +104,7 @@ const GameControls: React.FC<GameControlsProps> = ({
   onDouble,
 }) => {
   console.log(gameState);
-  // gen with help from gpt4
-  const playersHandsArray =
-    gameState.playersHands instanceof Map
-      ? Array.from(gameState.playersHands.entries())
-      : [];
+  const playersHandsArray = Array.from(gameState.playersHands.entries());
 
   const findBetBySocketId = (
     betsMap: Map<Player, number>,

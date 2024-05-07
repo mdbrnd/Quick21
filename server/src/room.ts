@@ -24,6 +24,7 @@ class Room {
 
   addPlayer(player: Player) {
     this.players.push(player);
+    this.game.addPlayer(player);
   }
 
   getPlayer(playerSocketId: string): Player | undefined {
@@ -37,6 +38,8 @@ class Room {
     if (index !== -1) {
       this.players.splice(index, 1);
     }
+
+    this.game.removePlayer(playerSocketId);
   }
 
   hasPlayer(playerSocketId: string): boolean {
@@ -62,7 +65,8 @@ class Room {
     playerSocketId: string,
     betAmount: number,
     user: User
-  ): ServerGameState { // if same state is returned, then bet was not placed
+  ): ServerGameState {
+    // if same state is returned, then bet was not placed
     const player = this.getPlayer(playerSocketId);
     if (!player) {
       return this.game.state;
