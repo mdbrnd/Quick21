@@ -180,7 +180,9 @@ io.on("connection", (socket) => {
             console.log("bet placed, game state: ", updatedGameState);
             const success = updatedGameState !== oldGameState;
             callback({ success: success });
-            io.to(roomCode).emit("game-state-update", updatedGameState);
+            const updatedGameStateForEmit = updatedGameState.toSerializedFormat();
+            console.log("serialized game state: ", updatedGameStateForEmit);
+            io.to(roomCode).emit("game-state-update", updatedGameStateForEmit);
         }
     }));
     socket.on("action", (roomCode, action) => {

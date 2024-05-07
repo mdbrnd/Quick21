@@ -206,7 +206,11 @@ io.on("connection", (socket) => {
 
         callback({ success: success });
 
-        io.to(roomCode).emit("game-state-update", updatedGameState);
+        const updatedGameStateForEmit = updatedGameState.toSerializedFormat();
+
+        console.log("serialized game state: ", updatedGameStateForEmit)
+
+        io.to(roomCode).emit("game-state-update", updatedGameStateForEmit);
       }
     }
   );

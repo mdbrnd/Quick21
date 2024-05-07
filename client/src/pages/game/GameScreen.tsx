@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { socket } from "../../socket";
 import { Location, useLocation } from "react-router-dom";
 import { ClientGameState } from "../../models/game_state";
+import Player from "../../models/player";
 
 type LocationState = {
   roomCode: string;
@@ -11,13 +12,9 @@ type LocationState = {
 const GameScreen: React.FC = () => {
   const location: Location<LocationState> = useLocation();
   const [gameStarted, setGameStarted] = useState<boolean>(false);
-  const [gameState, setGameState] = useState<ClientGameState>({
-    dealersVisibleCard: null,
-    currentTurn: null,
-    playersHands: new Map(),
-    currentPhase: "Betting",
-    bets: new Map(),
-  });
+  const [gameState, setGameState] = useState<ClientGameState>(
+    new ClientGameState(null, null, new Map(), "Betting", new Map())
+  );
 
   let isRoomOwner = location.state.isOwner;
 
@@ -36,9 +33,11 @@ const GameScreen: React.FC = () => {
     socket.on("game-started", (initialGameState: ClientGameState) =>
       onStartGame(initialGameState)
     );
-    socket.on("game-state-update", (gameState: ClientGameState) =>
-      updateGameState(gameState)
-    );
+    socket.on("game-state-update", (gameState: any) => {
+      // TODO: maybe add DTO
+      gameState = ClientGameState.fromSerializedFormat(gameState);
+      updateGameState(gameState);
+    });
 
     // Remove event listener when component unmounts
     return () => {
@@ -110,6 +109,19 @@ const GameControls: React.FC<GameControlsProps> = ({
     gameState.playersHands instanceof Map
       ? Array.from(gameState.playersHands.entries())
       : [];
+
+  const findBetBySocketId = (
+    betsMap: Map<Player, number>,
+    socketId: string
+  ): number | undefined => {
+    for (const [player, bet] of betsMap.entries()) {
+      if (player.socketId === socketId) {
+        return bet;
+      }
+    }
+    return undefined;
+  };
+
   return (
     <div>
       <button onClick={onHit}>Hit</button>
@@ -128,7 +140,7 @@ const GameControls: React.FC<GameControlsProps> = ({
           {player.name}'s Hand:{" "}
           {cards.map((card) => `${card.value} of ${card.suit}`).join(", ")}
           <br />
-          Bet: {gameState.bets.get(player)}
+          Bet: {findBetBySocketId(gameState.bets, player.socketId)}
         </div>
       ))}
     </div>

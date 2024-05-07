@@ -26,20 +26,53 @@ export class ServerGameState {
   }
 
   toClientGameState(): ClientGameState {
-    return {
-      dealersVisibleCard: this.dealersHand[0],
-      currentTurn: this.currentTurn,
-      playersHands: this.playersHands,
-      currentPhase: this.currentPhase,
-      bets: this.bets,
-    };
+    const dealersVisibleCard = this.dealersHand[0];
+    return new ClientGameState(
+      dealersVisibleCard,
+      this.currentTurn,
+      this.playersHands,
+      this.currentPhase,
+      this.bets,
+    );
   }
 }
 
-export interface ClientGameState {
+export class ClientGameState {
   dealersVisibleCard: Card | null;
   currentTurn: Player | null;
   playersHands: Map<Player, Card[]>;
   currentPhase: "Betting" | "Playing" | "RoundOver";
   bets: Map<Player, number>;
+
+  constructor(
+    dealersVisibleCard: Card | null,
+    currentTurn: Player | null,
+    playersHands: Map<Player, Card[]>,
+    currentPhase: "Betting" | "Playing" | "RoundOver",
+    bets: Map<Player, number>
+  ) {
+    this.dealersVisibleCard = dealersVisibleCard;
+    this.currentTurn = currentTurn;
+    this.playersHands = playersHands;
+    this.currentPhase = currentPhase;
+    this.bets = bets;
+  }
+
+  toSerializedFormat() {
+    return {
+      dealersVisibleCard: this.dealersVisibleCard,
+      currentTurn: this.currentTurn,
+      playersHands: serializeMap(this.playersHands),
+      currentPhase: this.currentPhase,
+      bets: serializeMap(this.bets)
+    };
+  }
 }
+
+const serializeMap = (map: Map<any, any>) => {
+  return Array.from(map.entries());
+};
+
+const deserializeMap = (array: any[]) => {
+  return new Map(array);
+};
