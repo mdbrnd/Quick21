@@ -120,9 +120,13 @@ const GameControls: React.FC<GameControlsProps> = ({
 
   return (
     <div>
-      <button onClick={onHit}>Hit</button>
-      <button onClick={onStand}>Stand</button>
-      <button onClick={onDouble}>Double</button>
+      {gameState.currentTurn?.socketId === socket.id && (
+        <div>
+          <button onClick={onHit}>Hit</button>
+          <button onClick={onStand}>Stand</button>
+          <button onClick={onDouble}>Double</button>
+        </div>
+      )}
       <div>Current Phase: {gameState.currentPhase}</div>
       {gameState.dealersVisibleCard && (
         <div>
