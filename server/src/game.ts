@@ -1,6 +1,7 @@
 import { Card } from "./models/card";
 import { ServerGameState } from "./models/game_state";
 import Player from "./models/player";
+import { RoundOverInfo, RoundResult } from "./models/round_over_info";
 
 class Game {
   public state: ServerGameState = new ServerGameState(
@@ -73,6 +74,23 @@ class Game {
     this.state.currentTurn = players[nextIndex];
   }
 
+  public isLastTurn(): boolean {
+    const players = Array.from(this.state.playersHands.keys());
+    const currentIndex = players.indexOf(this.state.currentTurn);
+    return currentIndex === players.length - 1;
+  }
+
+  public endRound() {
+    //TODO: evaluate results
+
+    let roundOverInfo: RoundOverInfo = new RoundOverInfo(
+      new Map(),
+      this.state.dealersHand,
+      new Map()
+    );
+
+    return roundOverInfo;
+  }
 
   public getPlayerHandBySocketId(socketId: string): Card[] | undefined {
     for (let [player, hand] of this.state.playersHands.entries()) {

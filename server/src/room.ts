@@ -1,6 +1,7 @@
 import Game from "./game";
 import { ServerGameState } from "./models/game_state";
 import Player from "./models/player";
+import { RoundOverInfo } from "./models/round_over_info";
 import { User } from "./models/user";
 
 enum PlayerAction { // no double for now
@@ -46,9 +47,12 @@ class Room {
     return this.players.some((player) => player.socketId === playerSocketId);
   }
 
-  performAction(playerSocketId: string, action: PlayerAction): ServerGameState {
+  performAction(
+    playerSocketId: string,
+    action: PlayerAction
+  ): [state: ServerGameState, roundOver: RoundOverInfo | undefined] {
     if (this.game.state.currentTurn.socketId !== playerSocketId) {
-      return this.game.state;
+      return [this.game.state, undefined];
     }
 
     console.log("performing action: ", action);
@@ -62,7 +66,13 @@ class Room {
         break;
     }
 
-    return this.game.state;
+    if (this.game.isLastTurn()) {
+      this.game.state.currentPhase = "RoundOver";
+      let roundOverInfo = this.game.endRound();
+      return [this.game.state, roundOverInfo];
+    }
+
+    return [this.game.state, undefined];
   }
 
   placeBet(

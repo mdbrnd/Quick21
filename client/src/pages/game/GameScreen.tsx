@@ -29,6 +29,11 @@ const GameScreen: React.FC = () => {
       updateGameState(newGameState);
     });
 
+    socket.on("round-over", (roundOverInfo: any) => {
+      console.log("Round over");
+      console.log(roundOverInfo);
+    });
+
     // Remove event listener when component unmounts
     return () => {
       socket.off("game-state-update", updateGameState);

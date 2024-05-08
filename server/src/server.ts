@@ -7,6 +7,8 @@ import RoomManager from "./room_manager";
 import Room from "./room";
 import { DBManager } from "./database/dbmanager";
 import "dotenv/config";
+import { RoundOverInfo } from "./models/round_over_info";
+import { ServerGameState } from "./models/game_state";
 
 const app = express();
 const server = createServer(app);
@@ -217,11 +219,16 @@ io.on("connection", (socket) => {
 
   socket.on("action", (roomCode: string, action) => {
     console.log("action received");
+    // TODO: start new round
     let room = roomManager.getRoom(roomCode);
     if (room) {
-      let updatedGameState = room.performAction(socket.id, action).toDTO(); //TODO: add round over event if last action was made
+      let actionResult = room.performAction(socket.id, action);
 
-      io.to(roomCode).emit("game-state-update", updatedGameState);
+      io.to(roomCode).emit("game-state-update", actionResult[0].toDTO());
+      
+      if (actionResult[1] !== undefined) {
+        io.to(roomCode).emit("round-over", actionResult[1].toDTO());
+      }
     }
   });
 

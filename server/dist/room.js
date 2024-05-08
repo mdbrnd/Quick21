@@ -37,7 +37,7 @@ class Room {
     }
     performAction(playerSocketId, action) {
         if (this.game.state.currentTurn.socketId !== playerSocketId) {
-            return this.game.state;
+            return [this.game.state, undefined];
         }
         console.log("performing action: ", action);
         switch (action) {
@@ -48,7 +48,12 @@ class Room {
             case PlayerAction.Stand: // do nothing as player is standing
                 break;
         }
-        return this.game.state;
+        if (this.game.isLastTurn()) {
+            this.game.state.currentPhase = "RoundOver";
+            let roundOverInfo = this.game.endRound();
+            return [this.game.state, roundOverInfo];
+        }
+        return [this.game.state, undefined];
     }
     placeBet(playerSocketId, betAmount, user) {
         // if same state is returned, then bet was not placed

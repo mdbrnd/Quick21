@@ -7,8 +7,26 @@ export enum RoundResult {
   Blackjack = "Blackjack", // player won with blackjack
 }
 
-export interface RoundOverInfo {
+export class RoundOverInfo {
   results: Map<string, RoundResult>;
-  dealerHand: Card[];
+  dealersHand: Card[];
   updatedBalances: Map<string, number>;
+
+  constructor(
+    results: Map<string, RoundResult>,
+    dealersHand: Card[],
+    updatedBalances: Map<string, number>
+  ) {
+    this.results = results;
+    this.dealersHand = dealersHand;
+    this.updatedBalances = updatedBalances;
+  }
+
+  toDTO() {
+    return {
+      results: serializeMap(this.results),
+      dealersHand: this.dealersHand,
+      updatedBalances: serializeMap(this.updatedBalances),
+    };
+  }
 }

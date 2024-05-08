@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const game_state_1 = require("./models/game_state");
+const round_over_info_1 = require("./models/round_over_info");
 class Game {
     constructor(firstPlayer) {
         this.state = new game_state_1.ServerGameState(false, // gameStarted
@@ -61,6 +62,16 @@ class Game {
         const currentIndex = players.indexOf(this.state.currentTurn);
         const nextIndex = (currentIndex + 1) % players.length;
         this.state.currentTurn = players[nextIndex];
+    }
+    isLastTurn() {
+        const players = Array.from(this.state.playersHands.keys());
+        const currentIndex = players.indexOf(this.state.currentTurn);
+        return currentIndex === players.length - 1;
+    }
+    endRound() {
+        //TODO: evaluate results
+        let roundOverInfo = new round_over_info_1.RoundOverInfo(new Map(), this.state.dealersHand, new Map());
+        return roundOverInfo;
     }
     getPlayerHandBySocketId(socketId) {
         for (let [player, hand] of this.state.playersHands.entries()) {
