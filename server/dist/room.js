@@ -42,8 +42,10 @@ class Room {
         console.log("performing action: ", action);
         switch (action) {
             case PlayerAction.Hit:
+                this.game.hit(playerSocketId);
+                this.game.nextTurn();
                 break;
-            case PlayerAction.Stand:
+            case PlayerAction.Stand: // do nothing as player is standing
                 break;
         }
         return this.game.state;

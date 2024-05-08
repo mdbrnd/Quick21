@@ -44,12 +44,23 @@ class Game {
                 this.state.deck.push({ value, suit });
             }
         }
+        this.state.deck = this.shuffleDeck(this.state.deck);
     }
     hit(playerSocketId) {
         const player = this.getPlayerHandBySocketId(playerSocketId);
         if (player) {
+            // if deck is empty, create a new deck
+            if (this.state.deck.length === 0) {
+                this.initializeDeck();
+            }
             player.push(this.state.deck.pop());
         }
+    }
+    nextTurn() {
+        const players = Array.from(this.state.playersHands.keys());
+        const currentIndex = players.indexOf(this.state.currentTurn);
+        const nextIndex = (currentIndex + 1) % players.length;
+        this.state.currentTurn = players[nextIndex];
     }
     getPlayerHandBySocketId(socketId) {
         for (let [player, hand] of this.state.playersHands.entries()) {
@@ -75,7 +86,6 @@ class Game {
                 // if deck is empty, create a new deck
                 if (this.state.deck.length === 0) {
                     this.initializeDeck();
-                    this.state.deck = this.shuffleDeck(this.state.deck);
                 }
                 hand.push(this.state.deck.pop()); // remove last card from deck and add to players hands
             }
