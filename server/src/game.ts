@@ -4,6 +4,7 @@ import Player from "./models/player";
 
 class Game {
   public state: ServerGameState = new ServerGameState(
+    false, // gameStarted
     [], // deck
     [], // dealersHand
     { socketId: "", name: "" }, // currentTurn
@@ -20,6 +21,7 @@ class Game {
   public start(): ServerGameState {
     this.initializeDeck();
     this.state.deck = this.shuffleDeck(this.state.deck);
+    this.state.gameStarted = true;
     console.log("game started");
     return this.state;
   }

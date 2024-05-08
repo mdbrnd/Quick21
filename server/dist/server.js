@@ -127,8 +127,8 @@ function startGame(socket, roomCode) {
             console.log("player not in room or not owner");
             return;
         }
-        let initialGameState = room.game.start().toClientGameState();
-        io.to(roomCode).emit("game-started", initialGameState); // send to all players in room. socket.to would exclude the sender
+        let initialGameState = room.game.start().toDTO();
+        io.to(roomCode).emit("game-state-update", initialGameState); // send to all players in room. socket.to would exclude the sender
     }
 }
 io.on("connection", (socket) => {
@@ -189,9 +189,7 @@ io.on("connection", (socket) => {
         console.log("action received");
         let room = roomManager.getRoom(roomCode);
         if (room) {
-            let updatedGameState = room
-                .performAction(socket.id, action)
-                .toClientGameState(); //TODO: add round over event if last action was made
+            let updatedGameState = room.performAction(socket.id, action).toDTO(); //TODO: add round over event if last action was made
             io.to(roomCode).emit("game-state-update", updatedGameState);
         }
     });

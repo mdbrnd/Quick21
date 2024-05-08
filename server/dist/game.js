@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const game_state_1 = require("./models/game_state");
 class Game {
     constructor(firstPlayer) {
-        this.state = new game_state_1.ServerGameState([], // deck
+        this.state = new game_state_1.ServerGameState(false, // gameStarted
+        [], // deck
         [], // dealersHand
         { socketId: "", name: "" }, // currentTurn
         new Map(), // playersHands
@@ -16,6 +17,7 @@ class Game {
     start() {
         this.initializeDeck();
         this.state.deck = this.shuffleDeck(this.state.deck);
+        this.state.gameStarted = true;
         console.log("game started");
         return this.state;
     }

@@ -2,6 +2,7 @@ import { Card } from "./card";
 import Player from "./player";
 
 export class ServerGameState {
+  gameStarted: boolean;
   deck: Card[];
   dealersHand: Card[];
   currentTurn: Player;
@@ -10,6 +11,7 @@ export class ServerGameState {
   bets: Map<Player, number>;
 
   constructor(
+    gameStarted: boolean,
     deck: Card[],
     dealersHand: Card[],
     currentTurn: Player,
@@ -17,6 +19,7 @@ export class ServerGameState {
     currentPhase: "Betting" | "Playing" | "RoundOver",
     bets: Map<Player, number>
   ) {
+    this.gameStarted = gameStarted;
     this.deck = deck;
     this.dealersHand = dealersHand;
     this.currentTurn = currentTurn;
@@ -25,9 +28,14 @@ export class ServerGameState {
     this.bets = bets;
   }
 
+  toDTO() {
+    return this.toClientGameState().toSerializedFormat();
+  }
+
   toClientGameState(): ClientGameState {
     const dealersVisibleCard = this.dealersHand[0];
     return new ClientGameState(
+      this.gameStarted,
       dealersVisibleCard,
       this.currentTurn,
       this.playersHands,
@@ -38,6 +46,7 @@ export class ServerGameState {
 }
 
 export class ClientGameState {
+  gameStarted: boolean;
   dealersVisibleCard: Card | null;
   currentTurn: Player | null;
   playersHands: Map<Player, Card[]>;
@@ -45,12 +54,14 @@ export class ClientGameState {
   bets: Map<Player, number>;
 
   constructor(
+    gameStarted: boolean,
     dealersVisibleCard: Card | null,
     currentTurn: Player | null,
     playersHands: Map<Player, Card[]>,
     currentPhase: "Betting" | "Playing" | "RoundOver",
     bets: Map<Player, number>
   ) {
+    this.gameStarted = gameStarted;
     this.dealersVisibleCard = dealersVisibleCard;
     this.currentTurn = currentTurn;
     this.playersHands = playersHands;
@@ -60,6 +71,7 @@ export class ClientGameState {
 
   toSerializedFormat() {
     return {
+      gameStarted: this.gameStarted,
       dealersVisibleCard: this.dealersVisibleCard,
       currentTurn: this.currentTurn,
       playersHands: serializeMap(this.playersHands),

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { socket } from "../../socket";
 import { Location, useLocation } from "react-router-dom";
 import { ClientGameState } from "../../models/game_state";
-import Player from "../../models/player";
+import { Player, PlayerAction } from "../../models/player";
 
 type LocationState = {
   roomCode: string;
@@ -11,9 +11,8 @@ type LocationState = {
 
 const GameScreen: React.FC = () => {
   const location: Location<LocationState> = useLocation();
-  const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [gameState, setGameState] = useState<ClientGameState>(
-    new ClientGameState(null, null, new Map(), "Betting", new Map())
+    new ClientGameState(false, null, null, new Map(), "Betting", new Map())
   );
 
   let isRoomOwner = location.state.isOwner;
@@ -25,23 +24,13 @@ const GameScreen: React.FC = () => {
   }
 
   useEffect(() => {
-    function onStartGame(initialGameState: ClientGameState) {
-      setGameStarted(true);
-      setGameState(initialGameState);
-    }
-
-    socket.on("game-started", (initialGameState: ClientGameState) =>
-      onStartGame(initialGameState)
-    );
-    socket.on("game-state-update", (gameState: any) => {
-      // TODO: maybe add DTO
-      gameState = ClientGameState.fromSerializedFormat(gameState);
-      updateGameState(gameState);
+    socket.on("game-state-update", (newGameState: any) => {
+      newGameState = ClientGameState.fromSerializedFormat(newGameState);
+      updateGameState(newGameState);
     });
 
     // Remove event listener when component unmounts
     return () => {
-      socket.off("game-started", onStartGame);
       socket.off("game-state-update", updateGameState);
     };
   }, []);
@@ -49,6 +38,14 @@ const GameScreen: React.FC = () => {
   const handleStartGameButton = () => {
     socket.emit("start-game", location.state.roomCode);
   };
+
+  function hit() {
+    socket.emit("action", location.state.roomCode, PlayerAction.Hit);
+  }
+
+  function stand() {
+    socket.emit("action", location.state.roomCode, PlayerAction.Stand);
+  }
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -64,15 +61,15 @@ const GameScreen: React.FC = () => {
         </button>
       </h3>
       <h3>
-        {gameStarted ? (
+        {gameState.gameStarted ? (
           gameState.currentPhase === "Betting" ? (
             <BettingControls />
           ) : (
             <GameControls
               gameState={gameState}
               updateGameState={updateGameState}
-              onHit={() => {}}
-              onStand={() => {}}
+              onHit={hit}
+              onStand={stand}
               onDouble={() => {}}
             />
           )
@@ -80,7 +77,7 @@ const GameScreen: React.FC = () => {
           "Waiting for host to start..."
         )}
       </h3>
-      {isRoomOwner && !gameStarted && (
+      {isRoomOwner && !gameState.gameStarted && (
         <button onClick={handleStartGameButton}>Start Game</button>
       )}
     </div>

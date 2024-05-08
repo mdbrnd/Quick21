@@ -39,6 +39,7 @@ class Room {
         if (this.game.state.currentTurn.socketId !== playerSocketId) {
             return this.game.state;
         }
+        console.log("performing action: ", action);
         switch (action) {
             case PlayerAction.Hit:
                 break;

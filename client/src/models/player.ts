@@ -1,6 +1,9 @@
-interface Player {
+export interface Player {
   socketId: string;
   name: string;
 }
 
-export default Player;
+export enum PlayerAction { // no double for now
+  Hit = "hit",
+  Stand = "stand",
+}
