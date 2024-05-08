@@ -1,7 +1,6 @@
 import Game from "./game";
-import { ServerGameState } from "./models/game_state";
-import Player from "./models/player";
-import { User } from "./models/user";
+import { User } from "./database/user";
+import { Player, ServerGameState } from "../../shared";
 
 enum PlayerAction { // no double for now
   Hit = "hit",

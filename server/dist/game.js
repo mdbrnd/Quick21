@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const game_state_1 = require("./models/game_state");
+const shared_1 = require("../../shared");
 class Game {
     constructor(firstPlayer) {
-        this.state = new game_state_1.ServerGameState([], // deck
+        this.state = new shared_1.ServerGameState([], // deck
         [], // dealersHand
         { socketId: "", name: "" }, // currentTurn
         new Map(), // playersHands

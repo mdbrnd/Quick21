@@ -1,5 +1,5 @@
-import Player from "./models/player";
 import Room from "./room";
+import { Player } from "../../shared";
 
 class RoomManager {
   private rooms: Map<string, Room> = new Map();

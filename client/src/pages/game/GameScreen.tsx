@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { socket } from "../../socket";
 import { Location, useLocation } from "react-router-dom";
-import { ClientGameState } from "../../models/game_state";
-import Player from "../../models/player";
+import { Player, ClientGameState } from "../../../../shared";
 
 type LocationState = {
   roomCode: string;
@@ -50,6 +49,10 @@ const GameScreen: React.FC = () => {
     socket.emit("start-game", location.state.roomCode);
   };
 
+  function hit() {
+    socket.emit("hit", location.state.roomCode);
+  }
+
   return (
     <div style={{ textAlign: "center" }}>
       <h2>Quick21</h2>
@@ -87,7 +90,6 @@ const GameScreen: React.FC = () => {
   );
 };
 
-export default GameScreen;
 
 interface GameControlsProps {
   gameState: ClientGameState;
@@ -120,9 +122,13 @@ const GameControls: React.FC<GameControlsProps> = ({
 
   return (
     <div>
-      <button onClick={onHit}>Hit</button>
-      <button onClick={onStand}>Stand</button>
-      <button onClick={onDouble}>Double</button>
+      {gameState.currentTurn?.socketId === socket.id && (
+        <div>
+          <button onClick={onHit}>Hit</button>
+          <button onClick={onStand}>Stand</button>
+          <button onClick={onDouble}>Double</button>
+        </div>
+      )}
       <div>Current Phase: {gameState.currentPhase}</div>
       {gameState.dealersVisibleCard && (
         <div>
@@ -166,3 +172,5 @@ const BettingControls: React.FC = () => {
     </div>
   );
 };
+
+export default GameScreen;
