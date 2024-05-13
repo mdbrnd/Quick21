@@ -1,5 +1,6 @@
 import { Card } from "./card";
 import { Player } from "./player";
+import { deserializeMap, serializeMap } from "./utils";
 
 export class ClientGameState {
   gameStarted: boolean;
@@ -25,7 +26,7 @@ export class ClientGameState {
     this.bets = bets;
   }
 
-  toSerializedFormat() {
+  toDTO() {
     return {
       gameStarted: this.gameStarted,
       dealersVisibleCard: this.dealersVisibleCard,
@@ -36,7 +37,7 @@ export class ClientGameState {
     };
   }
 
-  static fromSerializedFormat(data: any): ClientGameState {
+  static fromDTO(data: any): ClientGameState {
     return new ClientGameState(
       data.gameStarted,
       data.dealersVisibleCard,
@@ -47,11 +48,3 @@ export class ClientGameState {
     );
   }
 }
-
-const serializeMap = (map: Map<any, any>) => {
-  return Array.from(map.entries());
-};
-
-const deserializeMap = (array: any[]) => {
-  return new Map(array);
-};

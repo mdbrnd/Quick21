@@ -3,6 +3,8 @@ import { socket } from "../../socket";
 import { Location, useLocation } from "react-router-dom";
 import { ClientGameState } from "../../models/game_state";
 import { Player, PlayerAction } from "../../models/player";
+import { Card } from "../../models/card";
+import { RoundOverInfo } from "../../models/round_over_info";
 
 type LocationState = {
   roomCode: string;
@@ -13,6 +15,9 @@ const GameScreen: React.FC = () => {
   const location: Location<LocationState> = useLocation();
   const [gameState, setGameState] = useState<ClientGameState>(
     new ClientGameState(false, null, null, new Map(), "Betting", new Map())
+  );
+  const [roundOverInfo, setRoundOverInfo] = useState<RoundOverInfo | undefined>(
+    undefined
   );
 
   let isRoomOwner = location.state.isOwner;
@@ -25,7 +30,7 @@ const GameScreen: React.FC = () => {
 
   useEffect(() => {
     socket.on("game-state-update", (newGameState: any) => {
-      newGameState = ClientGameState.fromSerializedFormat(newGameState);
+      newGameState = ClientGameState.fromDTO(newGameState);
       updateGameState(newGameState);
     });
 
@@ -67,11 +72,13 @@ const GameScreen: React.FC = () => {
       </h3>
       <h3>
         {gameState.gameStarted ? (
-          gameState.currentPhase === "Betting" ? (
+          gameState.currentPhase === "Betting" &&
+          roundOverInfo === undefined ? (
             <BettingControls />
           ) : (
             <GameControls
               gameState={gameState}
+              roundOverInfo={roundOverInfo}
               updateGameState={updateGameState}
               onHit={hit}
               onStand={stand}
@@ -93,6 +100,7 @@ export default GameScreen;
 
 interface GameControlsProps {
   gameState: ClientGameState;
+  roundOverInfo: RoundOverInfo | undefined;
   updateGameState: (gameState: ClientGameState) => void;
   onHit: () => void;
   onStand: () => void;
@@ -101,6 +109,7 @@ interface GameControlsProps {
 
 const GameControls: React.FC<GameControlsProps> = ({
   gameState,
+  roundOverInfo,
   onHit,
   onStand,
   onDouble,
@@ -120,8 +129,38 @@ const GameControls: React.FC<GameControlsProps> = ({
     return undefined;
   };
 
+  function calculateHandValue(cards: Card[]): number {
+    let value = 0;
+    let aceCount = 0;
+
+    for (const card of cards) {
+      if (card.value === "A") {
+        aceCount++;
+        value += 11; // initially consider ace as 11
+      } else if (["J", "Q", "K"].includes(card.value)) {
+        value += 10;
+      } else {
+        value += parseInt(card.value);
+      }
+    }
+
+    // Adjust if the value is over 21 and the hand contains Aces considered as 11
+    while (value > 21 && aceCount > 0) {
+      value -= 10;
+      aceCount--;
+    }
+
+    return value;
+  }
+
   return (
     <div>
+      {roundOverInfo !== undefined && (
+        <div>
+          Round Over
+          <br />
+        </div>
+      )}
       {gameState.currentTurn?.socketId === socket.id && (
         <div>
           <button onClick={onHit}>Hit</button>
@@ -129,46 +168,70 @@ const GameControls: React.FC<GameControlsProps> = ({
           <button onClick={onDouble}>Double</button>
         </div>
       )}
-      <div>Current Phase: {gameState.currentPhase}</div>
-      {gameState.dealersVisibleCard && (
-        <div>
-          Dealer's Visible Card: {gameState.dealersVisibleCard.value} of{" "}
-          {gameState.dealersVisibleCard.suit}
-        </div>
+      {roundOverInfo === undefined && (
+        <>
+          <div>Current Phase: {gameState.currentPhase}</div>
+          {gameState.dealersVisibleCard && (
+            <div>
+              Dealer's Visible Card: {gameState.dealersVisibleCard.value} of{" "}
+              {gameState.dealersVisibleCard.suit}
+            </div>
+          )}
+          <div>Players' Hands:</div>
+          {playersHandsArray.map(([player, cards]) => (
+            <div key={player.socketId}>
+              {player.name}'s Hand Value: {calculateHandValue(cards)}
+              <br />
+              Bet: {findBetBySocketId(gameState.bets, player.socketId)}
+            </div>
+          ))}
+        </>
       )}
-      <div>Players' Hands:</div>
-      {playersHandsArray.map(([player, cards]) => (
-        <div key={player.socketId}>
-          {player.name}'s Hand:{" "}
-          {cards.map((card) => `${card.value} of ${card.suit}`).join(", ")}
-          <br />
-          Bet: {findBetBySocketId(gameState.bets, player.socketId)}
-        </div>
-      ))}
     </div>
   );
 };
 
 const BettingControls: React.FC = () => {
   const location: Location<LocationState> = useLocation();
+  const betInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleInputChange = () => {
+    if (betInputRef.current) {
+      const value = parseInt(betInputRef.current.value, 10);
+      if (value <= 0) {
+        betInputRef.current.value = ""; // Reset the input if the value is 0 or negative
+      }
+    }
+  };
+
   const handlePlaceBet = async () => {
-    const betAmount = parseInt(
-      (document.getElementById("betInput") as HTMLInputElement)?.value || "0"
-    );
-    const response = await socket.emitWithAck(
-      "place-bet",
-      location.state.roomCode,
-      betAmount
-    );
-    if (!response.success) {
-      alert("Failed to place bet");
+    const betAmount = parseInt(betInputRef.current?.value || "0", 10);
+
+    if (betAmount > 0) {
+      const response = await socket.emitWithAck(
+        "place-bet",
+        location.state.roomCode,
+        betAmount
+      );
+      if (!response.success) {
+        alert("Failed to place bet");
+      }
+    } else {
+      alert("Please enter a valid bet amount greater than zero.");
     }
   };
 
   return (
     <div>
-      <input type="number" id="betInput" />
+      <input
+        type="number"
+        id="betInput"
+        ref={betInputRef}
+        min="1"
+        onChange={handleInputChange}
+      />
       <button onClick={handlePlaceBet}>Place Bet</button>
     </div>
   );
 };
+

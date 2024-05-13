@@ -43,7 +43,6 @@ class Room {
         switch (action) {
             case PlayerAction.Hit:
                 this.game.hit(playerSocketId);
-                this.game.nextTurn();
                 break;
             case PlayerAction.Stand: // do nothing as player is standing
                 break;
@@ -53,6 +52,7 @@ class Room {
             let roundOverInfo = this.game.endRound();
             return [this.game.state, roundOverInfo];
         }
+        this.game.nextTurn();
         return [this.game.state, undefined];
     }
     placeBet(playerSocketId, betAmount, user) {

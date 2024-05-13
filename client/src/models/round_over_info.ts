@@ -1,5 +1,5 @@
 import { Card } from "./card";
-import { serializeMap } from "./utils";
+import { deserializeMap } from "./utils";
 
 export enum RoundResult {
   Win = "Win",
@@ -23,11 +23,11 @@ export class RoundOverInfo {
     this.updatedBalances = updatedBalances;
   }
 
-  toDTO() {
+  static fromDTO(data: any) {
     return {
-      results: serializeMap(this.results),
-      dealersHand: this.dealersHand,
-      updatedBalances: serializeMap(this.updatedBalances),
+      results: deserializeMap(data.results),
+      dealersHand: data.dealersHand,
+      updatedBalances: deserializeMap(data.updatedBalances),
     };
   }
 }

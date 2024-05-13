@@ -1,5 +1,6 @@
 import { Card } from "./card";
 import Player from "./player";
+import { serializeMap } from "./utils";
 
 export class ServerGameState {
   gameStarted: boolean;
@@ -29,7 +30,7 @@ export class ServerGameState {
   }
 
   toDTO() {
-    return this.toClientGameState().toSerializedFormat();
+    return this.toClientGameState().toDTO();
   }
 
   toClientGameState(): ClientGameState {
@@ -40,7 +41,7 @@ export class ServerGameState {
       this.currentTurn,
       this.playersHands,
       this.currentPhase,
-      this.bets,
+      this.bets
     );
   }
 }
@@ -69,14 +70,14 @@ export class ClientGameState {
     this.bets = bets;
   }
 
-  toSerializedFormat() {
+  toDTO() {
     return {
       gameStarted: this.gameStarted,
       dealersVisibleCard: this.dealersVisibleCard,
       currentTurn: this.currentTurn,
       playersHands: serializeMap(this.playersHands),
       currentPhase: this.currentPhase,
-      bets: serializeMap(this.bets)
+      bets: serializeMap(this.bets),
     };
   }
 }

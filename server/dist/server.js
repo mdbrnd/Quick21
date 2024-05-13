@@ -180,19 +180,19 @@ io.on("connection", (socket) => {
             console.log("bet placed, game state: ", updatedGameState);
             const success = updatedGameState !== oldGameState;
             callback({ success: success });
-            const updatedGameStateForEmit = updatedGameState.toSerializedFormat();
+            const updatedGameStateForEmit = updatedGameState.toDTO();
             console.log("serialized game state: ", updatedGameStateForEmit);
             io.to(roomCode).emit("game-state-update", updatedGameStateForEmit);
         }
     }));
     socket.on("action", (roomCode, action) => {
         console.log("action received");
-        // TODO: start new round
         let room = roomManager.getRoom(roomCode);
         if (room) {
             let actionResult = room.performAction(socket.id, action);
             io.to(roomCode).emit("game-state-update", actionResult[0].toDTO());
             if (actionResult[1] !== undefined) {
+                console.log("round over");
                 io.to(roomCode).emit("round-over", actionResult[1].toDTO());
             }
         }
