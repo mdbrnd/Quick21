@@ -69,9 +69,7 @@ class Game {
         return currentIndex === players.length - 1;
     }
     endRound() {
-        //TODO: evaluate results
-        let roundOverInfo = new round_over_info_1.RoundOverInfo(new Map(), this.state.dealersHand, new Map());
-        return roundOverInfo;
+        return this.determineRoundResults(this.state);
     }
     getPlayerHandBySocketId(socketId) {
         for (let [player, hand] of this.state.playersHands.entries()) {
@@ -116,6 +114,62 @@ class Game {
     }
     placeBet(player, betAmount) {
         this.state.bets.set(player, betAmount);
+    }
+    // two functions below written with help from chatgpt
+    calculateHandValue(cards) {
+        let value = 0;
+        let aceCount = 0;
+        for (const card of cards) {
+            if (card.value === "A") {
+                aceCount++;
+                value += 11; // initially consider ace as 11
+            }
+            else if (["J", "Q", "K"].includes(card.value)) {
+                value += 10;
+            }
+            else {
+                value += parseInt(card.value);
+            }
+        }
+        // Adjust if the value is over 21 and the hand contains Aces considered as 11
+        while (value > 21 && aceCount > 0) {
+            value -= 10;
+            aceCount--;
+        }
+        return value;
+    }
+    hasBlackjack(cards) {
+        return cards.length === 2 && this.calculateHandValue(cards) === 21;
+    }
+    determineRoundResults(state) {
+        const results = new Map();
+        const updatedBalances = new Map();
+        const dealerValue = this.calculateHandValue(state.dealersHand);
+        const dealerBlackjack = this.hasBlackjack(state.dealersHand);
+        state.playersHands.forEach((hand, player) => {
+            const playerValue = this.calculateHandValue(hand);
+            const playerBlackjack = this.hasBlackjack(hand);
+            const bet = state.bets.get(player) || 0;
+            let result;
+            if (playerBlackjack && !dealerBlackjack) {
+                result = round_over_info_1.RoundResult.Blackjack;
+                updatedBalances.set(player.socketId, bet * 2.5); // assuming 3:2 payout for blackjack
+            }
+            else if (playerBlackjack && dealerBlackjack || playerValue === dealerValue) {
+                result = round_over_info_1.RoundResult.Tie;
+                updatedBalances.set(player.socketId, bet); // return the bet
+            }
+            else if ((playerValue > dealerValue && playerValue <= 21) || dealerValue > 21) {
+                result = round_over_info_1.RoundResult.Win;
+                updatedBalances.set(player.socketId, bet * 2); // win, double the bet
+            }
+            else {
+                result = round_over_info_1.RoundResult.Lose;
+                updatedBalances.set(player.socketId, 0); // lose the bet
+            }
+            results.set(player.socketId, result);
+        });
+        return new round_over_info_1.RoundOverInfo(results, state.dealersHand, updatedBalances);
     }
 }
 exports.default = Game;
