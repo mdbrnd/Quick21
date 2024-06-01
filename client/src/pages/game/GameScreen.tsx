@@ -134,10 +134,10 @@ const GameControls: React.FC<GameControlsProps> = ({
     let aceCount = 0;
 
     for (const card of cards) {
-      if (card.value === "A") {
+      if (card.value === "Ace") {
         aceCount++;
         value += 11; // initially consider ace as 11
-      } else if (["J", "Q", "K"].includes(card.value)) {
+      } else if (["Jack", "Queen", "King"].includes(card.value)) {
         value += 10;
       } else {
         value += parseInt(card.value);
@@ -151,6 +151,25 @@ const GameControls: React.FC<GameControlsProps> = ({
     }
 
     return value;
+  }
+
+  function getCardImage(card: Card): string {
+    return `/assets/images/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
+  }
+
+  function getPlayerPositionStyle(
+    index: number,
+    totalPlayers: number
+  ): React.CSSProperties {
+    const angle = (index / (totalPlayers - 1)) * Math.PI - Math.PI / 2;
+    const x = 50 + 40 * Math.cos(angle);
+    const y = 50 + 40 * Math.sin(angle);
+    return {
+      position: "absolute",
+      left: `${x}%`,
+      top: `${y}%`,
+      transform: "translate(-50%, -50%)",
+    };
   }
 
   return (
@@ -172,19 +191,48 @@ const GameControls: React.FC<GameControlsProps> = ({
         <>
           <div>Current Phase: {gameState.currentPhase}</div>
           {gameState.dealersVisibleCard && (
-            <div>
-              Dealer's Visible Card: {gameState.dealersVisibleCard.value} of{" "}
-              {gameState.dealersVisibleCard.suit}
+            <div style={{ textAlign: "center" }}>
+              <div>Dealer's Visible Card:</div>
+              <img
+                src={getCardImage(gameState.dealersVisibleCard)}
+                alt={`Dealer's card: ${gameState.dealersVisibleCard.value} of ${gameState.dealersVisibleCard.suit}`}
+                style={{ width: "50px", height: "75px" }}
+              />
             </div>
           )}
           <div>Players' Hands:</div>
-          {playersHandsArray.map(([player, cards]) => (
-            <div key={player.socketId}>
-              {player.name}'s Hand Value: {calculateHandValue(cards)}
-              <br />
-              Bet: {findBetBySocketId(gameState.bets, player.socketId)}
-            </div>
-          ))}
+          <div style={{ position: "relative", width: "100%", height: "80vh" }}>
+            {playersHandsArray.map(([player, cards], index) => (
+              <div
+                key={player.socketId}
+                style={getPlayerPositionStyle(index, playersHandsArray.length)}
+              >
+                <div style={{ textAlign: "center" }}>
+                  <div>{player.name}</div>
+                  <div>
+                    {player.name}'s Hand Value: {calculateHandValue(cards)}
+                  </div>
+                  <div>
+                    Bet: {findBetBySocketId(gameState.bets, player.socketId)}
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    {cards.map((card, cardIndex) => (
+                      <img
+                        key={cardIndex}
+                        src={getCardImage(card)}
+                        alt={`${card.value} of ${card.suit}`}
+                        style={{
+                          width: "50px",
+                          height: "75px",
+                          margin: "0 5px",
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </>
       )}
     </div>
@@ -234,4 +282,3 @@ const BettingControls: React.FC = () => {
     </div>
   );
 };
-

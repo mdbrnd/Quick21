@@ -90,6 +90,7 @@ const io = new Server(server, {
 
 const roomManager = new RoomManager();
 
+// TODO: make so players cant join/only spectate already started game/only on next round
 function joinRoom(socket: any, roomCode: string, playerName: string) {
   console.log("joining room " + roomCode);
   let couldJoin: boolean = roomManager.joinRoom(roomCode, {

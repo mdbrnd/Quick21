@@ -50,10 +50,10 @@ class Game {
       "8",
       "9",
       "10",
-      "J",
-      "Q",
-      "K",
-      "A",
+      "Jack",
+      "Queen",
+      "King",
+      "Ace",
     ];
 
     this.state.deck = [];
@@ -164,10 +164,10 @@ class Game {
     let aceCount = 0;
 
     for (const card of cards) {
-      if (card.value === "A") {
+      if (card.value === "Ace") {
         aceCount++;
         value += 11; // initially consider ace as 11
-      } else if (["J", "Q", "K"].includes(card.value)) {
+      } else if (["Jack", "Queen", "King"].includes(card.value)) {
         value += 10;
       } else {
         value += parseInt(card.value);
