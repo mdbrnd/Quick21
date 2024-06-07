@@ -10,7 +10,7 @@ const LobbyScreen: React.FC = () => {
   const [roomCode, setRoomCode] = useState<string>("");
 
   const newGame = async () => {
-    const response = await socket.emitWithAck("create-room", "player 1");
+    const response = await socket.emitWithAck("create-room", "Player 1");
 
     if (!response.success) {
       alert("Failed to create room");
@@ -32,7 +32,9 @@ const LobbyScreen: React.FC = () => {
       return;
     }
 
-    socket.emit("join-room", roomCode);
+    const playerName = `Player ${Math.floor(Math.random() * 100)}`; // int from 0 to 99
+
+    socket.emit("join-room", roomCode, playerName);
 
     socket.once("join-room-response", (success: boolean) => {
       if (!success) {
@@ -65,9 +67,7 @@ const LobbyScreen: React.FC = () => {
         </button>
         <h1 className="title">Welcome to Quick21</h1>
         <div className="profile">
-          <img
-            src="/assets/images/profile-icon-3.svg"
-            alt="Profile Icon"         />
+          <img src="/assets/images/profile-icon-3.svg" alt="Profile Icon" />
 
           <span>Player</span>
         </div>
