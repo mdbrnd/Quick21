@@ -128,6 +128,7 @@ function leaveRoom(socket: any, roomCode: string) {
   }
 }
 
+//TODO: somehow fetch game if user reloads page
 function startGame(socket: any, roomCode: string) {
   let room = roomManager.getRoom(roomCode);
 

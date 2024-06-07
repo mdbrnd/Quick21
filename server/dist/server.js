@@ -121,6 +121,7 @@ function leaveRoom(socket, roomCode) {
         socket.emit("leave-room-response", false);
     }
 }
+//TODO: somehow fetch game if user reloads page
 function startGame(socket, roomCode) {
     let room = roomManager.getRoom(roomCode);
     if (room) {
