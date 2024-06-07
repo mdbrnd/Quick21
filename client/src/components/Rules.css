@@ -1,4 +1,4 @@
-.overlayStyle {
+.overlay-style {
   position: fixed;
   top: 0;
   left: 0;
@@ -8,11 +8,11 @@
   z-index: 1000;
 }
 
-.modalTextStyle {
+.modal-text-style {
   color: white;
 }
 
-.modalStyle {
+.modal-style {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -29,18 +29,18 @@
 }
 
 /* Rules */
-.ruleImageStyle {
+.rule-image-style {
   width: 200px;
   height: 200px;
   margin-right: 10px;
 }
 
-.ruleStyle {
+.rule-style {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
 }
 
-.leftShiftButton {
-    margin-left: 0px;
+.left-shift-button {
+  margin-left: 0px;
 }

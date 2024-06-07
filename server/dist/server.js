@@ -104,6 +104,7 @@ function joinRoom(socket, roomCode, playerName) {
         console.log("could not add player to room");
     }
 }
+// TODO: if players leaves mid game, put next turn and transfer ownership and return bet
 function leaveRoom(socket, roomCode) {
     let room = roomManager.getRoom(roomCode);
     if (room) {

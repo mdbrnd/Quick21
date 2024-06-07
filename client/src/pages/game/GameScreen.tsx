@@ -5,6 +5,8 @@ import { ClientGameState } from "../../models/game_state";
 import { Player, PlayerAction } from "../../models/player";
 import { Card } from "../../models/card";
 import { RoundOverInfo } from "../../models/round_over_info";
+import "./CardStyles.css";
+import "../../index.css";
 
 type LocationState = {
   roomCode: string;
@@ -37,11 +39,13 @@ const GameScreen: React.FC = () => {
     socket.on("round-over", (roundOverInfo: any) => {
       console.log("Round over");
       console.log(roundOverInfo);
+      setRoundOverInfo(roundOverInfo);
     });
 
     // Remove event listener when component unmounts
     return () => {
       socket.off("game-state-update", updateGameState);
+      socket.off("round-over");
     };
   }, []);
 
@@ -58,7 +62,7 @@ const GameScreen: React.FC = () => {
   }
 
   return (
-    <div style={{ textAlign: "center" }}>
+    <div style={{ textAlign: "center" }} className="game-screen-style">
       <h2>Quick21</h2>
       <h3>
         Room Code: {location.state.roomCode} &nbsp;
@@ -92,6 +96,7 @@ const GameScreen: React.FC = () => {
       {isRoomOwner && !gameState.gameStarted && (
         <button onClick={handleStartGameButton}>Start Game</button>
       )}
+      <span className="version-number">v1.0</span>
     </div>
   );
 };
@@ -154,22 +159,7 @@ const GameControls: React.FC<GameControlsProps> = ({
   }
 
   function getCardImage(card: Card): string {
-    return `/assets/images/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
-  }
-
-  function getPlayerPositionStyle(
-    index: number,
-    totalPlayers: number
-  ): React.CSSProperties {
-    const angle = (index / (totalPlayers - 1)) * Math.PI - Math.PI / 2;
-    const x = 50 + 40 * Math.cos(angle);
-    const y = 50 + 40 * Math.sin(angle);
-    return {
-      position: "absolute",
-      left: `${x}%`,
-      top: `${y}%`,
-      transform: "translate(-50%, -50%)",
-    };
+    return `/assets/images/cards/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
   }
 
   return (
@@ -181,7 +171,7 @@ const GameControls: React.FC<GameControlsProps> = ({
         </div>
       )}
       {gameState.currentTurn?.socketId === socket.id && (
-        <div>
+        <div className="controls">
           <button onClick={onHit}>Hit</button>
           <button onClick={onStand}>Stand</button>
           <button onClick={onDouble}>Double</button>
@@ -189,46 +179,35 @@ const GameControls: React.FC<GameControlsProps> = ({
       )}
       {roundOverInfo === undefined && (
         <>
-          <div>Current Phase: {gameState.currentPhase}</div>
+          <div className="info-panel">
+            Current Phase: {gameState.currentPhase}
+          </div>
           {gameState.dealersVisibleCard && (
-            <div style={{ textAlign: "center" }}>
-              <div>Dealer's Visible Card:</div>
+            <div className="dealer-area">
+              <div>Dealer</div>
               <img
                 src={getCardImage(gameState.dealersVisibleCard)}
                 alt={`Dealer's card: ${gameState.dealersVisibleCard.value} of ${gameState.dealersVisibleCard.suit}`}
-                style={{ width: "50px", height: "75px" }}
+                className="card-image"
               />
             </div>
           )}
-          <div>Players' Hands:</div>
-          <div style={{ position: "relative", width: "100%", height: "80vh" }}>
+          <div className="player-area">
             {playersHandsArray.map(([player, cards], index) => (
-              <div
-                key={player.socketId}
-                style={getPlayerPositionStyle(index, playersHandsArray.length)}
-              >
-                <div style={{ textAlign: "center" }}>
-                  <div>{player.name}</div>
-                  <div>
-                    {player.name}'s Hand Value: {calculateHandValue(cards)}
-                  </div>
-                  <div>
-                    Bet: {findBetBySocketId(gameState.bets, player.socketId)}
-                  </div>
-                  <div style={{ display: "flex", justifyContent: "center" }}>
-                    {cards.map((card, cardIndex) => (
-                      <img
-                        key={cardIndex}
-                        src={getCardImage(card)}
-                        alt={`${card.value} of ${card.suit}`}
-                        style={{
-                          width: "50px",
-                          height: "75px",
-                          margin: "0 5px",
-                        }}
-                      />
-                    ))}
-                  </div>
+              <div key={player.socketId} className="player-info">
+                <div>{player.name}</div>
+                <div>
+                  Bet: {findBetBySocketId(gameState.bets, player.socketId)}$
+                </div>
+                <div className="card-container">
+                  {cards.map((card, cardIndex) => (
+                    <img
+                      key={cardIndex}
+                      src={getCardImage(card)}
+                      alt={`${card.value} of ${card.suit}`}
+                      className="card-image"
+                    />
+                  ))}
                 </div>
               </div>
             ))}

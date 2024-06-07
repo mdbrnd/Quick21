@@ -108,6 +108,7 @@ function joinRoom(socket: any, roomCode: string, playerName: string) {
   }
 }
 
+// TODO: if players leaves mid game, put next turn and transfer ownership and return bet
 function leaveRoom(socket: any, roomCode: string) {
   let room = roomManager.getRoom(roomCode);
 

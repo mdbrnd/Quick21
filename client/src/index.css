@@ -12,8 +12,8 @@ code {
     monospace;
 }
 
-/* Styles for Buttons */
-.buttonStyle {
+/* Styles for all Buttons */
+button {
   background-color: #61dafb; /* Light blue */
   color: #282c34;
   padding: 10px 20px;
@@ -27,7 +27,32 @@ code {
   transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-.buttonStyle:hover {
+button:hover {
   background-color: #53c4f3; /* A slightly darker shade of the original light blue */
   box-shadow: 0 0 8px 3px rgba(83, 196, 243, 0.6); /* Glow effect with a color similar to the hover background */
+}
+
+input[type="number"] {
+  padding: 10px;
+  margin-right: 5px;
+  width: 200px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: black;
+}
+
+input {
+  padding: 10px;
+  width: 200px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: white;
+  color: black;
+}
+
+.version-number {
+  position: absolute;
+  left: 20px;
+  bottom: 10px;
 }

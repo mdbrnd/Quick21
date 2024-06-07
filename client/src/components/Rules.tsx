@@ -51,19 +51,19 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="modalStyle" onClick={(e) => e.stopPropagation()}>
+    <div className="modal-style" onClick={(e) => e.stopPropagation()}>
       <h2>Blackjack Rules</h2>
 
-      <div className="ruleStyle">
+      <div className="rule-style">
         <img
           src={rules[currentRule].image}
           alt={rules[currentRule].altText}
-          className="ruleImageStyle"
+          className="rule-image-style"
         />
         <p>{rules[currentRule].text}</p>
       </div>
 
-      <button onClick={prevRule} className="buttonStyle leftShiftButton">
+      <button onClick={prevRule} className="buttonStyle left-shift-button">
         Previous
       </button>
       <button onClick={nextRule} className="buttonStyle">
