@@ -65,13 +65,13 @@ class Room {
         break;
     }
 
-    if (this.game.isLastTurn()) {
+    if (this.game.shouldRoundEnd(action === PlayerAction.Stand)) {
       this.game.state.currentPhase = "RoundOver";
       let roundOverInfo = this.game.endRound();
       return [this.game.state, roundOverInfo];
     }
 
-    this.game.nextTurn();
+    this.game.nextTurn(action === PlayerAction.Stand);
 
     return [this.game.state, undefined];
   }

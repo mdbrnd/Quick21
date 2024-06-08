@@ -30,7 +30,7 @@ const GameScreen: React.FC = () => {
     setGameState(gameState);
   }
 
-  useEffect(() => {
+  useEffect(() => { 
     socket.on("game-state-update", (newGameState: any) => {
       newGameState = ClientGameState.fromDTO(newGameState);
       updateGameState(newGameState);

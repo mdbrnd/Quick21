@@ -78,17 +78,31 @@ class Game {
     }
   }
 
-  public nextTurn() {
+  public nextTurn(didStand: boolean) {
     const players = Array.from(this.state.playersHands.keys());
     const currentIndex = players.indexOf(this.state.currentTurn);
     const nextIndex = (currentIndex + 1) % players.length;
-    this.state.currentTurn = players[nextIndex];
+    // only next turn if the player busted or stood
+    if (didStand || this.calculateHandValue(this.state.playersHands.get(players[currentIndex])!) > 21) {
+      this.state.currentTurn = players[nextIndex];
+    }
   }
 
   public isLastTurn(): boolean {
     const players = Array.from(this.state.playersHands.keys());
     const currentIndex = players.indexOf(this.state.currentTurn);
     return currentIndex === players.length - 1;
+  }
+
+  public shouldRoundEnd(didStand: boolean): boolean {
+    // if the last player busted or stood, the round should end
+    return (
+      this.isLastTurn() &&
+      (didStand ||
+        this.calculateHandValue(
+          this.state.playersHands.get(this.state.currentTurn)!
+        ) > 21)
+    );
   }
 
   public endRound(): RoundOverInfo {
