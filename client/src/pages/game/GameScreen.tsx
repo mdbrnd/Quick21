@@ -5,7 +5,6 @@ import { ClientGameState } from "../../models/game_state";
 import { Player, PlayerAction } from "../../models/player";
 import { Card } from "../../models/card";
 import { RoundOverInfo } from "../../models/round_over_info";
-import "./CardStyles.css";
 import "./Game.css";
 import "../../index.css";
 
@@ -230,36 +229,45 @@ const GameControls: React.FC<GameControlsProps> = ({
         )}
       {
         <>
+        {roundOverInfo === undefined && (
           <div className="info-panel">
-            Current Phase: {gameState.currentPhase}
-          </div>
+              Current Phase: {gameState.currentPhase}
+            </div>
+          )}
           {gameState.dealersVisibleCard && (
             <div className="dealer-area">
               <div>Dealer</div>
-              <img
-                src={getCardImage(gameState.dealersVisibleCard)}
-                alt={`Dealer's card: ${gameState.dealersVisibleCard.value} of ${gameState.dealersVisibleCard.suit}`}
-                className="card-image"
-              />
               {roundOverInfo === undefined && (
-                <img
-                  src={"/assets/images/cards/back_of_card.png"}
-                  alt={`Dealer's not visible card`}
-                  className="card-image"
-                />
+                <div>
+                  <img
+                    src={getCardImage(gameState.dealersVisibleCard)}
+                    alt={`Dealer's card: ${gameState.dealersVisibleCard.value} of ${gameState.dealersVisibleCard.suit}`}
+                    className="card-image"
+                  />
+
+                  <img
+                    src={"/assets/images/cards/back_of_card.png"}
+                    alt={`Dealer's not visible card`}
+                    className="card-image"
+                  />
+                </div>
               )}
               {roundOverInfo !== undefined && (
-                <img
-                  src={getCardImage(roundOverInfo.dealersHand[1])}
-                  alt={`Dealer's second card: ${roundOverInfo.dealersHand[1].value} of ${roundOverInfo.dealersHand[1].suit}`}
-                  className="card-image"
-                />
+                <div>
+                  {roundOverInfo.dealersHand.map((card, index) => (
+                    <img
+                      src={getCardImage(card)}
+                      alt={`Dealer's card: ${card.value} of ${card.suit}`}
+                      className="card-image"
+                    />
+                  ))}
+                </div>
               )}
             </div>
           )}
           <div className="player-area">
             {playersHandsArray.map(([player, cards], index) => (
-              <div key={player.socketId} className="player-info">
+              <div key={player.socketId}>
                 <div
                   style={{
                     color:
