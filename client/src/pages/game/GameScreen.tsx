@@ -190,6 +190,11 @@ const GameControls: React.FC<GameControlsProps> = ({
                 alt={`Dealer's card: ${gameState.dealersVisibleCard.value} of ${gameState.dealersVisibleCard.suit}`}
                 className="card-image"
               />
+              <img
+                src={"/assets/images/cards/back_of_card.png"}
+                alt={`Dealer's not visible card`}
+                className="card-image"
+              />
             </div>
           )}
           <div className="player-area">
