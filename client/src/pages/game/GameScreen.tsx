@@ -6,6 +6,7 @@ import { Player, PlayerAction } from "../../models/player";
 import { Card } from "../../models/card";
 import { RoundOverInfo } from "../../models/round_over_info";
 import "./CardStyles.css";
+import "./Game.css";
 import "../../index.css";
 
 type LocationState = {
@@ -63,8 +64,9 @@ const GameScreen: React.FC = () => {
 
   return (
     <div style={{ textAlign: "center" }} className="game-screen-style">
-      <h2>Quick21</h2>
-      <h3>
+      <PlayerList gameState={gameState} />
+      <h1>Quick21</h1>
+      <h3 style={{ position: "absolute", top: "0px", left: "25px" }}>
         Room Code: {location.state.roomCode} &nbsp;
         <button
           onClick={() => {
@@ -83,7 +85,6 @@ const GameScreen: React.FC = () => {
             <GameControls
               gameState={gameState}
               roundOverInfo={roundOverInfo}
-              updateGameState={updateGameState}
               onHit={hit}
               onStand={stand}
               onDouble={() => {}}
@@ -103,10 +104,41 @@ const GameScreen: React.FC = () => {
 
 export default GameScreen;
 
+interface PlayerListProps {
+  gameState: ClientGameState;
+}
+
+const PlayerList: React.FC<PlayerListProps> = ({ gameState }) => {
+  const playersHandsArray = Array.from(gameState.playersHands.entries());
+
+  const findBetBySocketId = (
+    betsMap: Map<Player, number>,
+    socketId: string
+  ): number | undefined => {
+    for (const [player, bet] of betsMap.entries()) {
+      if (player.socketId === socketId) {
+        return bet;
+      }
+    }
+    return undefined;
+  };
+
+  return (
+    <div className="player-list-top-right">
+      {playersHandsArray.map(([player, cards], index) => (
+        <div key={player.socketId} className="player-info">
+          <div className="player-name">{player.name}</div>
+          <div className="player-bet">
+            Bet: {findBetBySocketId(gameState.bets, player.socketId) || 0}$
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 interface GameControlsProps {
   gameState: ClientGameState;
   roundOverInfo: RoundOverInfo | undefined;
-  updateGameState: (gameState: ClientGameState) => void;
   onHit: () => void;
   onStand: () => void;
   onDouble: () => void;
@@ -247,7 +279,6 @@ const BettingControls: React.FC = () => {
 
   const handlePlaceBet = async () => {
     const betAmount = parseInt(betInputRef.current?.value || "0", 10);
-
     if (betAmount > 0) {
       const response = await socket.emitWithAck(
         "place-bet",
