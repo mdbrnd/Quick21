@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { socket } from "../../socket";
-import { Location, useLocation } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import { ClientGameState } from "../../models/game_state";
 import { Player, PlayerAction } from "../../models/player";
 import { Card } from "../../models/card";
@@ -16,6 +16,7 @@ type LocationState = {
 
 const GameScreen: React.FC = () => {
   const location: Location<LocationState> = useLocation();
+  const navigate = useNavigate();
   const [gameState, setGameState] = useState<ClientGameState>(
     new ClientGameState(false, null, null, new Map(), "Betting", new Map())
   );
@@ -52,6 +53,12 @@ const GameScreen: React.FC = () => {
 
   const handleStartGameButton = () => {
     socket.emit("start-game", location.state.roomCode);
+  };
+
+  const handleLeaveGameButton = () => {
+    socket.emit("leave-room", location.state.roomCode);
+    // Route to home page
+    navigate("/");
   };
 
   function hit() {
@@ -97,6 +104,9 @@ const GameScreen: React.FC = () => {
       {isRoomOwner && !gameState.gameStarted && (
         <button onClick={handleStartGameButton}>Start Game</button>
       )}
+      <button className="leave-button" onClick={handleLeaveGameButton}>
+        🚪 Leave
+      </button>
       <span className="version-number">v1.0</span>
     </div>
   );

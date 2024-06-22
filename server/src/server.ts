@@ -103,6 +103,12 @@ function joinRoom(socket: any, roomCode: string, playerName: string) {
   if (couldJoin) {
     socket.join(roomCode);
     console.log("player added to room");
+    // Update game state to show others that player is in room
+    let room = roomManager.getRoom(roomCode);
+    if (room) {
+      let gameState = room.game.state.toClientGameState().toDTO();
+      io.to(roomCode).emit("game-state-update", gameState);
+    }
   } else {
     console.log("could not add player to room");
   }
@@ -122,6 +128,10 @@ function leaveRoom(socket: any, roomCode: string) {
     if (room.players.length === 0) {
       console.log("closing room");
       roomManager.closeRoom(roomCode);
+    } else {
+      // Send updated game state so player list is accurate
+      let gameState = room.game.state.toClientGameState().toDTO();
+      io.to(roomCode).emit("game-state-update", gameState);
     }
   } else {
     socket.emit("leave-room-response", false);
@@ -168,6 +178,12 @@ io.on("connection", (socket) => {
     });
 
     socket.join(createdRoom.code);
+
+    let room = roomManager.getRoom(createdRoom.code);
+    if (room) {
+      let gameState = room.game.state.toClientGameState().toDTO();
+      io.to(createdRoom.code).emit("game-state-update", gameState);
+    }
   });
 
   // TODO: change to emit with ack

@@ -27,3 +27,16 @@
   font-size: 0.9rem;
   color: #ffffff; /* White color for the bet to differentiate from the name */
 }
+
+.leave-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
