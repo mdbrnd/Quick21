@@ -1,4 +1,5 @@
 import { Card } from "./card";
+import { Player } from "./player";
 import { deserializeMap } from "./utils";
 
 export enum RoundResult {
@@ -9,14 +10,14 @@ export enum RoundResult {
 }
 
 export class RoundOverInfo {
-  results: Map<string, RoundResult>;
+  results: Map<Player, RoundResult>;
   dealersHand: Card[];
-  updatedBalances: Map<string, number>;
+  updatedBalances: Map<Player, number>;
 
   constructor(
-    results: Map<string, RoundResult>,
+    results: Map<Player, RoundResult>,
     dealersHand: Card[],
-    updatedBalances: Map<string, number>
+    updatedBalances: Map<Player, number>
   ) {
     this.results = results;
     this.dealersHand = dealersHand;
@@ -25,9 +26,12 @@ export class RoundOverInfo {
 
   static fromDTO(data: any) {
     return {
-      results: deserializeMap(data.results),
+      results: deserializeMap(data.results) as Map<Player, RoundResult>,
       dealersHand: data.dealersHand,
-      updatedBalances: deserializeMap(data.updatedBalances),
+      updatedBalances: deserializeMap(data.updatedBalances) as Map<
+        Player,
+        number
+      >,
     };
   }
 }

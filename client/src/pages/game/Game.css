@@ -2,21 +2,20 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  background-color: #1f2229; /* Dark background */
-  color: #61dafb; /* Light blue text for better contrast */
+  background-color: #1f2229;
+  color: #61dafb;
   padding: 10px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 200px; /* Fixed width for better control */
+  width: 200px;
 }
 
 .player-info {
   padding: 5px;
-  border-bottom: 1px solid #61dafb; /* Light blue border for separation */
 }
 
 .player-info:last-child {
-  border-bottom: none; /* Remove border from the last item */
+  border-bottom: none;
 }
 
 .player-name {
@@ -25,7 +24,7 @@
 
 .player-bet {
   font-size: 0.9rem;
-  color: #ffffff; /* White color for the bet to differentiate from the name */
+  color: #ffffff;
 }
 
 .leave-button {

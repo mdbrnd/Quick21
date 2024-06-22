@@ -41,6 +41,7 @@ const GameScreen: React.FC = () => {
     socket.on("round-over", (roundOverInfo: any) => {
       console.log("Round over");
       console.log(roundOverInfo);
+      roundOverInfo = RoundOverInfo.fromDTO(roundOverInfo);
       setRoundOverInfo(roundOverInfo);
     });
 
@@ -210,16 +211,24 @@ const GameControls: React.FC<GameControlsProps> = ({
         <div>
           Round Over
           <br />
+          {Array.from(roundOverInfo.results.entries()).map(
+            ([player, result]) => (
+              <div key={player.socketId}>
+                {player.name} {result}
+              </div>
+            )
+          )}
         </div>
       )}
-      {gameState.currentTurn?.socketId === socket.id && (
-        <div className="controls">
-          <button onClick={onHit}>Hit</button>
-          <button onClick={onStand}>Stand</button>
-          <button onClick={onDouble}>Double</button>
-        </div>
-      )}
-      {roundOverInfo === undefined && (
+      {gameState.currentTurn?.socketId === socket.id &&
+        roundOverInfo === undefined && (
+          <div className="controls">
+            <button onClick={onHit}>Hit</button>
+            <button onClick={onStand}>Stand</button>
+            <button onClick={onDouble}>Double</button>
+          </div>
+        )}
+      {
         <>
           <div className="info-panel">
             Current Phase: {gameState.currentPhase}
@@ -232,11 +241,20 @@ const GameControls: React.FC<GameControlsProps> = ({
                 alt={`Dealer's card: ${gameState.dealersVisibleCard.value} of ${gameState.dealersVisibleCard.suit}`}
                 className="card-image"
               />
-              <img
-                src={"/assets/images/cards/back_of_card.png"}
-                alt={`Dealer's not visible card`}
-                className="card-image"
-              />
+              {roundOverInfo === undefined && (
+                <img
+                  src={"/assets/images/cards/back_of_card.png"}
+                  alt={`Dealer's not visible card`}
+                  className="card-image"
+                />
+              )}
+              {roundOverInfo !== undefined && (
+                <img
+                  src={getCardImage(roundOverInfo.dealersHand[1])}
+                  alt={`Dealer's second card: ${roundOverInfo.dealersHand[1].value} of ${roundOverInfo.dealersHand[1].suit}`}
+                  className="card-image"
+                />
+              )}
             </div>
           )}
           <div className="player-area">
@@ -245,7 +263,8 @@ const GameControls: React.FC<GameControlsProps> = ({
                 <div
                   style={{
                     color:
-                      gameState.currentTurn?.socketId === player.socketId
+                      gameState.currentTurn?.socketId === player.socketId &&
+                      roundOverInfo === undefined
                         ? "green"
                         : "inherit",
                   }}
@@ -269,7 +288,7 @@ const GameControls: React.FC<GameControlsProps> = ({
             ))}
           </div>
         </>
-      )}
+      }
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import { Card } from "./card";
+import Player from "./player";
 import { serializeMap } from "./utils";
 
 export enum RoundResult {
@@ -9,14 +10,14 @@ export enum RoundResult {
 }
 
 export class RoundOverInfo {
-  results: Map<string, RoundResult>;
+  results: Map<Player, RoundResult>;
   dealersHand: Card[];
-  updatedBalances: Map<string, number>;
+  updatedBalances: Map<Player, number>;
 
   constructor(
-    results: Map<string, RoundResult>,
+    results: Map<Player, RoundResult>,
     dealersHand: Card[],
-    updatedBalances: Map<string, number>
+    updatedBalances: Map<Player, number>
   ) {
     this.results = results;
     this.dealersHand = dealersHand;

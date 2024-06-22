@@ -72,7 +72,8 @@ class Game {
         const currentIndex = players.indexOf(this.state.currentTurn);
         const nextIndex = (currentIndex + 1) % players.length;
         // only next turn if the player busted or stood
-        if (didStand || this.calculateHandValue(this.state.playersHands.get(players[currentIndex])) > 21) {
+        if (didStand ||
+            this.calculateHandValue(this.state.playersHands.get(players[currentIndex])) > 21) {
             this.state.currentTurn = players[nextIndex];
         }
     }
@@ -85,7 +86,7 @@ class Game {
         // if the last player busted or stood, the round should end
         return (this.isLastTurn() &&
             (didStand ||
-                this.calculateHandValue(this.state.playersHands.get(this.state.currentTurn)) > 21));
+                this.calculateHandValue(this.state.playersHands.get(this.state.currentTurn)) >= 21));
     }
     endRound() {
         // start new round
@@ -182,23 +183,23 @@ class Game {
             let result;
             if (playerBlackjack && !dealerBlackjack) {
                 result = round_over_info_1.RoundResult.Blackjack;
-                updatedBalances.set(player.socketId, bet * 2.5); // assuming 3:2 payout for blackjack
+                updatedBalances.set(player, bet * 2.5); // assuming 3:2 payout for blackjack
             }
             else if ((playerBlackjack && dealerBlackjack) ||
                 playerValue === dealerValue) {
                 result = round_over_info_1.RoundResult.Tie;
-                updatedBalances.set(player.socketId, bet); // return the bet
+                updatedBalances.set(player, bet); // return the bet
             }
             else if ((playerValue > dealerValue && playerValue <= 21) ||
                 dealerValue > 21) {
                 result = round_over_info_1.RoundResult.Win;
-                updatedBalances.set(player.socketId, bet * 2); // win, double the bet
+                updatedBalances.set(player, bet * 2); // win, double the bet
             }
             else {
                 result = round_over_info_1.RoundResult.Lose;
-                updatedBalances.set(player.socketId, 0); // lose the bet
+                updatedBalances.set(player, 0); // lose the bet
             }
-            results.set(player.socketId, result);
+            results.set(player, result);
         });
         return new round_over_info_1.RoundOverInfo(results, state.dealersHand, updatedBalances);
     }
