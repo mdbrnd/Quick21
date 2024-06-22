@@ -35,6 +35,9 @@ const GameScreen: React.FC = () => {
     socket.on("game-state-update", (newGameState: any) => {
       newGameState = ClientGameState.fromDTO(newGameState);
       updateGameState(newGameState);
+      if (newGameState.currentPhase !== "RoundOver") {
+        setRoundOverInfo(undefined);
+      }
     });
 
     socket.on("round-over", (roundOverInfo: any) => {
@@ -69,6 +72,10 @@ const GameScreen: React.FC = () => {
     socket.emit("action", location.state.roomCode, PlayerAction.Stand);
   }
 
+  function startNewRound() {
+    socket.emit("new-round", location.state.roomCode);
+  }
+
   return (
     <div style={{ textAlign: "center" }} className="game-screen-style">
       <PlayerList gameState={gameState} />
@@ -95,6 +102,7 @@ const GameScreen: React.FC = () => {
               onHit={hit}
               onStand={stand}
               onDouble={() => {}}
+              onStartNewRound={startNewRound}
             />
           )
         ) : (
@@ -152,6 +160,7 @@ interface GameControlsProps {
   onHit: () => void;
   onStand: () => void;
   onDouble: () => void;
+  onStartNewRound: () => void;
 }
 
 const GameControls: React.FC<GameControlsProps> = ({
@@ -160,6 +169,7 @@ const GameControls: React.FC<GameControlsProps> = ({
   onHit,
   onStand,
   onDouble,
+  onStartNewRound,
 }) => {
   console.log(gameState);
   const playersHandsArray = Array.from(gameState.playersHands.entries());
@@ -217,6 +227,7 @@ const GameControls: React.FC<GameControlsProps> = ({
               </div>
             )
           )}
+          <button onClick={onStartNewRound}>New Round</button>
         </div>
       )}
       {gameState.currentTurn?.socketId === socket.id &&

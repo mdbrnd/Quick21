@@ -62,7 +62,10 @@ class Room {
             return this.game.state;
         }
         if (this.game.state.bets.has(player)) {
-            return this.game.state;
+            const currentBet = this.game.state.bets.get(player);
+            if (currentBet && currentBet > 0) {
+                return this.game.state;
+            }
         }
         // Check if player has enough balance to place bet
         // if (user.balance < betAmount) { TODO: uncomment in prod
@@ -76,7 +79,10 @@ class Room {
         return this.game.state;
     }
     allBetsPlaced() {
-        return this.players.every((player) => this.game.state.bets.has(player));
+        return this.players.every((player) => {
+            const bet = this.game.state.bets.get(player);
+            return bet !== undefined && bet > 0;
+        });
     }
 }
 exports.default = Room;

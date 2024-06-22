@@ -17,19 +17,18 @@ class Game {
     }
     start() {
         this.initializeDeck();
-        this.state.deck = this.shuffleDeck(this.state.deck);
         this.state.gameStarted = true;
         console.log("game started");
         return this.state;
     }
     newRound() {
         this.initializeDeck();
-        this.state.deck = this.shuffleDeck(this.state.deck);
         this.state.dealersHand = [];
-        this.state.currentTurn = { socketId: "", name: "" };
+        const firstPlayer = Array.from(this.state.bets.keys())[0];
+        this.state.currentTurn = firstPlayer || { socketId: "", name: "" };
         this.state.currentPhase = "Betting";
-        this.state.playersHands = new Map();
-        this.state.bets = new Map();
+        this.state.playersHands = new Map(Array.from(this.state.playersHands.keys()).map((player) => [player, []]));
+        this.state.bets = new Map(Array.from(this.state.bets.keys()).map((player) => [player, 0]));
         return this.state;
     }
     initializeDeck() {
@@ -89,8 +88,6 @@ class Game {
                 this.calculateHandValue(this.state.playersHands.get(this.state.currentTurn)) >= 21));
     }
     endRound() {
-        // start new round
-        //this.newRound();
         // Deal to dealer
         while (this.calculateHandValue(this.state.dealersHand) < 17) {
             if (this.state.deck.length === 0) {
@@ -186,12 +183,12 @@ class Game {
                 updatedBalances.set(player, bet * 2.5); // assuming 3:2 payout for blackjack
             }
             else if ((playerBlackjack && dealerBlackjack) ||
-                playerValue === dealerValue) {
+                (playerValue === dealerValue && playerValue <= 21)) {
                 result = round_over_info_1.RoundResult.Tie;
                 updatedBalances.set(player, bet); // return the bet
             }
             else if ((playerValue > dealerValue && playerValue <= 21) ||
-                dealerValue > 21) {
+                (playerValue <= 21 && dealerValue > 21)) {
                 result = round_over_info_1.RoundResult.Win;
                 updatedBalances.set(player, bet * 2); // win, double the bet
             }

@@ -87,7 +87,10 @@ class Room {
       return this.game.state;
     }
     if (this.game.state.bets.has(player)) {
-      return this.game.state;
+      const currentBet = this.game.state.bets.get(player);
+      if (currentBet && currentBet > 0) {
+        return this.game.state;
+      }
     }
 
     // Check if player has enough balance to place bet
@@ -106,7 +109,10 @@ class Room {
   }
 
   private allBetsPlaced(): boolean {
-    return this.players.every((player) => this.game.state.bets.has(player));
+    return this.players.every((player) => {
+      const bet = this.game.state.bets.get(player);
+      return bet !== undefined && bet > 0;
+    });
   }
 }
 

@@ -216,6 +216,15 @@ io.on("connection", (socket) => {
             }
         }
     });
+    socket.on("new-round", (roomCode) => {
+        let room = roomManager.getRoom(roomCode);
+        if (room) {
+            if (room.game.state.currentPhase === "RoundOver") {
+                let newGameState = room.game.newRound().toClientGameState();
+                io.to(roomCode).emit("game-state-update", newGameState.toDTO());
+            }
+        }
+    });
     socket.on("disconnect", () => {
         console.log("user disconnected");
         let room = roomManager.getRoomThatPlayerIsIn(socket.id);
