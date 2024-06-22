@@ -30,7 +30,7 @@ const GameScreen: React.FC = () => {
     setGameState(gameState);
   }
 
-  useEffect(() => { 
+  useEffect(() => {
     socket.on("game-state-update", (newGameState: any) => {
       newGameState = ClientGameState.fromDTO(newGameState);
       updateGameState(newGameState);
@@ -195,7 +195,16 @@ const GameControls: React.FC<GameControlsProps> = ({
           <div className="player-area">
             {playersHandsArray.map(([player, cards], index) => (
               <div key={player.socketId} className="player-info">
-                <div>{player.name}</div>
+                <div
+                  style={{
+                    color:
+                      gameState.currentTurn?.socketId === player.socketId
+                        ? "green"
+                        : "inherit",
+                  }}
+                >
+                  {player.name}
+                </div>
                 <div>
                   Bet: {findBetBySocketId(gameState.bets, player.socketId)}$
                 </div>
