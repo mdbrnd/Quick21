@@ -53,12 +53,7 @@
   overflow-y: auto;
 }
 
-.scrollable-content {
-  width: 100%;
-  flex-grow: 1;
-  overflow-y: auto;
-  background-color: #282c34;
-}
+
 
 .dealer-area {
   margin-bottom: 20px;

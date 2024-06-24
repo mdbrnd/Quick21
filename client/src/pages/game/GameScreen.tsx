@@ -317,18 +317,22 @@ const GameControls: React.FC<GameControlsProps> = ({
 const BettingControls: React.FC = () => {
   const location: Location<LocationState> = useLocation();
   const betInputRef = React.useRef<HTMLInputElement>(null);
+  const [betAmount, setBetAmount] = useState(0);
 
-  const handleInputChange = () => {
-    if (betInputRef.current) {
-      const value = parseInt(betInputRef.current.value, 10);
-      if (value <= 0) {
-        betInputRef.current.value = ""; // Reset the input if the value is 0 or negative
-      }
+  const handleAddBet = () => {
+    setBetAmount((prevBet) => prevBet + 25000);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value, 10);
+    if (value > 0) {
+      setBetAmount(value);
+    } else {
+      setBetAmount(0);
     }
   };
 
   const handlePlaceBet = async () => {
-    const betAmount = parseInt(betInputRef.current?.value || "0", 10);
     if (betAmount > 0) {
       const response = await socket.emitWithAck(
         "place-bet",
@@ -348,11 +352,19 @@ const BettingControls: React.FC = () => {
       <input
         type="number"
         id="betInput"
-        ref={betInputRef}
+        value={betAmount}
         min="1"
         onChange={handleInputChange}
       />
       <button onClick={handlePlaceBet}>Place Bet</button>
+      <div>
+        <img
+          src="/assets/images/coin-1-256.png"
+          alt="Add 25k to Bet"
+          onClick={handleAddBet}
+          style={{ cursor: "pointer", width: "50px", height: "50px" }}
+        />
+      </div>
     </div>
   );
 };
