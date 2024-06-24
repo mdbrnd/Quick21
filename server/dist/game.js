@@ -70,9 +70,9 @@ class Game {
         const players = Array.from(this.state.playersHands.keys());
         const currentIndex = players.indexOf(this.state.currentTurn);
         const nextIndex = (currentIndex + 1) % players.length;
-        // only next turn if the player busted or stood
+        // only next turn if the player busted/has blackjack or stood
         if (didStand ||
-            this.calculateHandValue(this.state.playersHands.get(players[currentIndex])) > 21) {
+            this.calculateHandValue(this.state.playersHands.get(players[currentIndex])) >= 21) {
             this.state.currentTurn = players[nextIndex];
         }
     }
