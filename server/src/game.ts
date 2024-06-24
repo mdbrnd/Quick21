@@ -158,6 +158,14 @@ class Game {
       }
       this.state.dealersHand.push(this.state.deck.pop()!);
     }
+
+    // After all cards dealt, skip to person that doesn't have blackjack
+    for (let [player, hand] of this.state.playersHands.entries()) {
+      if (!this.hasBlackjack(hand)) {
+        this.state.currentTurn = player;
+        return;
+      }
+    }
   }
 
   public addPlayer(player: Player) {

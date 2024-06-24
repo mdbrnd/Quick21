@@ -78,44 +78,46 @@ const GameScreen: React.FC = () => {
 
   return (
     <div style={{ textAlign: "center" }} className="game-screen-style">
-      <PlayerList gameState={gameState} />
-      <h1>Quick21</h1>
-      <h3 style={{ position: "absolute", top: "0px", left: "25px" }}>
-        Room Code: {location.state.roomCode} &nbsp;
-        <button
-          onClick={() => {
-            navigator.clipboard.writeText(location.state.roomCode);
-          }}
-        >
-          Copy
-        </button>
-      </h3>
-      <h3>
-        {gameState.gameStarted ? (
-          gameState.currentPhase === "Betting" &&
-          roundOverInfo === undefined ? (
-            <BettingControls />
+      <div className="scrollable-content">
+        <PlayerList gameState={gameState} />
+        <h1>Quick21</h1>
+        <h3 style={{ position: "absolute", top: "0px", left: "25px" }}>
+          Room Code: {location.state.roomCode} &nbsp;
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(location.state.roomCode);
+            }}
+          >
+            Copy
+          </button>
+        </h3>
+        <h3>
+          {gameState.gameStarted ? (
+            gameState.currentPhase === "Betting" &&
+            roundOverInfo === undefined ? (
+              <BettingControls />
+            ) : (
+              <GameControls
+                gameState={gameState}
+                roundOverInfo={roundOverInfo}
+                onHit={hit}
+                onStand={stand}
+                onDouble={() => {}}
+                onStartNewRound={startNewRound}
+              />
+            )
           ) : (
-            <GameControls
-              gameState={gameState}
-              roundOverInfo={roundOverInfo}
-              onHit={hit}
-              onStand={stand}
-              onDouble={() => {}}
-              onStartNewRound={startNewRound}
-            />
-          )
-        ) : (
-          "Waiting for host to start..."
+            "Waiting for host to start..."
+          )}
+        </h3>
+        {isRoomOwner && !gameState.gameStarted && (
+          <button onClick={handleStartGameButton}>Start Game</button>
         )}
-      </h3>
-      {isRoomOwner && !gameState.gameStarted && (
-        <button onClick={handleStartGameButton}>Start Game</button>
-      )}
-      <button className="leave-button" onClick={handleLeaveGameButton}>
-        🚪 Leave
-      </button>
-      <span className="version-number">v1.0</span>
+        <button className="leave-button" onClick={handleLeaveGameButton}>
+          🚪 Leave
+        </button>
+        <span className="version-number">v1.0</span>
+      </div>
     </div>
   );
 };
@@ -240,8 +242,8 @@ const GameControls: React.FC<GameControlsProps> = ({
         )}
       {
         <>
-        {roundOverInfo === undefined && (
-          <div className="info-panel">
+          {roundOverInfo === undefined && (
+            <div className="info-panel">
               Current Phase: {gameState.currentPhase}
             </div>
           )}
