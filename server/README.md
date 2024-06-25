@@ -14,7 +14,7 @@ This is the backend for the Quick21 Blackjack game, built with Node.js (Express)
 
 ### Installation
 
-1. Clone the repository:
+1. Clone the repository (if not already done):
    ```sh
    git clone https://github.com/mdbrnd/quick21.git
    cd quick21/server

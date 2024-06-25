@@ -10,7 +10,7 @@ This is the frontend for the Quick21 Blackjack game. It is built with React and 
 
 ### Installation
 
-1. Clone the repository:
+1. Clone the repository (if not already done):
    ```sh
    git clone https://github.com/mdbrnd/quick21.git
    cd quick21/client
