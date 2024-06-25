@@ -302,6 +302,12 @@ const GameControls: React.FC<GameControlsProps> = ({
                       src={getCardImage(card)}
                       alt={`${card.value} of ${card.suit}`}
                       className="card-image"
+                      style={{
+                        transform:
+                          cardIndex === 0
+                            ? "translate(0, 0)"
+                            : "translate(-50px, 0)",
+                      }}
                     />
                   ))}
                 </div>
