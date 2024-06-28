@@ -20,7 +20,8 @@ Quick21 is a modern twist on the classic Blackjack game, built with React for th
    cd quick21
    ```
 
-2. Follow the instructions in the `README.md` files of the `client` and `server` directories for further installation steps.
+2. Follow the instructions in the `README.md` file for the server [Backend - Quick21 - Blackjack Game](https://github.com/mdbrnd/quick21/tree/main/server/README.md)
+3. Follow the instructions in the `README.md` file for the client: [Frontend - Quick21 - Blackjack Game](https://github.com/mdbrnd/quick21/tree/main/client/README.md)
 
 ### Running the Application
 
