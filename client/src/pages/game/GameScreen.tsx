@@ -77,11 +77,14 @@ const GameScreen: React.FC = () => {
   }
 
   return (
-    <div style={{ textAlign: "center" }} className="game-screen-style">
+    <div
+      style={{ textAlign: "center" }}
+      className="flex flex-col items-center h-screen bg-[#282c34] text-white text-center p-5 box-border overflow-y-auto"
+    >
       <div className="scrollable-content">
         <PlayerList gameState={gameState} />
         <h1>Quick21</h1>
-        <h3 style={{ position: "absolute", top: "0px", left: "25px" }}>
+        <h3 className="absolute top-6 left-6">
           Room Code: {location.state.roomCode} &nbsp;
           <button
             onClick={() => {
@@ -113,7 +116,10 @@ const GameScreen: React.FC = () => {
         {isRoomOwner && !gameState.gameStarted && (
           <button onClick={handleStartGameButton}>Start Game</button>
         )}
-        <button className="leave-button" onClick={handleLeaveGameButton}>
+        <button
+          className="absolute bottom-3.5 right-3.5 text-base rounded bg-red-600 text-white border-none cursor-pointer"
+          onClick={handleLeaveGameButton}
+        >
           🚪 Leave
         </button>
         <span className="version-number">v1.0</span>
@@ -144,11 +150,14 @@ const PlayerList: React.FC<PlayerListProps> = ({ gameState }) => {
   };
 
   return (
-    <div className="player-list-top-right">
+    <div className="absolute top-5 right-5 bg-[#1f2229] text-[#61dafb] p-2.5 rounded shadow-md w-50">
       {playersHandsArray.map(([player, cards], index) => (
-        <div key={player.socketId} className="player-info">
-          <div className="player-name">{player.name}</div>
-          <div className="player-bet">
+        <div
+          key={player.socketId}
+          className="p-1.5 border-b-2 border-[#61dafb] last:border-b-0"
+        >
+          <div className="font-bold">{player.name}</div>
+          <div className="text-sm text-white">
             Bet: {findBetBySocketId(gameState.bets, player.socketId) || 0}$
           </div>
         </div>
@@ -234,7 +243,7 @@ const GameControls: React.FC<GameControlsProps> = ({
       )}
       {gameState.currentTurn?.socketId === socket.id &&
         roundOverInfo === undefined && (
-          <div className="controls">
+          <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex">
             <button onClick={onHit}>Hit</button>
             <button onClick={onStand}>Stand</button>
             <button onClick={onDouble}>Double</button>
@@ -243,25 +252,24 @@ const GameControls: React.FC<GameControlsProps> = ({
       {
         <>
           {roundOverInfo === undefined && (
-            <div className="info-panel">
+            <div className="flex justify-center p-5 flex-col items-center bg-[#282c34] text-white text-center">
               Current Phase: {gameState.currentPhase}
             </div>
           )}
           {gameState.dealersVisibleCard && (
-            <div className="dealer-area">
+            <div className="mb-5">
               <div>Dealer</div>
               {roundOverInfo === undefined && (
-                <div>
+                <div className="flex justify-center">
                   <img
                     src={getCardImage(gameState.dealersVisibleCard)}
                     alt={`Dealer's card: ${gameState.dealersVisibleCard.value} of ${gameState.dealersVisibleCard.suit}`}
-                    className="card-image"
+                    className="card-image w-25 h-[150px] ml-1.5 mt-1.5"
                   />
-
                   <img
                     src={"/assets/images/cards/back_of_card.png"}
                     alt={`Dealer's not visible card`}
-                    className="card-image"
+                    className="card-image w-25 h-[150px] ml-1.5 mt-1.5"
                   />
                 </div>
               )}
@@ -278,7 +286,7 @@ const GameControls: React.FC<GameControlsProps> = ({
               )}
             </div>
           )}
-          <div className="player-area">
+          <div className="w-full flex justify-around flex-wrap mt-5 gap-12.5">
             {playersHandsArray.map(([player, cards], index) => (
               <div key={player.socketId}>
                 <div
