@@ -60,9 +60,9 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
         <h2 className="text-3xl font-bold text-primary">Blackjack Rules</h2>
         <button
           onClick={onClose}
-          className="bg-primary text-secondary hover:bg-primary-light transition-all duration-200"
+          className="bg-primary text-secondary hover:bg-primary-light rounded-lg transition-all duration-200"
         >
-          <X size={24} />
+          <X size={30} />
         </button>
       </div>
 

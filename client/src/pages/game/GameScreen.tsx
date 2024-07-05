@@ -88,7 +88,7 @@ const GameScreen: React.FC = () => {
               onClick={() =>
                 navigator.clipboard.writeText(location.state.roomCode)
               }
-              className="text-primary hover:text-primary-light transition-colors duration-300"
+              className="text-primary hover:text-primary-light rounded-lg transition-colors duration-300"
             >
               <Copy size={20} />
             </button>
