@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Rules.css";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 interface Rule {
   image: string;
@@ -39,6 +39,7 @@ interface RulesModalProps {
   onClose: () => void; // Specifies that onClose is a function that returns void
 }
 
+
 const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
   const [currentRule, setCurrentRule] = useState(0);
 
@@ -51,28 +52,48 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="modal-style" onClick={(e) => e.stopPropagation()}>
-      <h2>Blackjack Rules</h2>
+    <div
+      className="bg-secondary border-2 border-primary rounded-xl p-6 max-w-2xl w-full mx-4 shadow-lg"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold text-primary">Blackjack Rules</h2>
+        <button
+          onClick={onClose}
+          className="bg-primary text-secondary hover:bg-primary-light transition-all duration-200"
+        >
+          <X size={24} />
+        </button>
+      </div>
 
-      <div className="rule-style">
+      <div className="mb-6">
         <img
           src={rules[currentRule].image}
           alt={rules[currentRule].altText}
-          className="rule-image-style"
+          className="w-full h-48 object-cover rounded-lg mb-4"
         />
-        <p>{rules[currentRule].text}</p>
+        <p className="text-accent text-lg">{rules[currentRule].text}</p>
       </div>
 
-      <button onClick={prevRule} className="buttonStyle left-shift-button">
-        Previous
-      </button>
-      <button onClick={nextRule} className="buttonStyle">
-        Next
-      </button>
-
-      <button onClick={onClose} className="buttonStyle">
-        Close
-      </button>
+      <div className="flex justify-between items-center">
+        <button
+          onClick={prevRule}
+          className="bg-primary text-secondary hover:bg-primary-light transition-all duration-200 py-2 px-4 rounded-lg flex items-center"
+        >
+          <ChevronLeft size={20} />
+          <span className="ml-2">Previous</span>
+        </button>
+        <span className="text-accent">
+          {currentRule + 1} / {rules.length}
+        </span>
+        <button
+          onClick={nextRule}
+          className="bg-primary text-secondary hover:bg-primary-light transition-all duration-200 py-2 px-4 rounded-lg flex items-center"
+        >
+          <span className="mr-2">Next</span>
+          <ChevronRight size={20} />
+        </button>
+      </div>
     </div>
   );
 };
