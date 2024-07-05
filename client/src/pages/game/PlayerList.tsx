@@ -1,6 +1,7 @@
 import React from "react";
 import { ClientGameState } from "../../models/game_state";
 import { Player } from "../../models/player";
+import { findBetBySocketId } from "../../models/utils";
 
 interface PlayerListProps {
   gameState: ClientGameState;
@@ -8,18 +9,6 @@ interface PlayerListProps {
 
 const PlayerList: React.FC<PlayerListProps> = ({ gameState }) => {
   const playersHandsArray = Array.from(gameState.playersHands.entries());
-
-  const findBetBySocketId = (
-    betsMap: Map<Player, number>,
-    socketId: string
-  ): number | undefined => {
-    for (const [player, bet] of betsMap.entries()) {
-      if (player.socketId === socketId) {
-        return bet;
-      }
-    }
-    return undefined;
-  };
 
   return (
     <div className="absolute top-5 right-5 bg-secondary-light text-primary p-4 rounded-lg shadow-lg w-64">

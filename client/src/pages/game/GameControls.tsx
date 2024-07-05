@@ -5,6 +5,7 @@ import { Player } from "../../models/player";
 import { Card } from "../../models/card";
 import { RoundOverInfo } from "../../models/round_over_info";
 import "../../index.css";
+import { calculateHandValue, findBetBySocketId } from "../../models/utils";
 
 interface GameControlsProps {
   gameState: ClientGameState;
@@ -24,42 +25,6 @@ const GameControls: React.FC<GameControlsProps> = ({
   onStartNewRound,
 }) => {
   const playersHandsArray = Array.from(gameState.playersHands.entries());
-
-  const findBetBySocketId = (
-    betsMap: Map<Player, number>,
-    socketId: string
-  ): number | undefined => {
-    for (const [player, bet] of betsMap.entries()) {
-      if (player.socketId === socketId) {
-        return bet;
-      }
-    }
-    return undefined;
-  };
-
-  function calculateHandValue(cards: Card[]): number {
-    let value = 0;
-    let aceCount = 0;
-
-    for (const card of cards) {
-      if (card.value === "Ace") {
-        aceCount++;
-        value += 11; // Initially consider ace as 11
-      } else if (["Jack", "Queen", "King"].includes(card.value)) {
-        value += 10;
-      } else {
-        value += parseInt(card.value);
-      }
-    }
-
-    // Adjust if the value is over 21 and the hand contains Aces considered as 11
-    while (value > 21 && aceCount > 0) {
-      value -= 10;
-      aceCount--;
-    }
-
-    return value;
-  }
 
   function getCardImage(card: Card): string {
     return `/assets/images/cards/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
