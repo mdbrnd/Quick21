@@ -67,7 +67,7 @@ const BettingControls: React.FC = () => {
       </div>
       <button
         onClick={handlePlaceBet}
-        className="bg-gradient-to-r from-primary to-primary text-secondary font-bold py-3 px-6 rounded-lg text-xl w-full transition-all duration-300 hover:shadow-[0_0_15px_rgba(97,218,251,0.7)] transform hover:scale-105"
+        className="bg-gradient-to-r from-primary to-primary text-secondary font-bold py-3 px-6 rounded-lg text-xl w-full transition-all duration-300 hover:bg-primary transform hover:scale-105"
       >
         Place Bet
       </button>

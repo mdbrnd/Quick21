@@ -40,7 +40,7 @@ const GameControls: React.FC<GameControlsProps> = ({
             alt={`${card.value} of ${card.suit}`}
             className="absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6"
             style={{
-              left: `${index * 25}px`,
+              left: `${index * 35}px`,
               zIndex: index,
             }}
           />
