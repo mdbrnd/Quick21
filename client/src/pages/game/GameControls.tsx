@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { socket } from "../../socket";
 import { ClientGameState } from "../../models/game_state";
 import { Player } from "../../models/player";
@@ -6,6 +6,73 @@ import { Card } from "../../models/card";
 import { RoundOverInfo } from "../../models/round_over_info";
 import "../../index.css";
 import { calculateHandValue, findBetBySocketId } from "../../models/utils";
+
+const DealerHand: React.FC<{
+  visibleCard: Card | null;
+  fullHand: Card[] | null;
+  onRevealComplete: () => void;
+}> = ({ visibleCard, fullHand, onRevealComplete }) => {
+  const [isRevealing, setIsRevealing] = useState(false);
+  const [revealedCards, setRevealedCards] = useState<Card[]>([]);
+
+  useEffect(() => {
+    if (fullHand && fullHand.length > 1 && !isRevealing) {
+      setIsRevealing(true);
+      setTimeout(() => {
+        setRevealedCards([fullHand[0], fullHand[1]]);
+        setTimeout(() => {
+          setRevealedCards(fullHand);
+          onRevealComplete();
+        }, 500);
+      }, 1000);
+    }
+  }, [fullHand, isRevealing, onRevealComplete]);
+
+  const getCardImage = (card: Card): string => {
+    return `/assets/images/cards/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
+  };
+
+  if (!visibleCard && !fullHand) return null;
+
+  return (
+    <div className="relative h-[190px] w-[150px]">
+      {visibleCard && (
+        <img
+          src={getCardImage(visibleCard)}
+          alt={`Dealer's card: ${visibleCard.value} of ${visibleCard.suit}`}
+          className="absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6 animate-card-enter"
+        />
+      )}
+      {!fullHand && (
+        <img
+          src="/assets/images/cards/back_of_card.png"
+          alt="Dealer's hidden card"
+          className="absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6 animate-card-enter"
+          style={{ left: "25px", zIndex: 1 }}
+        />
+      )}
+      {isRevealing &&
+        revealedCards.map((card, index) => (
+          <img
+            key={index}
+            src={getCardImage(card)}
+            alt={`${card.value} of ${card.suit}`}
+            className={`absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6 ${
+              index === 1
+                ? "animate-card-flip"
+                : index > 1
+                ? "animate-card-enter"
+                : ""
+            }`}
+            style={{
+              left: `${index * 35}px`,
+              zIndex: index,
+            }}
+          />
+        ))}
+    </div>
+  );
+};
 
 interface GameControlsProps {
   gameState: ClientGameState;
@@ -25,12 +92,34 @@ const GameControls: React.FC<GameControlsProps> = ({
   onStartNewRound,
 }) => {
   const playersHandsArray = Array.from(gameState.playersHands.entries());
+  const [animatedCards, setAnimatedCards] = useState<{ [key: string]: number }>(
+    {}
+  );
+  const [dealerRevealComplete, setDealerRevealComplete] = useState(false);
+
+  useEffect(() => {
+    playersHandsArray.forEach(([player, cards]) => {
+      const playerKey = player.socketId;
+      if (
+        !animatedCards[playerKey] ||
+        animatedCards[playerKey] < cards.length
+      ) {
+        setAnimatedCards((prev) => ({ ...prev, [playerKey]: cards.length }));
+      }
+    });
+
+    if (roundOverInfo) {
+      setDealerRevealComplete(false);
+    }
+  }, [playersHandsArray, animatedCards, roundOverInfo]);
 
   function getCardImage(card: Card): string {
     return `/assets/images/cards/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
   }
 
-  const renderStackedCards = (cards: Card[]) => {
+  const renderStackedCards = (cards: Card[], playerKey: string) => {
+    const animatedCount = animatedCards[playerKey] || 0;
+
     return (
       <div className="relative h-[190px] w-[150px]">
         {cards.map((card, index) => (
@@ -38,10 +127,20 @@ const GameControls: React.FC<GameControlsProps> = ({
             key={index}
             src={getCardImage(card)}
             alt={`${card.value} of ${card.suit}`}
-            className="absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6"
+            className={`absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6 ${
+              index === cards.length - 1 && index + 1 > animatedCount - 1
+                ? "animate-card-enter"
+                : ""
+            }`}
             style={{
               left: `${index * 35}px`,
               zIndex: index,
+            }}
+            onAnimationEnd={() => {
+              setAnimatedCards((prev) => ({
+                ...prev,
+                [playerKey]: cards.length,
+              }));
             }}
           />
         ))}
@@ -102,27 +201,15 @@ const GameControls: React.FC<GameControlsProps> = ({
         </div>
       )}
 
-      {gameState.dealersVisibleCard && (
+      {(gameState.dealersVisibleCard || roundOverInfo) && (
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-primary mb-2">Dealer</h2>
           <div className="flex justify-center">
-            {roundOverInfo === undefined ? (
-              <div className="relative h-[190px] w-[150px]">
-                <img
-                  src={getCardImage(gameState.dealersVisibleCard)}
-                  alt={`Dealer's card: ${gameState.dealersVisibleCard.value} of ${gameState.dealersVisibleCard.suit}`}
-                  className="absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6"
-                />
-                <img
-                  src="/assets/images/cards/back_of_card.png"
-                  alt="Dealer's hidden card"
-                  className="absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6"
-                  style={{ left: "25px", zIndex: 1 }}
-                />
-              </div>
-            ) : (
-              renderStackedCards(roundOverInfo.dealersHand)
-            )}
+            <DealerHand
+              visibleCard={gameState.dealersVisibleCard}
+              fullHand={roundOverInfo?.dealersHand ?? null}
+              onRevealComplete={() => setDealerRevealComplete(true)}
+            />
           </div>
         </div>
       )}
@@ -146,7 +233,7 @@ const GameControls: React.FC<GameControlsProps> = ({
             <p className="text-accent mb-2">
               Bet: ${findBetBySocketId(gameState.bets, player.socketId)}
             </p>
-            {renderStackedCards(cards)}
+            {renderStackedCards(cards, player.socketId)}
             <p className="text-accent">
               Hand Value: {calculateHandValue(cards)}
             </p>

@@ -24,3 +24,38 @@ button:hover {
   background-color: #d4af37;
   box-shadow: 0 0 8px 3px rgba(197, 191, 7, 0.6);
 }
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+.animate-card-enter {
+  animation: cardEnter 0.5s ease-out;
+}
+
+@keyframes cardFlip {
+  0% {
+    transform: rotateY(0deg);
+    background-image: url('./images/back_of_card.png');
+  }
+  49% {
+    background-image: url('./images/back_of_card.png');
+  }
+  50% {
+    background-image: none;
+  }
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+.animate-card-flip {
+  animation: cardFlip 1s ease-out forwards;
+}

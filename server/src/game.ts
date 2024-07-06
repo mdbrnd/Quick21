@@ -163,9 +163,12 @@ class Game {
     for (let [player, hand] of this.state.playersHands.entries()) {
       if (!this.hasBlackjack(hand)) {
         this.state.currentTurn = player;
-        return;
+        return false;
       }
     }
+
+    //TODO: If all players have blackjack, end the round
+    
   }
 
   public addPlayer(player: Player) {
