@@ -20,6 +20,7 @@ const socket_io_1 = require("socket.io");
 const room_manager_1 = __importDefault(require("./room_manager"));
 const dbmanager_1 = require("./database/dbmanager");
 require("dotenv/config");
+const cors_1 = __importDefault(require("cors"));
 const app = (0, express_1.default)();
 const server = (0, http_1.createServer)(app);
 const SERVER_PORT = 4000;
@@ -31,6 +32,10 @@ if (!JWT_SECRET) {
     process.exit(1);
 }
 app.use(express_1.default.json()); // Middleware to parse JSON bodies
+app.use((0, cors_1.default)({
+    origin: "http://localhost:3000",
+    credentials: true,
+}));
 app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, password } = req.body;
     if (!name || !password) {
@@ -46,7 +51,8 @@ app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(201).send({ message: "User registered successfully." });
     }
     catch (error) {
-        res.status(500).send({ message: "Failed to register user.", error: error });
+        console.error("Registration error:", error);
+        res.status(500).send({ message: "Failed to register user." });
     }
 }));
 app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -59,8 +65,7 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         if (!user) {
             return res.status(404).send({ message: "User not found." });
         }
-        const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-        const match = yield bcrypt_1.default.compare(hashedPassword, user.password);
+        const match = yield bcrypt_1.default.compare(password, user.password);
         if (match) {
             // Generate an auth token
             const token = jsonwebtoken_1.default.sign({ id: user.id, name: user.name }, JWT_SECRET, {
@@ -77,7 +82,8 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
     }
     catch (error) {
-        res.status(500).send({ message: "Login failed.", error: error });
+        console.error("Login error:", error);
+        res.status(500).send({ message: "Login failed." });
     }
 }));
 const io = new socket_io_1.Server(server, {

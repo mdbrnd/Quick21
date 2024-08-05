@@ -7,8 +7,7 @@ import RoomManager from "./room_manager";
 import Room from "./room";
 import { DBManager } from "./database/dbmanager";
 import "dotenv/config";
-import { RoundOverInfo } from "./models/round_over_info";
-import { ServerGameState } from "./models/game_state";
+import cors from "cors";
 
 const app = express();
 const server = createServer(app);
@@ -26,6 +25,13 @@ if (!JWT_SECRET) {
 
 app.use(express.json()); // Middleware to parse JSON bodies
 
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
+
 app.post("/register", async (req, res) => {
   const { name, password } = req.body;
   if (!name || !password) {
@@ -42,7 +48,8 @@ app.post("/register", async (req, res) => {
     await dbManager.addUser(name, hashedPassword, 1000);
     res.status(201).send({ message: "User registered successfully." });
   } catch (error) {
-    res.status(500).send({ message: "Failed to register user.", error: error });
+    console.error("Registration error:", error);
+    res.status(500).send({ message: "Failed to register user." });
   }
 });
 
@@ -58,8 +65,7 @@ app.post("/login", async (req, res) => {
       return res.status(404).send({ message: "User not found." });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const match = await bcrypt.compare(hashedPassword, user.password);
+    const match = await bcrypt.compare(password, user.password);
     if (match) {
       // Generate an auth token
       const token = jwt.sign({ id: user.id, name: user.name }, JWT_SECRET, {
@@ -75,9 +81,11 @@ app.post("/login", async (req, res) => {
       res.status(401).send({ message: "Password is incorrect." });
     }
   } catch (error) {
-    res.status(500).send({ message: "Login failed.", error: error });
+    console.error("Login error:", error);
+    res.status(500).send({ message: "Login failed." });
   }
 });
+
 
 const io = new Server(server, {
   cors: {

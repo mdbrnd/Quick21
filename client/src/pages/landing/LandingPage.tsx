@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+const API_BASE_URL = "http://localhost:4000";
+
 const LandingPage: React.FC = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [name, setName] = useState("");
@@ -16,13 +18,24 @@ const LandingPage: React.FC = () => {
     const endpoint = isSignup ? "/register" : "/login";
 
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
         body: JSON.stringify({ name, password }),
       });
 
-      const data = await response.json();
+
+      let data;
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.indexOf("application/json") !== -1) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(`Server responded with non-JSON data: ${text}`);
+      }
 
       if (!response.ok) {
         throw new Error(data.message || "An error occurred");
@@ -101,6 +114,15 @@ const LandingPage: React.FC = () => {
     );
   };
 
+  const openModal = (signup: boolean) => {
+    setIsSignup(signup);
+    setName("");
+    setPassword("");
+    setError("");
+    setSuccess("");
+    setIsOpen(true);
+  };
+
   return (
     <div className="min-h-screen bg-secondary flex flex-col items-center justify-center p-4">
       <h1 className="text-5xl font-bold text-primary mb-8">Blackjack Game</h1>
@@ -110,19 +132,13 @@ const LandingPage: React.FC = () => {
 
       <div className="space-x-4">
         <button
-          onClick={() => {
-            setIsSignup(false);
-            setIsOpen(true);
-          }}
+          onClick={() => openModal(false)}
           className="bg-primary text-secondary hover:bg-primary-light font-bold py-3 px-6 rounded-xl text-xl transition-all duration-300 shadow-lg hover:shadow-primary"
         >
           Sign In
         </button>
         <button
-          onClick={() => {
-            setIsSignup(true);
-            setIsOpen(true);
-          }}
+          onClick={() => openModal(true)}
           className="bg-secondary text-primary hover:bg-secondary-light font-bold py-3 px-6 rounded-xl text-xl transition-all duration-300 shadow-lg hover:shadow-secondary border-2 border-primary"
         >
           Sign Up
