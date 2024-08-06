@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { socket } from "../../socket";
-import { Location, useLocation } from "react-router-dom";
+import { Location, useLocation, useNavigate } from "react-router-dom";
 import "../../index.css";
 import { Minus, CoinsIcon, Plus } from "lucide-react";
 import LocationState from "../../models/location_state";
+import { useSocket } from "../../SocketContext";
 
 const BettingControls: React.FC = () => {
   const location: Location<LocationState> = useLocation();
-  const betInputRef = React.useRef<HTMLInputElement>(null);
+  const { socket } = useSocket();
   const [betAmount, setBetAmount] = useState(0);
+  const navigate = useNavigate();
 
   const handleAddBet = () => {
     setBetAmount((prevBet) => prevBet + 25000);
@@ -28,6 +29,11 @@ const BettingControls: React.FC = () => {
   };
 
   const handlePlaceBet = async () => {
+    if (!socket) {
+      navigate("/");
+      return;
+    }
+
     if (betAmount > 0) {
       const response = await socket.emitWithAck(
         "place-bet",

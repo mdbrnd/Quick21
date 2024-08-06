@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { socket } from "../../socket";
 import { Location, useLocation, useNavigate } from "react-router-dom";
 import { ClientGameState } from "../../models/game_state";
 import { PlayerAction } from "../../models/player";
@@ -10,6 +9,7 @@ import GameControls from "./GameControls";
 import PlayerList from "./PlayerList";
 import LocationState from "../../models/location_state";
 import BettingControls from "./BettingControls";
+import { useSocket } from "../../SocketContext";
 
 const GameScreen: React.FC = () => {
   const location: Location<LocationState> = useLocation();
@@ -20,6 +20,7 @@ const GameScreen: React.FC = () => {
   const [roundOverInfo, setRoundOverInfo] = useState<RoundOverInfo | undefined>(
     undefined
   );
+  const { socket } = useSocket();
 
   let isRoomOwner = location.state.isOwner;
 
@@ -30,6 +31,11 @@ const GameScreen: React.FC = () => {
   }
 
   useEffect(() => {
+    if (!socket || !location.state.roomCode || !location.state.isOwner) {
+      navigate("/");
+      return;
+    }
+
     socket.on("game-state-update", (newGameState: any) => {
       newGameState = ClientGameState.fromDTO(newGameState);
       updateGameState(newGameState);
@@ -53,24 +59,44 @@ const GameScreen: React.FC = () => {
   }, []);
 
   const handleStartGameButton = () => {
+    if (!socket) {
+      navigate("/");
+      return;
+    }
     socket.emit("start-game", location.state.roomCode);
   };
 
   const handleLeaveGameButton = () => {
+    if (!socket) {
+      navigate("/");
+      return;
+    }
     socket.emit("leave-room", location.state.roomCode);
     // Route to home page
     navigate("/");
   };
 
   function hit() {
+    if (!socket) {
+      navigate("/");
+      return;
+    }
     socket.emit("action", location.state.roomCode, PlayerAction.Hit);
   }
 
   function stand() {
+    if (!socket) {
+      navigate("/");
+      return;
+    }
     socket.emit("action", location.state.roomCode, PlayerAction.Stand);
   }
 
   function startNewRound() {
+    if (!socket) {
+      navigate("/");
+      return;
+    }
     socket.emit("new-round", location.state.roomCode);
   }
 
@@ -86,7 +112,7 @@ const GameScreen: React.FC = () => {
             </span>
             <button
               onClick={() =>
-                navigator.clipboard.writeText(location.state.roomCode)
+                navigator.clipboard.writeText(location.state.roomCode || "")
               }
               className="text-primary hover:text-primary-light rounded-lg transition-colors duration-300"
             >

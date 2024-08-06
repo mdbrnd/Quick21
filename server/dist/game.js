@@ -7,7 +7,7 @@ class Game {
         this.state = new game_state_1.ServerGameState(false, // gameStarted
         [], // deck
         [], // dealersHand
-        { socketId: "", name: "" }, // currentTurn
+        { socketId: "", name: "", balance: 0, userId: -1 }, // currentTurn
         new Map(), // playersHands
         "Betting", // currentPhase
         new Map() // bets

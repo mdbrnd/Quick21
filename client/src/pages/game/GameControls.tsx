@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { socket } from "../../socket";
 import { ClientGameState } from "../../models/game_state";
-import { Player } from "../../models/player";
 import { Card } from "../../models/card";
 import { RoundOverInfo } from "../../models/round_over_info";
 import "../../index.css";
 import { calculateHandValue, findBetBySocketId } from "../../models/utils";
+import { useSocket } from "../../SocketContext";
+import { useNavigate } from "react-router-dom";
 
 const DealerHand: React.FC<{
   visibleCard: Card | null;
@@ -96,6 +96,8 @@ const GameControls: React.FC<GameControlsProps> = ({
     {}
   );
   const [dealerRevealComplete, setDealerRevealComplete] = useState(false);
+  const { socket } = useSocket();
+  const navigate = useNavigate();
 
   useEffect(() => {
     playersHandsArray.forEach(([player, cards]) => {
@@ -112,6 +114,11 @@ const GameControls: React.FC<GameControlsProps> = ({
       setDealerRevealComplete(false);
     }
   }, [playersHandsArray, animatedCards, roundOverInfo]);
+
+  if (!socket) {
+    navigate("/");
+    return;
+  }
 
   function getCardImage(card: Card): string {
     return `/assets/images/cards/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;

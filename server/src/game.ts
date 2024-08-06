@@ -8,7 +8,7 @@ class Game {
     false, // gameStarted
     [], // deck
     [], // dealersHand
-    { socketId: "", name: "" }, // currentTurn
+    { socketId: "", name: "", balance: 0, userId: -1 }, // currentTurn
     new Map(), // playersHands
     "Betting", // currentPhase
     new Map() // bets
@@ -168,7 +168,6 @@ class Game {
     }
 
     //TODO: If all players have blackjack, end the round
-    
   }
 
   public addPlayer(player: Player) {

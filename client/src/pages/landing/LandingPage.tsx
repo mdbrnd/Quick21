@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useSocket } from "../../SocketContext";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "http://localhost:4000";
 
@@ -9,6 +11,8 @@ const LandingPage: React.FC = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+  const { socket, connect, disconnect } = useSocket();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,10 +48,12 @@ const LandingPage: React.FC = () => {
       setSuccess(data.message);
       if (!isSignup && data.token) {
         localStorage.setItem("authToken", data.token);
+
+        // Connect to the socket server after successful login
+        connect(data.token);
+
         // Redirect to the game page after successful login
-        setTimeout(() => {
-          window.location.href = "/lobby";
-        }, 1500);
+        navigate("/lobby", { state: { data } });
       } else if (isSignup) {
         // Switch to sign in mode after successful registration
         setTimeout(() => {

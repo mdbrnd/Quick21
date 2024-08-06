@@ -1,6 +1,6 @@
 type LocationState = {
-  roomCode: string;
-  isOwner: boolean;
+  roomCode: string | undefined;
+  isOwner: boolean | undefined;
 };
 
 export default LocationState;

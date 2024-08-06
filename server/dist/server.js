@@ -28,12 +28,12 @@ const CLIENT_PORT = 3000;
 const dbManager = new dbmanager_1.DBManager();
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
-    console.error("JWT_SECRET is not defined. Set JWT_SECRET environment variable.");
+    console.error("JWT_SECRET is not defined. Set JWT_SECRET environment variable and create .env file in the root directory if it does not yet exist. (/server/.env), JWT_SECRET=<your_secret>");
     process.exit(1);
 }
 app.use(express_1.default.json()); // Middleware to parse JSON bodies
 app.use((0, cors_1.default)({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3000", // TODO: update in prod
     credentials: true,
 }));
 app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -95,11 +95,13 @@ const io = new socket_io_1.Server(server, {
 });
 const roomManager = new room_manager_1.default();
 // TODO: make so players cant join/only spectate already started game/only on next round; match game state
-function joinRoom(socket, roomCode, playerName) {
+function joinRoom(socket, roomCode) {
     console.log("joining room " + roomCode);
     let couldJoin = roomManager.joinRoom(roomCode, {
         socketId: socket.id,
-        name: playerName,
+        name: socket.user.name,
+        balance: socket.user.balance,
+        userId: socket.user.id,
     });
     socket.emit("join-room-response", couldJoin);
     if (couldJoin) {
@@ -151,13 +153,33 @@ function startGame(socket, roomCode) {
         io.to(roomCode).emit("game-state-update", initialGameState); // send to all players in room. socket.to would exclude the sender
     }
 }
+const authenticateToken = (socket, next) => {
+    const token = socket.handshake.auth.token;
+    if (!token) {
+        return next(new Error("Authentication error: Token not provided"));
+    }
+    jsonwebtoken_1.default.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return next(new Error("Authentication error: Invalid token"));
+        }
+        // Attach the decoded token to the socket for future use
+        socket.user = decoded;
+        next();
+    });
+};
+// Auth middleware for all socket connections; ran once on connection, not for every request
+io.use(authenticateToken);
 io.on("connection", (socket) => {
-    console.log("a user connected with socket id: ", socket.id);
-    socket.on("create-room", (playerName, callback) => {
+    const authSocket = socket;
+    console.log("Authenticated user connected with socket id: ", authSocket.id);
+    console.log("User details:", authSocket.user);
+    authSocket.on("create-room", (callback) => {
         console.log("creating room");
         let createdRoom = roomManager.createRoom({
-            socketId: socket.id,
-            name: playerName,
+            socketId: authSocket.id,
+            name: authSocket.user.name,
+            balance: authSocket.user.balance,
+            userId: authSocket.user.id,
         });
         console.log("room created with id: " + createdRoom.code);
         callback({
@@ -165,8 +187,10 @@ io.on("connection", (socket) => {
             roomCode: createdRoom.code,
         });
         roomManager.joinRoom(createdRoom.code, {
-            socketId: socket.id,
-            name: playerName,
+            socketId: authSocket.id,
+            name: authSocket.user.name,
+            balance: authSocket.user.balance,
+            userId: authSocket.user.id,
         });
         socket.join(createdRoom.code);
         let room = roomManager.getRoom(createdRoom.code);
@@ -176,18 +200,18 @@ io.on("connection", (socket) => {
         }
     });
     // TODO: change to emit with ack
-    socket.on("join-room", (roomCode, playerName) => {
-        joinRoom(socket, roomCode, playerName);
+    authSocket.on("join-room", (roomCode) => {
+        joinRoom(authSocket, roomCode);
     });
     // TODO: change to emit with ack
-    socket.on("leave-room", (roomCode) => {
+    authSocket.on("leave-room", (roomCode) => {
         leaveRoom(socket, roomCode);
     });
-    socket.on("start-game", (roomCode) => {
+    authSocket.on("start-game", (roomCode) => {
         console.log("start game event received");
         startGame(socket, roomCode);
     });
-    socket.on("place-bet", (roomCode, betAmount, callback) => __awaiter(void 0, void 0, void 0, function* () {
+    authSocket.on("place-bet", (roomCode, betAmount, callback) => __awaiter(void 0, void 0, void 0, function* () {
         let room = roomManager.getRoom(roomCode);
         if (room) {
             let player = room.getPlayer(socket.id);
@@ -210,7 +234,7 @@ io.on("connection", (socket) => {
             io.to(roomCode).emit("game-state-update", updatedGameStateForEmit);
         }
     }));
-    socket.on("action", (roomCode, action) => {
+    authSocket.on("action", (roomCode, action) => {
         console.log("action received");
         let room = roomManager.getRoom(roomCode);
         if (room) {
@@ -222,7 +246,7 @@ io.on("connection", (socket) => {
             }
         }
     });
-    socket.on("new-round", (roomCode) => {
+    authSocket.on("new-round", (roomCode) => {
         let room = roomManager.getRoom(roomCode);
         if (room) {
             if (room.game.state.currentPhase === "RoundOver") {
@@ -231,7 +255,7 @@ io.on("connection", (socket) => {
             }
         }
     });
-    socket.on("disconnect", () => {
+    authSocket.on("disconnect", () => {
         console.log("user disconnected");
         let room = roomManager.getRoomThatPlayerIsIn(socket.id);
         if (room) {

@@ -2,7 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import RoomManager from "./room_manager";
 import Room from "./room";
 import { DBManager } from "./database/dbmanager";
@@ -18,7 +18,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
   console.error(
-    "JWT_SECRET is not defined. Set JWT_SECRET environment variable."
+    "JWT_SECRET is not defined. Set JWT_SECRET environment variable and create .env file in the root directory if it does not yet exist. (/server/.env), JWT_SECRET=<your_secret>"
   );
   process.exit(1);
 }
@@ -27,7 +27,7 @@ app.use(express.json()); // Middleware to parse JSON bodies
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "http://localhost:3000", // TODO: update in prod
     credentials: true,
   })
 );
@@ -52,6 +52,12 @@ app.post("/register", async (req, res) => {
     res.status(500).send({ message: "Failed to register user." });
   }
 });
+
+interface JwtPayload {
+  id: number;
+  name: string;
+  balance: number;
+}
 
 app.post("/login", async (req, res) => {
   const { name, password } = req.body;
@@ -99,11 +105,13 @@ const io = new Server(server, {
 const roomManager = new RoomManager();
 
 // TODO: make so players cant join/only spectate already started game/only on next round; match game state
-function joinRoom(socket: any, roomCode: string, playerName: string) {
+function joinRoom(socket: AuthenticatedSocket, roomCode: string) {
   console.log("joining room " + roomCode);
   let couldJoin: boolean = roomManager.joinRoom(roomCode, {
     socketId: socket.id,
-    name: playerName,
+    name: socket.user.name,
+    balance: socket.user.balance,
+    userId: socket.user.id as unknown as number,
   });
 
   socket.emit("join-room-response", couldJoin);
@@ -164,14 +172,44 @@ function startGame(socket: any, roomCode: string) {
   }
 }
 
-io.on("connection", (socket) => {
-  console.log("a user connected with socket id: ", socket.id);
+// Extend socket to include user (details) property
+interface AuthenticatedSocket extends Socket {
+  user: JwtPayload;
+}
 
-  socket.on("create-room", (playerName: string, callback) => {
+const authenticateToken = (socket: any, next: any) => {
+  const token = socket.handshake.auth.token;
+
+  if (!token) {
+    return next(new Error("Authentication error: Token not provided"));
+  }
+
+  jwt.verify(token, JWT_SECRET, (err: any, decoded: any) => {
+    if (err) {
+      return next(new Error("Authentication error: Invalid token"));
+    }
+
+    // Attach the decoded token to the socket for future use
+    (socket as AuthenticatedSocket).user = decoded as JwtPayload;
+    next();
+  });
+};
+
+// Auth middleware for all socket connections; ran once on connection, not for every request
+io.use(authenticateToken);
+
+io.on("connection", (socket) => {
+  const authSocket = socket as AuthenticatedSocket;
+  console.log("Authenticated user connected with socket id: ", authSocket.id);
+  console.log("User details:", authSocket.user);
+
+  authSocket.on("create-room", (callback) => {
     console.log("creating room");
     let createdRoom: Room = roomManager.createRoom({
-      socketId: socket.id,
-      name: playerName,
+      socketId: authSocket.id,
+      name: authSocket.user.name,
+      balance: authSocket.user.balance,
+      userId: authSocket.user.id as unknown as number,
     });
     console.log("room created with id: " + createdRoom.code);
 
@@ -181,8 +219,10 @@ io.on("connection", (socket) => {
     });
 
     roomManager.joinRoom(createdRoom.code, {
-      socketId: socket.id,
-      name: playerName,
+      socketId: authSocket.id,
+      name: authSocket.user.name,
+      balance: authSocket.user.balance,
+      userId: authSocket.user.id as unknown as number,
     });
 
     socket.join(createdRoom.code);
@@ -195,21 +235,21 @@ io.on("connection", (socket) => {
   });
 
   // TODO: change to emit with ack
-  socket.on("join-room", (roomCode: string, playerName: string) => {
-    joinRoom(socket, roomCode, playerName);
+  authSocket.on("join-room", (roomCode: string) => {
+    joinRoom(authSocket, roomCode);
   });
 
   // TODO: change to emit with ack
-  socket.on("leave-room", (roomCode: string) => {
+  authSocket.on("leave-room", (roomCode: string) => {
     leaveRoom(socket, roomCode);
   });
 
-  socket.on("start-game", (roomCode: string) => {
+  authSocket.on("start-game", (roomCode: string) => {
     console.log("start game event received");
     startGame(socket, roomCode);
   });
 
-  socket.on(
+  authSocket.on(
     "place-bet",
     async (roomCode: string, betAmount: number, callback) => {
       let room = roomManager.getRoom(roomCode);
@@ -244,7 +284,7 @@ io.on("connection", (socket) => {
     }
   );
 
-  socket.on("action", (roomCode: string, action) => {
+  authSocket.on("action", (roomCode: string, action) => {
     console.log("action received");
     let room = roomManager.getRoom(roomCode);
     if (room) {
@@ -259,7 +299,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("new-round", (roomCode: string) => {
+  authSocket.on("new-round", (roomCode: string) => {
     let room = roomManager.getRoom(roomCode);
     if (room) {
       if (room.game.state.currentPhase === "RoundOver") {
@@ -269,7 +309,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("disconnect", () => {
+  authSocket.on("disconnect", () => {
     console.log("user disconnected");
     let room = roomManager.getRoomThatPlayerIsIn(socket.id);
     if (room) {

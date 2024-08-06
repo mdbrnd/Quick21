@@ -1,16 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, AlertCircle, Diamond, Spade } from "lucide-react";
 import RulesModal from "../../components/Rules";
-import { socket } from "../../socket";
+import { useSocket } from "../../SocketContext";
 
 const LobbyScreen = () => {
   const navigate = useNavigate();
   const [showRules, setShowRules] = useState(false);
   const [roomCode, setRoomCode] = useState("");
+  const { socket } = useSocket();
+  // TODO: add auth provider to get user data or add use effect with socket to get user data
 
   const newGame = async () => {
-    const response = await socket.emitWithAck("create-room", "Player 1");
+    if (!socket) {
+      navigate("/");
+      return;
+    }
+
+    const response = await socket.emitWithAck("create-room");
     if (!response.success) {
       alert("Failed to create room");
       return;
@@ -25,8 +32,13 @@ const LobbyScreen = () => {
       alert("Room code must be 6 digits");
       return;
     }
-    const playerName = `Player ${Math.floor(Math.random() * 100)}`;
-    socket.emit("join-room", roomCode, playerName);
+
+    if (!socket) {
+      alert("Socket connection not established");
+      return;
+    }
+
+    socket.emit("join-room", roomCode);
     socket.once("join-room-response", (success) => {
       if (!success) {
         alert("Room not found or full");
