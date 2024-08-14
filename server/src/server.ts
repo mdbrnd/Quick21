@@ -234,6 +234,24 @@ io.on("connection", (socket) => {
     }
   });
 
+  authSocket.on("get-user-info", async (callback) => {
+    try {
+      const user = await dbManager.getUser(authSocket.user.id);
+      if (user) {
+        callback({
+          id: user.id,
+          name: user.name,
+          balance: user.balance,
+        });
+      } else {
+        callback(null);
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+      callback(null);
+    }
+  });
+
   // TODO: change to emit with ack
   authSocket.on("join-room", (roomCode: string) => {
     joinRoom(authSocket, roomCode);
@@ -259,10 +277,10 @@ io.on("connection", (socket) => {
           return;
         }
 
-        let user = await dbManager.getUserByName(player.name);
-        // if (!user) { //TODO: uncomment in prod
-        //   return;
-        // }
+        let user = await dbManager.getUser(authSocket.user.id);
+        if (!user) {
+           return;
+        }
 
         let oldGameState = room.game.state.toClientGameState();
 

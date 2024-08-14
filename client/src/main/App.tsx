@@ -3,9 +3,11 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LobbyScreen from "../pages/lobby/LobbyScreen";
 import GameScreen from "../pages/game/GameScreen";
 import LandingPage from "../pages/landing/LandingPage";
-import { SocketProvider } from "../SocketContext";
+import { SocketProvider, useSocket } from "../SocketContext";
 
 const App: React.FC = () => {
+  const socket = useSocket();
+
   return (
     <SocketProvider>
       <Router>

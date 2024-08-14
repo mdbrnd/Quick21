@@ -22,16 +22,20 @@ const GameScreen: React.FC = () => {
   );
   const { socket } = useSocket();
 
-  let isRoomOwner = location.state.isOwner;
-
-  function updateGameState(gameState: ClientGameState) {
-    console.log("updating game state to:");
-    console.log(gameState);
-    setGameState(gameState);
-  }
+  const [roomCode, setRoomCode] = useState<string | null>(null);
+  const [isRoomOwner, setIsRoomOwner] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!socket || !location.state.roomCode || !location.state.isOwner) {
+    if (location.state?.roomCode && location.state?.isOwner !== undefined) {
+      setRoomCode(location.state.roomCode);
+      setIsRoomOwner(location.state.isOwner);
+    } else {
+      navigate("/");
+    }
+  }, [location, navigate]);
+
+  useEffect(() => {
+    if (!socket || !roomCode) {
       navigate("/");
       return;
     }
@@ -51,53 +55,57 @@ const GameScreen: React.FC = () => {
       setRoundOverInfo(roundOverInfo);
     });
 
-    // Remove event listener when component unmounts
     return () => {
       socket.off("game-state-update", updateGameState);
       socket.off("round-over");
     };
-  }, []);
+  }, [socket, roomCode, navigate]);
+
+  function updateGameState(gameState: ClientGameState) {
+    console.log("updating game state to:");
+    console.log(gameState);
+    setGameState(gameState);
+  }
 
   const handleStartGameButton = () => {
-    if (!socket) {
+    if (!socket || !roomCode) {
       navigate("/");
       return;
     }
-    socket.emit("start-game", location.state.roomCode);
+    socket.emit("start-game", roomCode);
   };
 
   const handleLeaveGameButton = () => {
-    if (!socket) {
+    if (!socket || !roomCode) {
       navigate("/");
       return;
     }
-    socket.emit("leave-room", location.state.roomCode);
-    // Route to home page
-    navigate("/");
+    socket.emit("leave-room", roomCode);
+    navigate("/lobby");
   };
 
   function hit() {
-    if (!socket) {
+    if (!socket || !roomCode) {
       navigate("/");
       return;
     }
-    socket.emit("action", location.state.roomCode, PlayerAction.Hit);
+    socket.emit("action", roomCode, PlayerAction.Hit);
   }
 
   function stand() {
-    if (!socket) {
+    if (!socket || !roomCode) {
       navigate("/");
       return;
     }
-    socket.emit("action", location.state.roomCode, PlayerAction.Stand);
+    socket.emit("action", roomCode, PlayerAction.Stand);
   }
 
   function startNewRound() {
-    if (!socket) {
+    if (!socket || !roomCode) {
       navigate("/");
       return;
     }
-    socket.emit("new-round", location.state.roomCode);
+    socket.emit("new-round", roomCode);
   }
 
   return (
@@ -108,12 +116,10 @@ const GameScreen: React.FC = () => {
         <header className="flex justify-between items-center mb-8">
           <div className="flex items-center space-x-2 bg-primary bg-opacity-20 rounded-full py-2 px-4">
             <span className="font-semibold">
-              Room: {location.state.roomCode}
+              Room: {roomCode}
             </span>
             <button
-              onClick={() =>
-                navigator.clipboard.writeText(location.state.roomCode || "")
-              }
+              onClick={() => navigator.clipboard.writeText(roomCode || "")}
               className="text-primary hover:text-primary-light rounded-lg transition-colors duration-300"
             >
               <Copy size={20} />

@@ -199,6 +199,25 @@ io.on("connection", (socket) => {
             io.to(createdRoom.code).emit("game-state-update", gameState);
         }
     });
+    authSocket.on("get-user-info", (callback) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const user = yield dbManager.getUser(authSocket.user.id);
+            if (user) {
+                callback({
+                    id: user.id,
+                    name: user.name,
+                    balance: user.balance,
+                });
+            }
+            else {
+                callback(null);
+            }
+        }
+        catch (error) {
+            console.error("Error fetching user info:", error);
+            callback(null);
+        }
+    }));
     // TODO: change to emit with ack
     authSocket.on("join-room", (roomCode) => {
         joinRoom(authSocket, roomCode);
@@ -218,10 +237,10 @@ io.on("connection", (socket) => {
             if (!player) {
                 return;
             }
-            let user = yield dbManager.getUserByName(player.name);
-            // if (!user) { //TODO: uncomment in prod
-            //   return;
-            // }
+            let user = yield dbManager.getUser(authSocket.user.id);
+            if (!user) {
+                return;
+            }
             let oldGameState = room.game.state.toClientGameState();
             let updatedGameState = room
                 .placeBet(socket.id, betAmount, user)

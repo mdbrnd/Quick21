@@ -7,6 +7,8 @@ interface Rule {
   text: string;
 }
 
+// TODO: add images
+
 const rules: Rule[] = [
   {
     image: "/assets/images/beat-dealer.png",

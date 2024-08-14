@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
+import { UserDTO } from "./models/userDTO";
 
 const URL: string =
   process.env.NODE_ENV === "production" ? "" : "http://localhost:4000";
@@ -8,12 +9,16 @@ interface SocketContextType {
   socket: Socket | null;
   connect: (token: string) => void;
   disconnect: () => void;
+  userInfo: UserDTO | null;
+  isAuthenticated: boolean; // TODO: fix weird behaviour with this (sometimes it shows false even right after changing it to true)
 }
 
 const SocketContext = createContext<SocketContextType>({
   socket: null,
   connect: () => {},
   disconnect: () => {},
+  userInfo: null,
+  isAuthenticated: false,
 });
 
 export const useSocket = () => useContext(SocketContext);
@@ -22,6 +27,8 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
+  const [userInfo, setUserInfo] = useState<UserDTO | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   const connect = (token: string) => {
     if (socket) {
@@ -32,7 +39,21 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       auth: { token },
     });
 
-    setSocket(newSocket);
+    newSocket.on("connect", () => {
+      setSocket(newSocket);
+      setIsAuthenticated(true);
+      localStorage.setItem("authToken", token);
+
+      // Fetch user info after connecting
+      newSocket.emit("get-user-info", (userInfo: UserDTO) => {
+        setUserInfo(userInfo);
+      });
+    });
+
+    newSocket.on("disconnect", () => {
+      setIsAuthenticated(false);
+      setUserInfo(null);
+    });
   };
 
   const disconnect = () => {
@@ -40,13 +61,16 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       socket.close();
       setSocket(null);
     }
+
+    setIsAuthenticated(false);
+    setUserInfo(null);
     localStorage.removeItem("authToken");
   };
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (token) {
-      connect(token); // TODO: route to lobby
+      connect(token);
     }
 
     return () => {
@@ -57,7 +81,9 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <SocketContext.Provider value={{ socket, connect, disconnect }}>
+    <SocketContext.Provider
+      value={{ socket, connect, disconnect, userInfo, isAuthenticated }}
+    >
       {children}
     </SocketContext.Provider>
   );

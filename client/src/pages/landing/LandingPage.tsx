@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "http://localhost:4000";
 
+// TODO: eventually make this an actual landing page and give a separate /login page
+
 const LandingPage: React.FC = () => {
   const [isSignup, setIsSignup] = useState(false);
   const [name, setName] = useState("");
@@ -32,14 +34,7 @@ const LandingPage: React.FC = () => {
       });
 
 
-      let data;
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.indexOf("application/json") !== -1) {
-        data = await response.json();
-      } else {
-        const text = await response.text();
-        throw new Error(`Server responded with non-JSON data: ${text}`);
-      }
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || "An error occurred");
@@ -53,7 +48,7 @@ const LandingPage: React.FC = () => {
         connect(data.token);
 
         // Redirect to the game page after successful login
-        navigate("/lobby", { state: { data } });
+        navigate("/lobby");
       } else if (isSignup) {
         // Switch to sign in mode after successful registration
         setTimeout(() => {

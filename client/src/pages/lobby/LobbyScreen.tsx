@@ -8,8 +8,7 @@ const LobbyScreen = () => {
   const navigate = useNavigate();
   const [showRules, setShowRules] = useState(false);
   const [roomCode, setRoomCode] = useState("");
-  const { socket } = useSocket();
-  // TODO: add auth provider to get user data or add use effect with socket to get user data
+  const { socket, userInfo, isAuthenticated } = useSocket();
 
   const newGame = async () => {
     if (!socket) {
@@ -77,7 +76,7 @@ const LobbyScreen = () => {
           </h1>
           <div className="flex items-center space-x-2 bg-secondary border-2 border-primary rounded-full py-2 px-4">
             <User size={24} className="text-primary" />
-            <span className="font-semibold">Player</span>
+            <span className="font-semibold">{userInfo?.name}</span>
           </div>
         </header>
 
