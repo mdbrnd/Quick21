@@ -1,14 +1,25 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const dbmanager_1 = require("./database/dbmanager");
 const game_1 = __importDefault(require("./game"));
 var PlayerAction;
 (function (PlayerAction) {
     PlayerAction["Hit"] = "hit";
     PlayerAction["Stand"] = "stand";
 })(PlayerAction || (PlayerAction = {}));
+const dbManager = new dbmanager_1.DBManager();
 class Room {
     constructor(roomCode, initialPlayer) {
         this.players = [];
@@ -54,6 +65,22 @@ class Room {
         }
         this.game.nextTurn(action === PlayerAction.Stand);
         return [this.game.state, undefined];
+    }
+    endRound() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const roundOverInfo = this.game.endRound();
+            // Update balances in the database
+            for (const [player, balanceChange] of roundOverInfo.updatedBalances) {
+                const user = yield dbManager.getUser(player.userId);
+                if (user) {
+                    const newBalance = user.balance + balanceChange;
+                    yield dbManager.updateUserBalance(user.id, newBalance);
+                    // Update the player's balance in the game state
+                    player.balance = newBalance;
+                }
+            }
+            return roundOverInfo;
+        });
     }
     placeBet(playerSocketId, betAmount, user) {
         // if same state is returned, then bet was not placed

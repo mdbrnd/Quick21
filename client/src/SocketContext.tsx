@@ -11,6 +11,7 @@ interface SocketContextType {
   disconnect: () => void;
   userInfo: UserDTO | null;
   isAuthenticated: boolean; // TODO: fix weird behaviour with this (sometimes it shows false even right after changing it to true)
+  refreshUserInfo: () => void;
 }
 
 const SocketContext = createContext<SocketContextType>({
@@ -19,6 +20,7 @@ const SocketContext = createContext<SocketContextType>({
   disconnect: () => {},
   userInfo: null,
   isAuthenticated: false,
+  refreshUserInfo: () => {},
 });
 
 export const useSocket = () => useContext(SocketContext);
@@ -67,6 +69,16 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
     localStorage.removeItem("authToken");
   };
 
+  const refreshUserInfo = () => {
+    if (socket) {
+      socket.emit("get-user-info", (userInfo: any) => {
+        if (userInfo) {
+          setUserInfo(userInfo);
+        }
+      });
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (token) {
@@ -82,7 +94,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <SocketContext.Provider
-      value={{ socket, connect, disconnect, userInfo, isAuthenticated }}
+      value={{ socket, connect, disconnect, userInfo, isAuthenticated, refreshUserInfo }}
     >
       {children}
     </SocketContext.Provider>

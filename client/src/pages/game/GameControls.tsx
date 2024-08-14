@@ -155,6 +155,8 @@ const GameControls: React.FC<GameControlsProps> = ({
     );
   };
 
+  // TODO: show diff and add/remove balances when round ends
+
   return (
     <div className="w-full mx-auto">
       {roundOverInfo !== undefined && (

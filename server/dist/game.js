@@ -180,31 +180,32 @@ class Game {
         const updatedBalances = new Map();
         const dealerValue = this.calculateHandValue(state.dealersHand);
         const dealerBlackjack = this.hasBlackjack(state.dealersHand);
-        // TODO: add db balances
         state.playersHands.forEach((hand, player) => {
             const playerValue = this.calculateHandValue(hand);
             const playerBlackjack = this.hasBlackjack(hand);
             const bet = state.bets.get(player) || 0;
             let result;
+            let balanceChange;
             if (playerBlackjack && !dealerBlackjack) {
                 result = round_over_info_1.RoundResult.Blackjack;
-                updatedBalances.set(player, bet * 2.5); // assuming 3:2 payout for blackjack
+                balanceChange = bet * 1.5; // 3:2 payout for blackjack
             }
             else if ((playerBlackjack && dealerBlackjack) ||
                 (playerValue === dealerValue && playerValue <= 21)) {
                 result = round_over_info_1.RoundResult.Tie;
-                updatedBalances.set(player, bet); // return the bet
+                balanceChange = 0; // return the bet
             }
             else if ((playerValue > dealerValue && playerValue <= 21) ||
                 (playerValue <= 21 && dealerValue > 21)) {
                 result = round_over_info_1.RoundResult.Win;
-                updatedBalances.set(player, bet * 2); // win, double the bet
+                balanceChange = bet; // win, double the bet
             }
             else {
                 result = round_over_info_1.RoundResult.Lose;
-                updatedBalances.set(player, 0); // lose the bet
+                balanceChange = -bet; // lose the bet
             }
             results.set(player, result);
+            updatedBalances.set(player, balanceChange);
         });
         return new round_over_info_1.RoundOverInfo(results, state.dealersHand, updatedBalances);
     }

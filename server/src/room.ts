@@ -1,3 +1,4 @@
+import { DBManager } from "./database/dbmanager";
 import Game from "./game";
 import { ServerGameState } from "./models/game_state";
 import Player from "./models/player";
@@ -8,6 +9,8 @@ enum PlayerAction { // no double for now
   Hit = "hit",
   Stand = "stand",
 }
+
+const dbManager = new DBManager();
 
 class Room {
   public code: string;
@@ -76,6 +79,24 @@ class Room {
     return [this.game.state, undefined];
   }
 
+  public async endRound(): Promise<RoundOverInfo> {
+    const roundOverInfo = this.game.endRound();
+
+    // Update balances in the database
+    for (const [player, balanceChange] of roundOverInfo.updatedBalances) {
+      const user = await dbManager.getUser(player.userId);
+      if (user) {
+        const newBalance = user.balance + balanceChange;
+        await dbManager.updateUserBalance(user.id, newBalance);
+
+        // Update the player's balance in the game state
+        player.balance = newBalance;
+      }
+    }
+
+    return roundOverInfo;
+  }
+
   placeBet(
     playerSocketId: string,
     betAmount: number,
@@ -95,7 +116,7 @@ class Room {
 
     // Check if player has enough balance to place bet
     if (user.balance < betAmount) {
-       return this.game.state;
+      return this.game.state;
     }
 
     this.game.placeBet(player, betAmount);
