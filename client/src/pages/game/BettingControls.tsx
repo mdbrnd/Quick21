@@ -7,22 +7,22 @@ import { useSocket } from "../../SocketContext";
 
 const BettingControls: React.FC = () => {
   const location: Location<LocationState> = useLocation();
-  const { socket } = useSocket();
+  const { socket, userInfo } = useSocket();
   const [betAmount, setBetAmount] = useState(0);
   const navigate = useNavigate();
 
-  const handleAddBet = () => {
-    setBetAmount((prevBet) => prevBet + 25000);
+  const handleSubtractBet = () => {
+    setBetAmount(Math.max(betAmount - 25000, 0));
   };
 
-  const handleSubtractBet = () => {
-    setBetAmount((prevBet) => Math.max(prevBet - 25000, 0));
+  const handleAddBet = () => {
+    setBetAmount(betAmount + 25000);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(event.target.value, 10);
-    if (value > 0) {
-      setBetAmount(value);
+    if (!isNaN(value) && value >= 0) {
+      setBetAmount(Math.min(value, userInfo!.balance));
     } else {
       setBetAmount(0);
     }
@@ -33,8 +33,9 @@ const BettingControls: React.FC = () => {
       navigate("/");
       return;
     }
-
-    if (betAmount > 0) {
+    if (betAmount > userInfo!.balance) {
+      alert("Bet amount cannot exceed your balance.");
+    } else if (betAmount > 0) {
       const response = await socket.emitWithAck(
         "place-bet",
         location.state.roomCode,
@@ -51,6 +52,7 @@ const BettingControls: React.FC = () => {
   return (
     <div className="bg-secondary-dark border-1 border-primary p-6 rounded-xl shadow-lg max-w-md mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-primary">Place Your Bet</h2>
+      <p className="text-accent mb-4">Your Balance: ${userInfo!.balance}</p>
       <div className="flex items-center justify-center space-x-4 mb-6">
         <button
           onClick={handleSubtractBet}

@@ -94,9 +94,9 @@ class Room {
     }
 
     // Check if player has enough balance to place bet
-    // if (user.balance < betAmount) { TODO: uncomment in prod
-    //   return this.game.state;
-    // }
+    if (user.balance < betAmount) {
+       return this.game.state;
+    }
 
     this.game.placeBet(player, betAmount);
 
