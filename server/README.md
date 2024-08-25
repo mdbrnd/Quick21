@@ -12,7 +12,6 @@ This is the backend for the Quick21 Blackjack game, built with Node.js (Express)
 - Node.js (v14 or higher)
 
 ### Installation
-This project was tested using Windows 11 and macOS Sonoma.
 
 1. Clone the repository (if not already done):
    ```sh
