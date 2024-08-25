@@ -74,6 +74,21 @@ class Room {
                 return [this.game.state, roundOverInfo];
             }
             this.game.shouldNextTurn(action);
+            // TODO: add tests, like a simulation game
+            // Check if next player has blackjack; repeated code is a bit ugly, might change in the future
+            const nextPlayer = this.game.state.currentTurn;
+            const nextPlayerHand = this.game.state.playersHands.get(nextPlayer);
+            if (nextPlayerHand && this.game.calculateHandValue(nextPlayerHand) === 21) {
+                if (this.game.isLastTurn()) {
+                    this.game.state.currentPhase = "RoundOver";
+                    let roundOverInfo = this.game.endRound();
+                    yield this.updatePlayerBalances(roundOverInfo);
+                    return [this.game.state, roundOverInfo];
+                }
+                else {
+                    this.game.shouldNextTurn(player_1.PlayerAction.Stand);
+                }
+            }
             return [this.game.state, undefined];
         });
     }
