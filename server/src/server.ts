@@ -92,7 +92,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-
 const io = new Server(server, {
   cors: {
     origin:
@@ -105,12 +104,15 @@ const io = new Server(server, {
 const roomManager = new RoomManager();
 
 // TODO: make so players cant join/only spectate already started game/only on next round; match game state
-function joinRoom(socket: AuthenticatedSocket, roomCode: string) {
+async function joinRoom(socket: AuthenticatedSocket, roomCode: string) {
   console.log("joining room " + roomCode);
+
+  let user = await dbManager.getUser(socket.user.id);
+
   let couldJoin: boolean = roomManager.joinRoom(roomCode, {
     socketId: socket.id,
     name: socket.user.name,
-    balance: socket.user.balance,
+    balance: user?.balance ?? 0,
     userId: socket.user.id as unknown as number,
   });
 
@@ -279,7 +281,7 @@ io.on("connection", (socket) => {
 
         let user = await dbManager.getUser(authSocket.user.id);
         if (!user) {
-           return;
+          return;
         }
 
         let oldGameState = room.game.state.toClientGameState();
@@ -302,11 +304,12 @@ io.on("connection", (socket) => {
     }
   );
 
-  authSocket.on("action", (roomCode: string, action) => {
+  authSocket.on("action", async (roomCode: string, action) => {
     console.log("action received");
     let room = roomManager.getRoom(roomCode);
     if (room) {
-      let actionResult = room.performAction(socket.id, action);
+      let user = await dbManager.getUser(authSocket.user.id);
+      let actionResult = await room.performAction(socket.id, action, user);
 
       io.to(roomCode).emit("game-state-update", actionResult[0].toDTO());
 

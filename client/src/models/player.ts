@@ -5,7 +5,8 @@ export interface Player {
   userId: number;
 }
 
-export enum PlayerAction { // no double for now
+export enum PlayerAction {
   Hit = "hit",
   Stand = "stand",
+  Double = "double",
 }

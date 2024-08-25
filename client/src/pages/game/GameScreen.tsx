@@ -20,7 +20,7 @@ const GameScreen: React.FC = () => {
   const [roundOverInfo, setRoundOverInfo] = useState<RoundOverInfo | undefined>(
     undefined
   );
-  const { socket } = useSocket();
+  const { socket, refreshUserInfo } = useSocket();
 
   const [roomCode, setRoomCode] = useState<string | null>(null);
   const [isRoomOwner, setIsRoomOwner] = useState<boolean>(false);
@@ -100,12 +100,21 @@ const GameScreen: React.FC = () => {
     socket.emit("action", roomCode, PlayerAction.Stand);
   }
 
+  function double() {
+    if (!socket || !roomCode) {
+      navigate("/");
+      return;
+    }
+    socket.emit("action", roomCode, PlayerAction.Double);
+  }
+
   function startNewRound() {
     if (!socket || !roomCode) {
       navigate("/");
       return;
     }
     socket.emit("new-round", roomCode);
+    refreshUserInfo();
   }
 
   return (
@@ -141,7 +150,7 @@ const GameScreen: React.FC = () => {
                 roundOverInfo={roundOverInfo}
                 onHit={hit}
                 onStand={stand}
-                onDouble={() => {}}
+                onDouble={double}
                 onStartNewRound={startNewRound}
               />
             )

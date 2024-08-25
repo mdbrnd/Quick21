@@ -96,7 +96,7 @@ const GameControls: React.FC<GameControlsProps> = ({
     {}
   );
   const [dealerRevealComplete, setDealerRevealComplete] = useState(false);
-  const { socket } = useSocket();
+  const { socket, userInfo } = useSocket();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -155,7 +155,17 @@ const GameControls: React.FC<GameControlsProps> = ({
     );
   };
 
-  // TODO: show diff and add/remove balances when round ends
+  function currentPlayerCanDouble(): boolean {
+    const player = gameState.currentTurn;
+    if (!player) return false;
+
+    const bet = findBetBySocketId(gameState.bets, player.socketId);
+    if (bet === undefined) return false;
+
+    return bet * 2 <= userInfo!.balance;
+  }
+
+  // TODO: show diff balances when round ends
 
   return (
     <div className="w-full mx-auto">
@@ -193,12 +203,14 @@ const GameControls: React.FC<GameControlsProps> = ({
             >
               Stand
             </button>
-            <button
-              onClick={onDouble}
-              className="bg-primary text-secondary font-bold py-2 px-6 rounded-lg hover:bg-primary-light transition-colors duration-300"
-            >
-              Double
-            </button>
+            {currentPlayerCanDouble() && (
+              <button
+                onClick={onDouble}
+                className="bg-primary text-secondary font-bold py-2 px-6 rounded-lg hover:bg-primary-light transition-colors duration-300"
+              >
+                Double
+              </button>
+            )}
           </div>
         )}
 

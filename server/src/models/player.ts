@@ -5,4 +5,10 @@ interface Player {
   userId: number;
 }
 
+export enum PlayerAction {
+  Hit = "hit",
+  Stand = "stand",
+  Double = "double",
+}
+
 export default Player;

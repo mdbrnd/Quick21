@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const game_state_1 = require("./models/game_state");
+const player_1 = require("./models/player");
 const round_over_info_1 = require("./models/round_over_info");
 class Game {
     constructor(firstPlayer) {
@@ -66,12 +67,12 @@ class Game {
             player.push(this.state.deck.pop());
         }
     }
-    nextTurn(didStand) {
+    shouldNextTurn(action) {
         const players = Array.from(this.state.playersHands.keys());
         const currentIndex = players.indexOf(this.state.currentTurn);
         const nextIndex = (currentIndex + 1) % players.length;
-        // only next turn if the player busted/has blackjack or stood
-        if (didStand ||
+        // only next turn if the player busted/has blackjack or stood or doubled
+        if (action === player_1.PlayerAction.Stand || action === player_1.PlayerAction.Double ||
             this.calculateHandValue(this.state.playersHands.get(players[currentIndex])) >= 21) {
             this.state.currentTurn = players[nextIndex];
         }
@@ -81,10 +82,10 @@ class Game {
         const currentIndex = players.indexOf(this.state.currentTurn);
         return currentIndex === players.length - 1;
     }
-    shouldRoundEnd(didStand) {
-        // if the last player busted or stood, the round should end
+    shouldRoundEnd(action) {
+        // if the last player busted or stood or doubled, the round should end
         return (this.isLastTurn() &&
-            (didStand ||
+            (action === player_1.PlayerAction.Stand || action === player_1.PlayerAction.Double ||
                 this.calculateHandValue(this.state.playersHands.get(this.state.currentTurn)) >= 21));
     }
     endRound() {

@@ -1,6 +1,6 @@
 import { Card } from "./models/card";
 import { ServerGameState } from "./models/game_state";
-import Player from "./models/player";
+import Player, { PlayerAction } from "./models/player";
 import { RoundOverInfo, RoundResult } from "./models/round_over_info";
 
 class Game {
@@ -81,13 +81,13 @@ class Game {
     }
   }
 
-  public nextTurn(didStand: boolean) {
+  public shouldNextTurn(action: PlayerAction) {
     const players = Array.from(this.state.playersHands.keys());
     const currentIndex = players.indexOf(this.state.currentTurn);
     const nextIndex = (currentIndex + 1) % players.length;
-    // only next turn if the player busted/has blackjack or stood
+    // only next turn if the player busted/has blackjack or stood or doubled
     if (
-      didStand ||
+      action === PlayerAction.Stand || action === PlayerAction.Double ||
       this.calculateHandValue(
         this.state.playersHands.get(players[currentIndex])!
       ) >= 21
@@ -102,11 +102,11 @@ class Game {
     return currentIndex === players.length - 1;
   }
 
-  public shouldRoundEnd(didStand: boolean): boolean {
-    // if the last player busted or stood, the round should end
+  public shouldRoundEnd(action: PlayerAction): boolean {
+    // if the last player busted or stood or doubled, the round should end
     return (
       this.isLastTurn() &&
-      (didStand ||
+      (action === PlayerAction.Stand || action === PlayerAction.Double ||
         this.calculateHandValue(
           this.state.playersHands.get(this.state.currentTurn)!
         ) >= 21)

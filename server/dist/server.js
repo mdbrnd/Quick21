@@ -96,27 +96,31 @@ const io = new socket_io_1.Server(server, {
 const roomManager = new room_manager_1.default();
 // TODO: make so players cant join/only spectate already started game/only on next round; match game state
 function joinRoom(socket, roomCode) {
-    console.log("joining room " + roomCode);
-    let couldJoin = roomManager.joinRoom(roomCode, {
-        socketId: socket.id,
-        name: socket.user.name,
-        balance: socket.user.balance,
-        userId: socket.user.id,
-    });
-    socket.emit("join-room-response", couldJoin);
-    if (couldJoin) {
-        socket.join(roomCode);
-        console.log("player added to room");
-        // Update game state to show others that player is in room
-        let room = roomManager.getRoom(roomCode);
-        if (room) {
-            let gameState = room.game.state.toClientGameState().toDTO();
-            io.to(roomCode).emit("game-state-update", gameState);
+    return __awaiter(this, void 0, void 0, function* () {
+        var _a;
+        console.log("joining room " + roomCode);
+        let user = yield dbManager.getUser(socket.user.id);
+        let couldJoin = roomManager.joinRoom(roomCode, {
+            socketId: socket.id,
+            name: socket.user.name,
+            balance: (_a = user === null || user === void 0 ? void 0 : user.balance) !== null && _a !== void 0 ? _a : 0,
+            userId: socket.user.id,
+        });
+        socket.emit("join-room-response", couldJoin);
+        if (couldJoin) {
+            socket.join(roomCode);
+            console.log("player added to room");
+            // Update game state to show others that player is in room
+            let room = roomManager.getRoom(roomCode);
+            if (room) {
+                let gameState = room.game.state.toClientGameState().toDTO();
+                io.to(roomCode).emit("game-state-update", gameState);
+            }
         }
-    }
-    else {
-        console.log("could not add player to room");
-    }
+        else {
+            console.log("could not add player to room");
+        }
+    });
 }
 // TODO: if players leaves mid game, put next turn and transfer ownership and return bet
 function leaveRoom(socket, roomCode) {
@@ -253,18 +257,19 @@ io.on("connection", (socket) => {
             io.to(roomCode).emit("game-state-update", updatedGameStateForEmit);
         }
     }));
-    authSocket.on("action", (roomCode, action) => {
+    authSocket.on("action", (roomCode, action) => __awaiter(void 0, void 0, void 0, function* () {
         console.log("action received");
         let room = roomManager.getRoom(roomCode);
         if (room) {
-            let actionResult = room.performAction(socket.id, action);
+            let user = yield dbManager.getUser(authSocket.user.id);
+            let actionResult = yield room.performAction(socket.id, action, user);
             io.to(roomCode).emit("game-state-update", actionResult[0].toDTO());
             if (actionResult[1] !== undefined) {
                 console.log("round over");
                 io.to(roomCode).emit("round-over", actionResult[1].toDTO());
             }
         }
-    });
+    }));
     authSocket.on("new-round", (roomCode) => {
         let room = roomManager.getRoom(roomCode);
         if (room) {

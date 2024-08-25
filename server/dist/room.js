@@ -14,11 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dbmanager_1 = require("./database/dbmanager");
 const game_1 = __importDefault(require("./game"));
-var PlayerAction;
-(function (PlayerAction) {
-    PlayerAction["Hit"] = "hit";
-    PlayerAction["Stand"] = "stand";
-})(PlayerAction || (PlayerAction = {}));
+const player_1 = require("./models/player");
 const dbManager = new dbmanager_1.DBManager();
 class Room {
     constructor(roomCode, initialPlayer) {
@@ -46,29 +42,43 @@ class Room {
     hasPlayer(playerSocketId) {
         return this.players.some((player) => player.socketId === playerSocketId);
     }
-    performAction(playerSocketId, action) {
-        if (this.game.state.currentTurn.socketId !== playerSocketId) {
-            return [this.game.state, undefined];
-        }
-        console.log("performing action: ", action);
-        switch (action) {
-            case PlayerAction.Hit:
-                this.game.hit(playerSocketId);
-                break;
-            case PlayerAction.Stand: // do nothing as player is standing
-                break;
-        }
-        if (this.game.shouldRoundEnd(action === PlayerAction.Stand)) {
-            this.game.state.currentPhase = "RoundOver";
-            let roundOverInfo = this.game.endRound();
-            return [this.game.state, roundOverInfo];
-        }
-        this.game.nextTurn(action === PlayerAction.Stand);
-        return [this.game.state, undefined];
-    }
-    endRound() {
+    performAction(playerSocketId, action, user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const roundOverInfo = this.game.endRound();
+            if (this.game.state.currentTurn.socketId !== playerSocketId) {
+                return [this.game.state, undefined];
+            }
+            console.log("performing action: ", action);
+            switch (action) {
+                case player_1.PlayerAction.Hit:
+                    this.game.hit(playerSocketId);
+                    break;
+                case player_1.PlayerAction.Double:
+                    this.game.hit(playerSocketId);
+                    if (!user) {
+                        return [this.game.state, undefined];
+                    }
+                    let player = this.getPlayer(playerSocketId);
+                    if (!player) {
+                        return [this.game.state, undefined];
+                    }
+                    console.log("placing bet to double: ", this.game.state.bets.get(player) * 2);
+                    this.placeBet(playerSocketId, this.game.state.bets.get(player) * 2, user);
+                    break;
+                case player_1.PlayerAction.Stand: // do nothing as player is standing
+                    break;
+            }
+            if (this.game.shouldRoundEnd(action)) {
+                this.game.state.currentPhase = "RoundOver";
+                let roundOverInfo = this.game.endRound();
+                yield this.updatePlayerBalances(roundOverInfo);
+                return [this.game.state, roundOverInfo];
+            }
+            this.game.shouldNextTurn(action);
+            return [this.game.state, undefined];
+        });
+    }
+    updatePlayerBalances(roundOverInfo) {
+        return __awaiter(this, void 0, void 0, function* () {
             // Update balances in the database
             for (const [player, balanceChange] of roundOverInfo.updatedBalances) {
                 const user = yield dbManager.getUser(player.userId);
@@ -77,6 +87,7 @@ class Room {
                     yield dbManager.updateUserBalance(user.id, newBalance);
                     // Update the player's balance in the game state
                     player.balance = newBalance;
+                    console.log(player, " new balance: ", newBalance);
                 }
             }
             return roundOverInfo;
@@ -88,18 +99,22 @@ class Room {
         if (!player) {
             return this.game.state;
         }
-        if (this.game.state.bets.has(player)) {
+        // If you already bet, you can't bet again except for if you double during the round
+        if (this.game.state.bets.has(player) &&
+            this.game.state.currentPhase == "Betting") {
             const currentBet = this.game.state.bets.get(player);
             if (currentBet && currentBet > 0) {
                 return this.game.state;
             }
         }
+        console.log("checking balance");
         // Check if player has enough balance to place bet
         if (user.balance < betAmount) {
             return this.game.state;
         }
+        console.log("placing bet");
         this.game.placeBet(player, betAmount);
-        if (this.allBetsPlaced()) {
+        if (this.allBetsPlaced() && this.game.state.currentPhase == "Betting") {
             this.game.state.currentPhase = "Playing";
             this.game.dealFirstCards();
         }
