@@ -162,7 +162,10 @@ const GameControls: React.FC<GameControlsProps> = ({
     const bet = findBetBySocketId(gameState.bets, player.socketId);
     if (bet === undefined) return false;
 
-    return bet * 2 <= userInfo!.balance;
+    const playersHand = gameState.playersHands.get(player);
+    if (playersHand === undefined) return false;
+
+    return bet * 2 <= userInfo!.balance && playersHand.length == 2;
   }
 
   // TODO: show diff balances when round ends
