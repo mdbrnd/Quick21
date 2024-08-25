@@ -1,25 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useSocket } from "../../SocketContext";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL = "http://localhost:4000";
 
-// TODO: eventually make this an actual landing page and give a separate /login page
-
 const LandingPage: React.FC = () => {
   const [isSignup, setIsSignup] = useState(false);
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const { socket, connect, disconnect } = useSocket();
+  const { socket, connect } = useSocket();
   const navigate = useNavigate();
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // TODO: figure out a way to store username and pwd without losing focus after each keystroke so it stays when switching for sign up to sign in
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+
+    const formData = new FormData(formRef.current!);
+    const name = formData.get("name") as string;
+    const password = formData.get("password") as string;
 
     const endpoint = isSignup ? "/register" : "/login";
 
@@ -33,7 +37,6 @@ const LandingPage: React.FC = () => {
         body: JSON.stringify({ name, password }),
       });
 
-
       const data = await response.json();
 
       if (!response.ok) {
@@ -43,35 +46,27 @@ const LandingPage: React.FC = () => {
       setSuccess(data.message);
       if (!isSignup && data.token) {
         localStorage.setItem("authToken", data.token);
-
-        // Connect to the socket server after successful login
         connect(data.token);
-
-        // Redirect to the game page after successful login
         navigate("/lobby");
       } else if (isSignup) {
-        // Switch to sign in mode after successful registration
         setTimeout(() => {
           setIsSignup(false);
           setSuccess("");
         }, 1500);
       }
     } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("An unexpected error occurred");
-      }
+      setError(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
 
   const AuthForm: React.FC = () => (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
       <div>
         <input
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          name="name"
           placeholder="Username"
           className="w-full px-4 py-3 rounded-xl text-secondary text-lg border-2 border-primary bg-accent bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300 placeholder-gray-500"
           required
@@ -80,8 +75,7 @@ const LandingPage: React.FC = () => {
       <div>
         <input
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          name="password"
           placeholder="Password"
           className="w-full px-4 py-3 rounded-xl text-secondary text-lg border-2 border-primary bg-accent bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300 placeholder-gray-500"
           required
@@ -117,8 +111,6 @@ const LandingPage: React.FC = () => {
 
   const openModal = (signup: boolean) => {
     setIsSignup(signup);
-    setName("");
-    setPassword("");
     setError("");
     setSuccess("");
     setIsOpen(true);
