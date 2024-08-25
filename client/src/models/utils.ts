@@ -1,4 +1,5 @@
 import { Card } from "./card";
+import { ClientGameState } from "./game_state";
 import { Player } from "./player";
 
 const serializeMap = (map: Map<any, any>) => {
@@ -20,6 +21,18 @@ const findBetBySocketId = (
   }
   return undefined;
 };
+
+function getPlayerHandBySocketId(
+  socketId: string,
+  gameState: ClientGameState
+): Card[] | undefined {
+  for (let [player, hand] of gameState.playersHands.entries()) {
+    if (player.socketId === socketId) {
+      return hand;
+    }
+  }
+  return undefined;
+}
 
 function calculateHandValue(cards: Card[]): number {
   let value = 0;
@@ -45,4 +58,4 @@ function calculateHandValue(cards: Card[]): number {
   return value;
 }
 
-export { serializeMap, deserializeMap, findBetBySocketId, calculateHandValue };
+export { serializeMap, deserializeMap, findBetBySocketId, calculateHandValue, getPlayerHandBySocketId };

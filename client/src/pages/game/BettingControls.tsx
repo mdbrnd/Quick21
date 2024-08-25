@@ -12,11 +12,11 @@ const BettingControls: React.FC = () => {
   const navigate = useNavigate();
 
   const handleSubtractBet = () => {
-    setBetAmount(Math.max(betAmount - 25000, 0));
+    setBetAmount(Math.max(betAmount - 100, 0));
   };
 
   const handleAddBet = () => {
-    setBetAmount(betAmount + 25000);
+    setBetAmount(betAmount + 100);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +79,7 @@ const BettingControls: React.FC = () => {
       >
         Place Bet
       </button>
-      <div className="mt-4 flex justify-center">
+      {/*<div className="mt-4 flex justify-center">
         <button
           onClick={handleAddBet}
           className="bg-primary text-secondary p-2 rounded-full hover:bg-primary transition-colors duration-300 flex items-center space-x-2"
@@ -87,7 +87,7 @@ const BettingControls: React.FC = () => {
           <CoinsIcon size={24} />
           <span className="font-bold">+25k</span>
         </button>
-      </div>
+      </div>*/}
     </div>
   );
 };

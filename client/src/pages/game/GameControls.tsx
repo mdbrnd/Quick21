@@ -3,7 +3,11 @@ import { ClientGameState } from "../../models/game_state";
 import { Card } from "../../models/card";
 import { RoundOverInfo } from "../../models/round_over_info";
 import "../../index.css";
-import { calculateHandValue, findBetBySocketId } from "../../models/utils";
+import {
+  calculateHandValue,
+  findBetBySocketId,
+  getPlayerHandBySocketId,
+} from "../../models/utils";
 import { useSocket } from "../../SocketContext";
 import { useNavigate } from "react-router-dom";
 
@@ -162,7 +166,7 @@ const GameControls: React.FC<GameControlsProps> = ({
     const bet = findBetBySocketId(gameState.bets, player.socketId);
     if (bet === undefined) return false;
 
-    const playersHand = gameState.playersHands.get(player);
+    const playersHand = getPlayerHandBySocketId(player.socketId, gameState);
     if (playersHand === undefined) return false;
 
     return bet * 2 <= userInfo!.balance && playersHand.length == 2;
@@ -217,13 +221,13 @@ const GameControls: React.FC<GameControlsProps> = ({
           </div>
         )}
 
-      {roundOverInfo === undefined && (
+      {/*{roundOverInfo === undefined && (
         <div className="bg-secondary text-accent p-4 rounded-lg shadow-lg mb-6 text-center">
           <h2 className="text-xl font-semibold">
             Current Phase: {gameState.currentPhase}
           </h2>
         </div>
-      )}
+      )}*/}
 
       {(gameState.dealersVisibleCard || roundOverInfo) && (
         <div className="mb-8">

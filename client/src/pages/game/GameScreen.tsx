@@ -65,6 +65,7 @@ const GameScreen: React.FC = () => {
     console.log("updating game state to:");
     console.log(gameState);
     setGameState(gameState);
+    refreshUserInfo();
   }
 
   const handleStartGameButton = () => {
@@ -114,7 +115,6 @@ const GameScreen: React.FC = () => {
       return;
     }
     socket.emit("new-round", roomCode);
-    refreshUserInfo();
   }
 
   return (
