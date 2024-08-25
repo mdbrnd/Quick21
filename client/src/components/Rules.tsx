@@ -13,34 +13,28 @@ const rules: Rule[] = [
   {
     image: "/assets/images/beat-dealer.png",
     altText: "Beat the Dealer",
-    text: "Beat the dealer's hand without going over 21.",
+    text: "Each player is dealt 2 cards by the dealer. The dealer also receives 2 cards with one of their cards being unknown to the players. The goal is to have a higher card value than the dealer's hand without going over 21.",
   },
   {
     image: "/assets/images/card-values.png",
     altText: "Card Values",
-    text: "Cards 2-10 are worth their face value. Face cards are worth 10, and Aces can be 1 or 11.",
+    text: "Cards 2-10 are worth their face value. Face cards are worth 10, and Aces can be 1 or 11 (favorable for the player).",
   },
   {
     image: "/assets/images/hit-stand.png",
     altText: "Hit or Stand",
-    text: "'Hit' to draw another card, 'Stand' to hold your total and end your turn.",
+    text: "'Hit' to draw another card, 'Stand' to hold your total and end your turn or 'Double' to draw another card and simultaneously double your bet during the round while also ending your turn. Once all the turns are over, the dealers reveals his second card and hits until he reaches a hand value of 17 or busts (goes over 21). The player can hit as many times as needed as long as he does not go over 21, in which case the player automatically loses and their turn ends.",
   },
   {
     image: "/assets/images/blackjack.png",
     altText: "Blackjack",
-    text: "If you are dealt 21 from the start (Ace & 10), you got a blackjack.",
-  },
-  {
-    image: "/assets/images/double-down.png",
-    altText: "Double Down",
-    text: "Double down: Double your bet and get exactly one more card.",
+    text: "If you are dealt 21 from the start (Ace & 10), you got a blackjack. Unlike a normal win which pays 1x your bet, a blackjack pays 1.5x your bet. You automatically win unless the dealer also has blackjack, in which case its a tie and your bet is returned.",
   },
 ];
 
 interface RulesModalProps {
   onClose: () => void; // Specifies that onClose is a function that returns void
 }
-
 
 const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
   const [currentRule, setCurrentRule] = useState(0);
