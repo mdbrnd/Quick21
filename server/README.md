@@ -8,11 +8,11 @@ This is the backend for the Quick21 Blackjack game, built with Node.js (Express)
 
 ### Prerequisites
 
+- Git
 - Node.js (v14 or higher)
-- npm (v6 or higher)
-- SQLite3
 
 ### Installation
+This project was tested using Windows 11 and macOS Sonoma.
 
 1. Clone the repository (if not already done):
    ```sh
@@ -29,17 +29,16 @@ This is the backend for the Quick21 Blackjack game, built with Node.js (Express)
    ```env
    JWT_SECRET=your_jwt_secret
    ```
-   The JWT_SECRET is used to sign and verify JWT tokens for authentication and is recommended to be a long, random string.
+   The JWT_SECRET is used to sign and verify JWT tokens for authentication and is recommended to be a long, random string. For example: a74a38b67019bda7033e03e528f0f65b130a83a77aa92108d97b50896eb93c5c871051661b985ed313c42753a22b1dec3364a66e1da6d845d86610a5d6ac712a (usually even longer)
 
 4. Set up the SQLite database:
-   - Ensure you have SQLite3 installed on your machine.
    - Create a db folder in the root of the project. (server/db)
    ```sh
    mkdir db
    ```
-   - Create a new SQLite database file named `database.sqlite`. (server/db/database.sqlite)
+   - Create a new empty SQLite database file named `database.sqlite`. (server/db/database.sqlite)
 
-5. Start the server:
+5. Return to the root directory of the server and start the server:
    ```sh
    npm start
    ```
