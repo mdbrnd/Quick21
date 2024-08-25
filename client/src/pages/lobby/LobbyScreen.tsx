@@ -69,7 +69,7 @@ const LobbyScreen = () => {
             <AlertCircle size={20} />
             <span>Rules</span>
           </button>
-          <h1 className="text-5xl font-bold text-primary pb-2 flex items-center">
+          <h1 className="text-5xl font-bold text-primary pb-2 flex items-center absolute left-1/2 transform -translate-x-1/2">
             <Spade className="mr-2" />
             Quick21
             <Diamond className="ml-2" />
@@ -77,6 +77,9 @@ const LobbyScreen = () => {
           <div className="flex items-center space-x-2 bg-secondary border-2 border-primary rounded-full py-2 px-4">
             <User size={24} className="text-primary" />
             <span className="font-semibold">{userInfo?.name}</span>
+            <div className="flex items-center space-x-1 text-primary">
+              <span className="font-bold">${userInfo?.balance}</span>
+            </div>
           </div>
         </header>
 
