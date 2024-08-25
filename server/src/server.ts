@@ -27,7 +27,7 @@ app.use(express.json()); // Middleware to parse JSON bodies
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // TODO: update in prod
+    origin: "http://localhost:3000", // TODO: update in prod, also update nodemon.json in prod
     credentials: true,
   })
 );

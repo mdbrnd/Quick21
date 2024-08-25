@@ -33,7 +33,7 @@ if (!JWT_SECRET) {
 }
 app.use(express_1.default.json()); // Middleware to parse JSON bodies
 app.use((0, cors_1.default)({
-    origin: "http://localhost:3000", // TODO: update in prod
+    origin: "http://localhost:3000", // TODO: update in prod, also update nodemon.json in prod
     credentials: true,
 }));
 app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
