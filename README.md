@@ -8,11 +8,11 @@ Quick21 is a modern twist on the classic Blackjack game, built with React for th
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
-- npm (v6 or higher)
-- SQLite3
+- (Git)[https://git-scm.com/downloads]
+- (Node.js v14 or higher)[https://nodejs.org/en]
 
 ### Installation
+This project was tested using Windows 11 and macOS Sonoma. In order not to go beyond the scope of the project, not all packages were tested for vurnelabilities
 
 1. Clone the repository:
    ```sh
