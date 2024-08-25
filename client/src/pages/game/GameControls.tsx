@@ -169,7 +169,17 @@ const GameControls: React.FC<GameControlsProps> = ({
     const playersHand = getPlayerHandBySocketId(player.socketId, gameState);
     if (playersHand === undefined) return false;
 
-    return bet * 2 <= userInfo!.balance && playersHand.length == 2;
+    return bet * 2 <= userInfo!.balance && playersHand.length == 2 && calculateHandValue(playersHand) < 21;
+  }
+
+  function shouldShowHitBtn(): boolean {
+    const player = gameState.currentTurn;
+    if (!player) return true;
+
+    const playersHand = getPlayerHandBySocketId(player.socketId, gameState);
+    if (playersHand === undefined) return true;
+
+    return calculateHandValue(playersHand) >= 21 ? false : true;
   }
 
   // TODO: show diff balances when round ends
@@ -198,12 +208,15 @@ const GameControls: React.FC<GameControlsProps> = ({
       {gameState.currentTurn?.socketId === socket.id &&
         roundOverInfo === undefined && (
           <div className="fixed bottom-0 left-0 right-0 bg-secondary-dark p-4 flex justify-center space-x-4 z-10">
-            <button
-              onClick={onHit}
-              className="bg-primary text-secondary font-bold py-2 px-6 rounded-lg hover:bg-primary-light transition-colors duration-300"
-            >
-              Hit
-            </button>
+            {/*TODO: A bit of a workaround while the server doesnt yet skip everyone who is dealt blackjack*/}
+            {shouldShowHitBtn() && (
+              <button
+                onClick={onHit}
+                className="bg-primary text-secondary font-bold py-2 px-6 rounded-lg hover:bg-primary-light transition-colors duration-300"
+              >
+                Hit
+              </button>
+            )}
             <button
               onClick={onStand}
               className="bg-primary text-secondary font-bold py-2 px-6 rounded-lg hover:bg-primary-light transition-colors duration-300"
