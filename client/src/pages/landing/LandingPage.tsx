@@ -125,16 +125,16 @@ const LandingPage: React.FC = () => {
 
       <div className="space-x-4">
         <button
-          onClick={() => openModal(false)}
+          onClick={() => openModal(true)}
           className="bg-primary text-secondary hover:bg-primary-light font-bold py-3 px-6 rounded-xl text-xl transition-all duration-300 shadow-lg hover:shadow-primary"
         >
-          Sign In
+          Sign Up
         </button>
         <button
-          onClick={() => openModal(true)}
+          onClick={() => openModal(false)}
           className="bg-secondary text-primary hover:bg-secondary-light font-bold py-3 px-6 rounded-xl text-xl transition-all duration-300 shadow-lg hover:shadow-secondary border-2 border-primary"
         >
-          Sign Up
+          Sign In
         </button>
       </div>
 
