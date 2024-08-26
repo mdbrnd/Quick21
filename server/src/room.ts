@@ -100,7 +100,7 @@ class Room {
     // Check if next player has blackjack; repeated code is a bit ugly, might change in the future
     const nextPlayer = this.game.state.currentTurn;
     const nextPlayerHand = this.game.state.playersHands.get(nextPlayer);
-    if (nextPlayerHand && this.game.calculateHandValue(nextPlayerHand) === 21) {
+    if (nextPlayerHand && this.game.calculateHandValue(nextPlayerHand) === 21 && this.game.state.currentPhase == "Playing") {
       if (this.game.isLastTurn()) {
         this.game.state.currentPhase = "RoundOver";
         let roundOverInfo = this.game.endRound();
