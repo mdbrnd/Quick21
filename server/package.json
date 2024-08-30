@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon dist/server.js",
     "dev": "nodemon",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -22,12 +22,15 @@
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.11.30",
     "@types/sqlite3": "^3.1.11",
     "install": "^0.13.0",
+    "jest": "^29.7.0",
     "npm": "^10.5.2",
     "sqlite3": "^5.1.7",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
   }

@@ -87,7 +87,8 @@ class Game {
     const nextIndex = (currentIndex + 1) % players.length;
     // only next turn if the player busted/has blackjack or stood or doubled
     if (
-      action === PlayerAction.Stand || action === PlayerAction.Double ||
+      action === PlayerAction.Stand ||
+      action === PlayerAction.Double ||
       this.calculateHandValue(
         this.state.playersHands.get(players[currentIndex])!
       ) >= 21
@@ -106,7 +107,8 @@ class Game {
     // if the last player busted or stood or doubled, the round should end
     return (
       this.isLastTurn() &&
-      (action === PlayerAction.Stand || action === PlayerAction.Double ||
+      (action === PlayerAction.Stand ||
+        action === PlayerAction.Double ||
         this.calculateHandValue(
           this.state.playersHands.get(this.state.currentTurn)!
         ) >= 21)
