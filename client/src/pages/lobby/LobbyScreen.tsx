@@ -76,7 +76,7 @@ const LobbyScreen = () => {
           </h1>
           <div className="flex items-center space-x-2 bg-secondary border-2 border-primary rounded-full py-2 px-4">
             <User size={24} className="text-primary" />
-            <span className="font-semibold text-secondary-light">{userInfo?.name}</span>
+            <span className="font-semibold text-white">{userInfo?.name}</span>
             <div className="flex items-center space-x-1 text-primary">
               <span className="font-bold">${userInfo?.balance}</span>
             </div>
