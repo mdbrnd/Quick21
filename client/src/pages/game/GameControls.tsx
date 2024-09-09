@@ -26,7 +26,9 @@ const DealerHand: React.FC<{
         setRevealedCards([fullHand[0], fullHand[1]]);
         setTimeout(() => {
           setRevealedCards(fullHand);
-          onRevealComplete();
+          setTimeout(() => {
+            onRevealComplete();
+          }, 1000);
         }, 500);
       }, 1000);
     }
@@ -44,14 +46,14 @@ const DealerHand: React.FC<{
         <img
           src={getCardImage(visibleCard)}
           alt={`Dealer's card: ${visibleCard.value} of ${visibleCard.suit}`}
-          className="absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6 animate-card-enter"
+          className="absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out"
         />
       )}
       {!fullHand && (
         <img
           src="/assets/images/cards/back_of_card.png"
           alt="Dealer's hidden card"
-          className="absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6 animate-card-enter"
+          className="absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out"
           style={{ left: "25px", zIndex: 1 }}
         />
       )}
@@ -61,7 +63,7 @@ const DealerHand: React.FC<{
             key={index}
             src={getCardImage(card)}
             alt={`${card.value} of ${card.suit}`}
-            className={`absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6 ${
+            className={`absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out ${
               index === 1
                 ? "animate-card-flip"
                 : index > 1
@@ -113,10 +115,6 @@ const GameControls: React.FC<GameControlsProps> = ({
         setAnimatedCards((prev) => ({ ...prev, [playerKey]: cards.length }));
       }
     });
-
-    if (roundOverInfo) {
-      setDealerRevealComplete(false);
-    }
   }, [playersHandsArray, animatedCards, roundOverInfo]);
 
   if (!socket) {
@@ -132,13 +130,13 @@ const GameControls: React.FC<GameControlsProps> = ({
     const animatedCount = animatedCards[playerKey] || 0;
 
     return (
-      <div className="relative h-[190px] w-[150px]">
+      <div className="relative h-[170px] w-[150px]">
         {cards.map((card, index) => (
           <img
             key={index}
             src={getCardImage(card)}
             alt={`${card.value} of ${card.suit}`}
-            className={`absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out hover:-translate-y-6 ${
+            className={`absolute w-[100px] h-[150px] transition-all duration-300 ease-in-out ${
               index === cards.length - 1 && index + 1 > animatedCount - 1
                 ? "animate-card-enter"
                 : ""
@@ -169,7 +167,11 @@ const GameControls: React.FC<GameControlsProps> = ({
     const playersHand = getPlayerHandBySocketId(player.socketId, gameState);
     if (playersHand === undefined) return false;
 
-    return bet * 2 <= userInfo!.balance && playersHand.length == 2 && calculateHandValue(playersHand) < 21;
+    return (
+      bet * 2 <= userInfo!.balance &&
+      playersHand.length === 2 &&
+      calculateHandValue(playersHand) < 21
+    );
   }
 
   function shouldShowHitBtn(): boolean {
@@ -186,7 +188,7 @@ const GameControls: React.FC<GameControlsProps> = ({
 
   return (
     <div className="w-full mx-auto">
-      {roundOverInfo !== undefined && (
+      {roundOverInfo !== undefined && dealerRevealComplete && (
         <div className="bg-secondary-light text-primary p-4 rounded-lg shadow-lg mb-6">
           <h2 className="text-2xl font-bold mb-2">Round Over</h2>
           {Array.from(roundOverInfo.results.entries()).map(
@@ -249,13 +251,16 @@ const GameControls: React.FC<GameControlsProps> = ({
             <DealerHand
               visibleCard={gameState.dealersVisibleCard}
               fullHand={roundOverInfo?.dealersHand ?? null}
-              onRevealComplete={() => setDealerRevealComplete(true)}
+              onRevealComplete={() => {
+                setDealerRevealComplete(true);
+                console.log("Dealer reveal complete"); // Add this line for debugging
+              }}
             />
           </div>
         </div>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {playersHandsArray.map(([player, cards], index) => (
           <div
             key={player.socketId}
@@ -271,13 +276,15 @@ const GameControls: React.FC<GameControlsProps> = ({
             >
               {player.name}
             </h3>
-            <p className="text-accent mb-2">
-              Bet: ${findBetBySocketId(gameState.bets, player.socketId)}
+            <p className="text-accent mb-2 font-semibold">
+              ${findBetBySocketId(gameState.bets, player.socketId)}
             </p>
             {renderStackedCards(cards, player.socketId)}
-            <p className="text-accent">
-              Hand Value: {calculateHandValue(cards)}
-            </p>
+            <div className="flex">
+              <div className="flex justify-center items-center w-12 h-6 rounded-full bg-primary text-white text-lg font-bold shadow-lg">
+                {calculateHandValue(cards)}
+              </div>
+            </div>
           </div>
         ))}
       </div>
