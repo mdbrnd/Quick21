@@ -22,7 +22,6 @@ const DealerHand: React.FC<{
   useEffect(() => {
     if (fullHand && fullHand.length > 1 && !isRevealing) {
       setIsRevealing(true);
-      setTimeout(() => {
         setRevealedCards([fullHand[0], fullHand[1]]);
         setTimeout(() => {
           setRevealedCards(fullHand);
@@ -30,7 +29,6 @@ const DealerHand: React.FC<{
             onRevealComplete();
           }, 1000);
         }, 500);
-      }, 1000);
     }
   }, [fullHand, isRevealing, onRevealComplete]);
 
