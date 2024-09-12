@@ -98,9 +98,12 @@ const LandingPage: React.FC = () => {
     if (!isOpen) return null;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-        <div className="bg-accent rounded-xl p-6 w-full max-w-md">
-          <button onClick={onClose} className="float-right text-primary">
+      <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-lg flex items-center justify-center p-4 z-50">
+        <div className="bg-accent rounded-xl p-6 w-full max-w-md relative">
+          <button
+            onClick={onClose}
+            className="absolute top-2 right-2 text-primary text-2xl hover:text-primary-light"
+          >
             &times;
           </button>
           {children}
@@ -159,11 +162,11 @@ const LandingPage: React.FC = () => {
             <span className="block sm:inline">{success}</span>
           </div>
         )}
-        <p className="text-center text-secondary mt-4">
+        <p className="text-center text-white mt-4">
           {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
           <button
             onClick={() => setIsSignup(!isSignup)}
-            className="text-primary hover:underline focus:outline-none"
+            className="text-primary hover:text-white"
           >
             {isSignup ? "Sign In" : "Sign Up"}
           </button>

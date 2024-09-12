@@ -52,7 +52,7 @@ const BettingControls: React.FC = () => {
   return (
     <div className="bg-secondary-dark border-1 border-primary p-6 rounded-xl shadow-lg max-w-md mx-auto">
       <h2 className="text-2xl font-bold mb-4 text-primary">Place Your Bet</h2>
-      <p className="text-accent mb-4">Your Balance: ${userInfo!.balance}</p>
+      <p className="text-white mb-4">Your Balance: ${userInfo!.balance}</p>
       <div className="flex items-center justify-center space-x-4 mb-6">
         <button
           onClick={handleSubtractBet}
