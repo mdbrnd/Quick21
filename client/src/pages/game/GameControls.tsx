@@ -10,6 +10,7 @@ import {
 } from "../../models/utils";
 import { useSocket } from "../../SocketContext";
 import { useNavigate } from "react-router-dom";
+import RoundOverModal from "./RoundOverModal";
 
 const DealerHand: React.FC<{
   visibleCard: Card | null;
@@ -101,6 +102,7 @@ const GameControls: React.FC<GameControlsProps> = ({
   );
   const [dealerRevealComplete, setDealerRevealComplete] = useState(false);
   const { socket, userInfo } = useSocket();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -114,6 +116,12 @@ const GameControls: React.FC<GameControlsProps> = ({
       }
     });
   }, [playersHandsArray, animatedCards, roundOverInfo]);
+
+  useEffect(() => {
+    if (roundOverInfo && !isModalOpen && dealerRevealComplete) {
+      setIsModalOpen(true);
+    }
+  }, [roundOverInfo, isModalOpen, dealerRevealComplete]);
 
   if (!socket) {
     navigate("/");
@@ -187,22 +195,12 @@ const GameControls: React.FC<GameControlsProps> = ({
   return (
     <div className="w-full mx-auto">
       {roundOverInfo !== undefined && dealerRevealComplete && (
-        <div className="bg-secondary-light text-primary p-4 rounded-lg shadow-lg mb-6">
-          <h2 className="text-2xl font-bold mb-2">Round Over</h2>
-          {Array.from(roundOverInfo.results.entries()).map(
-            ([player, result]) => (
-              <div key={player.socketId} className="mb-1">
-                <span className="font-semibold">{player.name}:</span> {result}
-              </div>
-            )
-          )}
-          <button
-            onClick={onStartNewRound}
-            className="mt-4 bg-primary text-secondary font-bold py-2 px-4 rounded hover:bg-primary-light transition-colors duration-300"
-          >
-            New Round
-          </button>
-        </div>
+        <RoundOverModal
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}
+          roundOverInfo={roundOverInfo}
+          onStartNewRound={onStartNewRound}
+        />
       )}
 
       {gameState.currentTurn?.socketId === socket.id &&
@@ -243,7 +241,7 @@ const GameControls: React.FC<GameControlsProps> = ({
       )}*/}
 
       {(gameState.dealersVisibleCard || roundOverInfo) && (
-        <div className="mb-8">
+        <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-md p-4 mb-8">
           <h2 className="text-2xl font-bold text-primary mb-2">Dealer</h2>
           <div className="flex justify-center">
             <DealerHand
@@ -251,7 +249,6 @@ const GameControls: React.FC<GameControlsProps> = ({
               fullHand={roundOverInfo?.dealersHand ?? null}
               onRevealComplete={() => {
                 setDealerRevealComplete(true);
-                console.log("Dealer reveal complete"); // Add this line for debugging
               }}
             />
           </div>
@@ -277,10 +274,12 @@ const GameControls: React.FC<GameControlsProps> = ({
             <p className="text-accent mb-2 font-semibold">
               ${findBetBySocketId(gameState.bets, player.socketId)}
             </p>
-            {renderStackedCards(cards, player.socketId)}
-            <div className="flex">
-              <div className="flex justify-center items-center w-12 h-6 rounded-full bg-primary text-white text-lg font-bold shadow-lg">
-                {calculateHandValue(cards)}
+            <div className="bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg rounded-xl shadow-md p-4">
+              {renderStackedCards(cards, player.socketId)}
+              <div className="flex justify-center mt-2">
+                <div className="flex justify-center items-center w-12 h-6 rounded-full bg-primary text-white text-lg font-bold shadow-lg">
+                  {calculateHandValue(cards)}
+                </div>
               </div>
             </div>
           </div>

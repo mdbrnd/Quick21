@@ -1,93 +1,84 @@
 import React, { useState } from "react";
-import { Location, useLocation, useNavigate } from "react-router-dom";
-import "../../index.css";
-import { Minus, CoinsIcon, Plus } from "lucide-react";
-import LocationState from "../../models/location_state";
+import Slider from "rc-slider";
+import "rc-slider/assets/index.css";
 import { useSocket } from "../../SocketContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const BettingControls: React.FC = () => {
-  const location: Location<LocationState> = useLocation();
   const { socket, userInfo } = useSocket();
-  const [betAmount, setBetAmount] = useState(0);
+  const [bet, setBet] = useState<number>(0);
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const handleSubtractBet = () => {
-    setBetAmount(Math.max(betAmount - 100, 0));
-  };
-
-  const handleAddBet = () => {
-    setBetAmount(betAmount + 100);
-  };
-
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value, 10);
-    if (!isNaN(value) && value >= 0) {
-      setBetAmount(Math.min(value, userInfo!.balance));
-    } else {
-      setBetAmount(0);
-    }
-  };
-
-  const handlePlaceBet = async () => {
+  const handleBet = async () => {
     if (!socket) {
       navigate("/");
       return;
     }
-    if (betAmount > userInfo!.balance) {
+
+    if (bet > (userInfo?.balance ?? 0)) {
       alert("Bet amount cannot exceed your balance.");
-    } else if (betAmount > 0) {
+      return;
+    }
+
+    if (bet <= 0) {
+      alert("Please enter a valid bet amount greater than zero.");
+      return;
+    }
+
+    try {
       const response = await socket.emitWithAck(
         "place-bet",
-        location.state.roomCode,
-        betAmount
+        location.state?.roomCode,
+        bet
       );
       if (!response.success) {
         alert("Failed to place bet");
       }
-    } else {
-      alert("Please enter a valid bet amount greater than zero.");
+    } catch (error) {
+      console.error("Error placing bet:", error);
+      alert("An error occurred while placing your bet. Please try again.");
     }
   };
 
+  const chipValues = [5, 10, 25, 50, 100];
+
   return (
-    <div className="bg-secondary-dark border-1 border-primary p-6 rounded-xl shadow-lg max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-primary">Place Your Bet</h2>
-      <p className="text-white mb-4">Your Balance: ${userInfo!.balance}</p>
-      <div className="flex items-center justify-center space-x-4 mb-6">
-        <button
-          onClick={handleSubtractBet}
-          className="bg-primary text-secondary w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-300"
-        >
-          <Minus size={24} color="#282c34" />
-        </button>
-        <input
-          type="number"
-          value={betAmount}
-          onChange={handleInputChange}
-          className="bg-secondary text-primary border-2 border-primary rounded-lg px-4 py-2 w-40 text-center text-xl font-bold focus:outline-none focus:ring-2 focus:ring-primary"
+    <div className="bg-secondary-light p-6 rounded-lg shadow-lg">
+      <h2 className="text-2xl font-bold text-primary mb-4">Place Your Bet</h2>
+      <div className="mb-4">
+        <Slider
+          min={0}
+          max={userInfo ? userInfo.balance : 1000}
+          step={5}
+          value={bet}
+          onChange={(value) => setBet(value as number)}
         />
-        <button
-          onClick={handleAddBet}
-          className="bg-primary text-secondary w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary transition-colors duration-300"
-        >
-          <Plus size={24} color="#282c34" />
-        </button>
+      </div>
+      <div className="flex justify-center mb-4">
+        {chipValues.map((value) => (
+          <button
+            key={value}
+            onClick={() =>
+              setBet(Math.min(bet + value, userInfo?.balance ?? 0))
+            }
+            className="mx-1 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-bold py-2 px-4 rounded-full shadow-md"
+            disabled={bet + value > (userInfo?.balance ?? 0)}
+          >
+            +${value}
+          </button>
+        ))}
+      </div>
+      <div className="text-center mb-4">
+        <span className="text-xl font-semibold">Bet Amount: ${bet}</span>
       </div>
       <button
-        onClick={handlePlaceBet}
-        className="bg-gradient-to-r from-primary to-primary text-secondary font-bold py-3 px-6 rounded-lg text-xl w-full transition-all duration-300 hover:bg-primary transform hover:scale-105"
+        onClick={handleBet}
+        className="bg-primary text-secondary font-bold py-2 px-6 rounded-lg hover:bg-primary-light transition-colors duration-300"
+        disabled={bet === 0}
       >
         Place Bet
       </button>
-      {/*<div className="mt-4 flex justify-center">
-        <button
-          onClick={handleAddBet}
-          className="bg-primary text-secondary p-2 rounded-full hover:bg-primary transition-colors duration-300 flex items-center space-x-2"
-        >
-          <CoinsIcon size={24} />
-          <span className="font-bold">+25k</span>
-        </button>
-      </div>*/}
     </div>
   );
 };

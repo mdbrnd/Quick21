@@ -11,6 +11,7 @@ import LocationState from "../../models/location_state";
 import BettingControls from "./BettingControls";
 import { useSocket } from "../../SocketContext";
 
+
 const GameScreen: React.FC = () => {
   const location: Location<LocationState> = useLocation();
   const navigate = useNavigate();
@@ -24,6 +25,8 @@ const GameScreen: React.FC = () => {
 
   const [roomCode, setRoomCode] = useState<string | null>(null);
   const [isRoomOwner, setIsRoomOwner] = useState<boolean>(false);
+
+  // TODO: socket.on("error") or info to display error messages, use react toastify
 
   useEffect(() => {
     if (location.state?.roomCode && location.state?.isOwner !== undefined) {
