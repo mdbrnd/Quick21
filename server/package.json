@@ -2,9 +2,9 @@
   "name": "blackjack-backend",
   "version": "1.0.0",
   "description": "The backend of the blackjack game",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
-    "start": "nodemon dist/server.js",
+    "start": "nodemon dist/src/server.js",
     "dev": "nodemon",
     "test": "jest"
   },
