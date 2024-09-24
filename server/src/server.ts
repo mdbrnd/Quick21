@@ -8,6 +8,7 @@ import Room from "./room";
 import { DBManager } from "./database/dbmanager";
 import "dotenv/config";
 import cors from "cors";
+import path from "path";
 
 const app = express();
 const server = createServer(app);
@@ -25,9 +26,16 @@ if (!JWT_SECRET) {
 
 app.use(express.json()); // Middleware to parse JSON bodies
 
+// __dirname = server/src/dist/server.js
+app.use(express.static(path.join(__dirname, "../../../client/build")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../../client/build/index.html"));
+});
+
 app.use(
   cors({
-    origin: "http://localhost:3000", // TODO: update in prod, also update nodemon.json in prod
+    origin: "*",
     credentials: true,
   })
 );
@@ -96,7 +104,7 @@ const io = new Server(server, {
   cors: {
     origin:
       process.env.NODE_ENV === "production"
-        ? false
+        ? "*"
         : `http://localhost:${CLIENT_PORT}`,
   },
 });

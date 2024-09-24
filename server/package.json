@@ -5,6 +5,7 @@
   "main": "dist/src/server.js",
   "scripts": {
     "start": "nodemon dist/src/server.js",
+    "build": "tsc",
     "dev": "nodemon",
     "test": "jest"
   },

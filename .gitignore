@@ -12,8 +12,11 @@
 
 # production
 /build
+/client/build
+/server/public
 /server/db
 /server/.env
+.env
 
 # misc
 .DS_Store
