@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node server/dist/src/server.js",
     "dev": "nodemon server/src/server.ts",
+    "prebuild": "cd client && npm install && cd .. && cd server && npm install",
     "build": "cd client && npm run build && cd .. && cd server && npm run build",
     "test": "cd server && jest"
   },
