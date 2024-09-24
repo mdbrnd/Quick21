@@ -12,7 +12,7 @@ import path from "path";
 
 const app = express();
 const server = createServer(app);
-const SERVER_PORT = 4000;
+const SERVER_PORT = process.env.PORT || 4000;
 const CLIENT_PORT = 3000;
 const dbManager = new DBManager();
 const JWT_SECRET = process.env.JWT_SECRET;
