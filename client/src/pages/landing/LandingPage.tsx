@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useSocket } from "../../SocketContext";
 import { useNavigate } from "react-router-dom";
 
@@ -17,7 +17,16 @@ const LandingPage: React.FC = () => {
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  // TODO: figure out a way to store username and pwd without losing focus after each keystroke so it stays when switching for sign up to sign in
+  // useEffect to read stored token and connect to socket
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (token && !socket) {
+      connect(token);
+
+      // Redirect to lobby if already authenticated
+      navigate("/lobby");
+    }
+  }, [socket, connect]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
