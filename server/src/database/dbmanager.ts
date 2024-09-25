@@ -9,7 +9,11 @@ class DBManager {
   private db: sqlite3.Database;
 
   constructor() {
-    const dbPath = path.resolve(__dirname, "../../../db/database.sqlite");
+    var dbPath = path.resolve(__dirname, "../../db/database.sqlite");
+    // when using npm start, which is whats used in production, the db path is different since its running in dist folder
+    if (process.env.NODE_ENV === "production") {
+      dbPath = path.resolve(__dirname, "../../../db/database.sqlite");
+    }
     const dbDir = path.dirname(dbPath);
 
     // if path doesn't exist, create it

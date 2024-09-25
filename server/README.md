@@ -2,45 +2,7 @@
 
 ## Overview
 
-This is the backend for the Quick21 Blackjack game, built with Node.js (Express) and mainly socket.io. It handles user authentication, game logic, storage, and real-time communication.
-
-## Getting Started
-
-### Prerequisites
-
-- Git
-- Node.js (v14 or higher)
-
-### Installation
-
-1. Clone the repository (if not already done):
-   ```sh
-   git clone https://github.com/mdbrnd/quick21.git
-   cd quick21/server
-   ```
-
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-
-3. Create a `.env` file in the `server` directory and add the following:
-   ```env
-   JWT_SECRET=your_jwt_secret
-   ```
-   The JWT_SECRET is used to sign and verify JWT tokens for authentication and is recommended to be a long, random string. For example: a74a38b67019bda7033e03e528f0f65b130a83a77aa92108d97b50896eb93c5c871051661b985ed313c42753a22b1dec3364a66e1da6d845d86610a5d6ac712a (usually even longer)
-
-4. Set up the SQLite database:
-   - Create a db folder in the root of the project. (server/db)
-   ```sh
-   mkdir db
-   ```
-   - Create a new empty SQLite database file named `database.sqlite`. (server/db/database.sqlite)
-
-5. Return to the root directory of the server and start the server:
-   ```sh
-   npm start
-   ```
+This is the backend for the Quick21 Blackjack game, built with Node.js (Express) and mainly socket.io. It handles user authentication, game logic, storage, and real-time communication. The server serves the build from the client using Node.
 
 ### Available Scripts
 
@@ -48,7 +10,11 @@ In the project directory, you can run:
 
 #### `npm start`
 
-Starts the server in development mode using `nodemon`.
+Starts the server using `node`.
+
+### `npm run dev`
+
+Starts the server in development mode using `nodemon`, allowing for hot-reload.
 
 #### `npm run build`
 
@@ -60,7 +26,11 @@ Builds the TypeScript files into JavaScript.
 - `POST /login`: Login an existing user.
 
 ### WebSocket Events
+The server listens for WebSocket events from the client and sends back updated information through callback, a response (that the client listen for) or a general `game-state-update` event which is emitted. Here is a list of all events that the client can call:
 
+- `connect`: Connect to the WebSocket
+- `disconnect`: Disconnect from the WebSocket
+- `get-user-info`: Get the info of a given user (id, username, balance).
 - `create-room`: Create a new game room.
 - `join-room`: Join an existing game room.
 - `leave-room`: Leave a room.
@@ -73,7 +43,3 @@ Builds the TypeScript files into JavaScript.
 
 - `src/`: Contains the source code for the backend.
 - `db/`: Contains the SQLite database file.
-
-## License
-
-This project is licensed under the MIT License.

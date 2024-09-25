@@ -3,6 +3,7 @@
 # dependencies
 /client/node_modules
 /server/node_modules
+/node_modules
 /server/dist
 /.pnp
 .pnp.js
@@ -12,6 +13,7 @@
 
 # production
 /build
+/db
 /client/build
 /server/public
 /server/db
