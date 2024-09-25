@@ -1,48 +1,10 @@
 # Frontend - Quick21 - Blackjack Game
-This is the frontend for the Quick21 Blackjack game. It is built with React and uses plain CSS for styling. No important logic is computed here to make it secure, as the logic is handled on the server.
 
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v14 or higher)
-- npm (v6 or higher)
-
-### Installation
-
-1. Clone the repository (if not already done):
-   ```sh
-   git clone https://github.com/mdbrnd/quick21.git
-   cd quick21/client
-   ```
-
-2. Install dependencies:
-   ```sh
-   npm install
-   ```
-
-3. Start the server (see [Backend - Quick21 - Blackjack Game](https://github.com/mdbrnd/quick21/tree/main/server/README.md))
-
-4. Start the client:
-   ```sh
-   npm start
-   ```
+## Overview
+This is the frontend for the Quick21 Blackjack game. It is built with React + TS + socket.io (client) and uses Tailwind CSS for styling. No important logic is computed here to make it secure.
 
 ### Available Scripts
-
-In the project directory, you can run:
-
-#### `npm start`
-
-Runs the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-#### `npm run build`
-
-Builds the app for production to the `build` folder.
-
-## Learn More
-
-To learn more about React, check out the [React documentation](https://reactjs.org/).
+Since the server serves the build instead of connecting to a separate client instance, running this by itself would not be of much use.
 
 ## Project Structure
 
