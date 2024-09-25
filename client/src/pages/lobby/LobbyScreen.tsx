@@ -8,7 +8,14 @@ const LobbyScreen = () => {
   const navigate = useNavigate();
   const [showRules, setShowRules] = useState(false);
   const [roomCode, setRoomCode] = useState("");
-  const { socket, userInfo, isAuthenticated } = useSocket();
+  const { socket, userInfo } = useSocket();
+
+  useEffect(() => {
+    if (!socket) {
+      navigate("/");
+      return;
+    }
+  }, [socket, navigate]);
 
   const logOut = () => {
     if (socket) {

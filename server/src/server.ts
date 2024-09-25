@@ -13,7 +13,7 @@ import path from "path";
 const app = express();
 const server = createServer(app);
 const SERVER_PORT = process.env.PORT || 4000;
-const CLIENT_PORT = 3000;
+const DEV_CLIENT_PORT = 3000;
 const dbManager = new DBManager();
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -26,9 +26,10 @@ if (!JWT_SECRET) {
 
 app.use(express.json()); // Middleware to parse JSON bodies
 
-// __dirname = server/src/dist/server.js
+// __dirname = server/src/server.ts for development since its using nodemon (npm run dev)
 var distDir = path.join(__dirname, "../../client/build");
 if (process.env.NODE_ENV === "production") {
+  // __dirname = server/src/dist/server.js
   distDir = path.join(__dirname, "../../../client/build");
 }
 app.use(express.static(distDir));
@@ -109,7 +110,7 @@ const io = new Server(server, {
     origin:
       process.env.NODE_ENV === "production"
         ? "*"
-        : `http://localhost:${CLIENT_PORT}`,
+        : `http://localhost:${DEV_CLIENT_PORT}`,
   },
 });
 

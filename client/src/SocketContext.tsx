@@ -3,7 +3,10 @@ import { io, Socket } from "socket.io-client";
 import { UserDTO } from "./models/userDTO";
 
 const URL: string =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:4000";
+  process.env.REACT_APP_ENV === "production" ||
+  process.env.REACT_APP_ENV === undefined
+    ? "https://quick21.onrender.com"
+    : "http://localhost:4000";
 
 interface SocketContextType {
   socket: Socket | null;
@@ -94,7 +97,14 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <SocketContext.Provider
-      value={{ socket, connect, disconnect, userInfo, isAuthenticated, refreshUserInfo }}
+      value={{
+        socket,
+        connect,
+        disconnect,
+        userInfo,
+        isAuthenticated,
+        refreshUserInfo,
+      }}
     >
       {children}
     </SocketContext.Provider>
