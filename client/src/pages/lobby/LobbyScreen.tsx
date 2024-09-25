@@ -95,7 +95,10 @@ const LobbyScreen = () => {
             <div className="flex items-center space-x-1 text-primary">
               <span className="font-bold">${userInfo?.balance}</span>
             </div>
-            <button onClick={() => logOut()} className="hover:bg-primary-light">
+            <button
+              onClick={() => logOut()}
+              className="hover:bg-primary-light rounded-md"
+            >
               <LogOut size={24} className="text-white" />
             </button>
           </div>
