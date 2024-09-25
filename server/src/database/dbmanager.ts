@@ -9,7 +9,7 @@ class DBManager {
   private db: sqlite3.Database;
 
   constructor() {
-    const dbPath = path.resolve(__dirname, "../../../db/database.sqlite");
+    const dbPath = path.resolve(__dirname, "../../db/database.sqlite");
     const dbDir = path.dirname(dbPath);
 
     // if path doesn't exist, create it

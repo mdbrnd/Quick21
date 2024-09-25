@@ -12,6 +12,7 @@
 
 # production
 /build
+/db
 /client/build
 /server/public
 /server/db

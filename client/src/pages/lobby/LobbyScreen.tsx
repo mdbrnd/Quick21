@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, AlertCircle, Diamond, Spade } from "lucide-react";
+import { User, AlertCircle, Diamond, Spade, LogOut } from "lucide-react";
 import RulesModal from "../../components/Rules";
 import { useSocket } from "../../SocketContext";
 
@@ -9,6 +9,14 @@ const LobbyScreen = () => {
   const [showRules, setShowRules] = useState(false);
   const [roomCode, setRoomCode] = useState("");
   const { socket, userInfo, isAuthenticated } = useSocket();
+
+  const logOut = () => {
+    if (socket) {
+      socket.disconnect();
+      localStorage.removeItem("authToken");
+    }
+    navigate("/");
+  };
 
   const newGame = async () => {
     if (!socket) {
@@ -80,6 +88,9 @@ const LobbyScreen = () => {
             <div className="flex items-center space-x-1 text-primary">
               <span className="font-bold">${userInfo?.balance}</span>
             </div>
+            <button onClick={() => logOut()} className="hover:bg-primary-light">
+              <LogOut size={24} className="text-white" />
+            </button>
           </div>
         </header>
 

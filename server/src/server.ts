@@ -27,10 +27,14 @@ if (!JWT_SECRET) {
 app.use(express.json()); // Middleware to parse JSON bodies
 
 // __dirname = server/src/dist/server.js
-app.use(express.static(path.join(__dirname, "../../../client/build")));
+var distDir = path.join(__dirname, "../../client/build");
+if (process.env.NODE_ENV === "production") {
+  distDir = path.join(__dirname, "../../../client/build");
+}
+app.use(express.static(distDir));
 
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../../client/build/index.html"));
+  res.sendFile(path.join(distDir, "index.html"));
 });
 
 app.use(
