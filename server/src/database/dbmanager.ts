@@ -10,6 +10,7 @@ class DBManager {
 
   constructor() {
     var dbPath = path.resolve(__dirname, "../../db/database.sqlite");
+    console.log(`DB Path: ${dbPath}`);
     // when using npm start, which is whats used in production, the db path is different since its running in dist folder
     if (process.env.NODE_ENV === "production") {
       dbPath = path.resolve(__dirname, "../../../db/database.sqlite");
@@ -103,6 +104,14 @@ class DBManager {
         console.error(err.message);
       } else {
         console.log("User balance updated.");
+      }
+    });
+  }
+
+  addUserBalance(id: number, amount: number): void {
+    this.getUser(id).then((user) => {
+      if (user) {
+        this.updateUserBalance(id, user.balance + amount);
       }
     });
   }
