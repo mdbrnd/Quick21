@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { UserDTO } from "./models/userDTO";
 
-const URL: string =
+const API_BASE_URL: string =
   process.env.REACT_APP_ENV === "production" ||
   process.env.REACT_APP_ENV === undefined
     ? "https://quick21.onrender.com"
@@ -40,7 +40,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       socket.close();
     }
 
-    const newSocket = io(URL, {
+    const newSocket = io(API_BASE_URL, {
       auth: { token },
     });
 

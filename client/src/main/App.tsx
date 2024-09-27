@@ -4,6 +4,7 @@ import LobbyScreen from "../pages/lobby/LobbyScreen";
 import GameScreen from "../pages/game/GameScreen";
 import LandingPage from "../pages/landing/LandingPage";
 import { SocketProvider, useSocket } from "../SocketContext";
+import AdminPage from "../pages/admin/AdminPage";
 
 const App: React.FC = () => {
   const socket = useSocket();
@@ -15,6 +16,7 @@ const App: React.FC = () => {
           <Route path="/" element={<LandingPage />} />
           <Route path="/lobby" element={<LobbyScreen />} />
           <Route path="/game" element={<GameScreen />} />
+          <Route path="/admin" element={<AdminPage />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>

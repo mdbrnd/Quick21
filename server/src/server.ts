@@ -105,6 +105,44 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.post("/admin/add-money", async (req, res) => {
+  const { token, name, amount } = req.body;
+
+  if (!token || !name || !amount) {
+    return res
+      .status(400)
+      .send({ message: "Token, name, and amount are required." });
+  }
+
+  // check if types are correct
+  if (typeof name !== "string" || typeof amount !== "number") {
+    return res.status(400).send({ message: "Invalid types." });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+
+    if (decoded.name !== "admin") {
+      return res
+        .status(403)
+        .send({ message: "Forbidden: Insufficient permissions." });
+    }
+
+    // check if user exists
+    const user = await dbManager.getUserByName(name);
+    if (!user) {
+      return res.status(404).send({ message: "User not found." });
+    }
+
+    await dbManager.updateUserBalance(user.id, amount);
+    
+    res.status(200).send({ message: "Money added to user successfully." });
+  } catch (error) {
+    console.error("Failed to add money to user:", error);
+    res.status(500).send({ message: "Failed to add money to user." });
+  }
+});
+
 const io = new Server(server, {
   cors: {
     origin:
