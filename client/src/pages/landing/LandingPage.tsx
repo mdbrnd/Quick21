@@ -25,7 +25,7 @@ const LandingPage: React.FC = () => {
       connect(token);
 
       // Redirect to lobby if already authenticated
-      navigate("/lobby");
+      //navigate("/lobby");
     }
   }, [socket, connect]);
 
