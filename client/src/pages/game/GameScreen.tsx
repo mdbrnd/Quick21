@@ -26,18 +26,16 @@ const GameScreen: React.FC = () => {
   const [isRoomOwner, setIsRoomOwner] = useState<boolean>(false);
 
   useEffect(() => {
+    if (!socket) {
+      navigate("/");
+      return;
+    }
+
     if (location.state?.roomCode && location.state?.isOwner !== undefined) {
       setRoomCode(location.state.roomCode);
       setIsRoomOwner(location.state.isOwner);
     } else {
       navigate("/");
-    }
-  }, [location, navigate]);
-
-  useEffect(() => {
-    if (!socket) {
-      navigate("/");
-      return;
     }
 
     socket.on("game-state-update", (newGameState: any) => {
