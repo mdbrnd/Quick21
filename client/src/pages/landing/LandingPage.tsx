@@ -13,13 +13,13 @@ const LandingPage: React.FC = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const { socket, connect } = useSocket();
+  const { socket, connect, isAuthenticated } = useSocket();
   const navigate = useNavigate();
 
   const formRef = useRef<HTMLFormElement>(null);
 
   // useEffect to read stored token and connect to socket
-  useEffect(() => {
+  /*useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (token && !socket) {
       connect(token);
@@ -27,7 +27,13 @@ const LandingPage: React.FC = () => {
       // Redirect to lobby if already authenticated
       //navigate("/lobby");
     }
-  }, [socket, connect]);
+  }, [socket, connect]);*/
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/lobby");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
