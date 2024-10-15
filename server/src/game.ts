@@ -71,13 +71,13 @@ class Game {
   }
 
   public hit(playerSocketId: string) {
-    const player = this.getPlayerHandBySocketId(playerSocketId);
-    if (player) {
+    const playerHand = this.getPlayerHandBySocketId(playerSocketId);
+    if (playerHand) {
       // if deck is empty, create a new deck
       if (this.state.deck.length === 0) {
         this.initializeDeck();
       }
-      player.push(this.state.deck.pop()!);
+      playerHand.push(this.state.deck.pop()!);
     }
   }
 
