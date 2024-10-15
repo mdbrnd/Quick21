@@ -1,6 +1,6 @@
 {
-  "short_name": "Quick21",
-  "name": "Quick21 - Blackjack",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "favicon.ico",
