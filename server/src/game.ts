@@ -169,7 +169,7 @@ class Game {
       }
     }
 
-    //TODO: If all players have blackjack, end the round
+    // If all players have blackjack, the round should end, however for complexity reasons, the round won't end but the player on the client side will only have the option to stand
   }
 
   public addPlayer(player: Player) {
