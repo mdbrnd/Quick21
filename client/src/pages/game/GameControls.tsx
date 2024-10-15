@@ -276,8 +276,7 @@ const GameControls: React.FC<GameControlsProps> = ({
               >
                 {player.name}
               </span>
-              {roundOverInfo !== undefined &&
-                calculateHandValue(cards) > 21 && (
+              {calculateHandValue(cards) > 21 && (
                   <span className="ml-2 px-2 py-1 text-sm font-semibold rounded bg-red-600 text-white">
                     Bust
                   </span>

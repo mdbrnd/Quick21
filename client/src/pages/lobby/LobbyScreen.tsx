@@ -113,7 +113,7 @@ const LobbyScreen = () => {
             <input
               value={roomCode}
               onChange={sanitizeRoomCode}
-              placeholder="Enter game code"
+              placeholder="Enter room code"
               maxLength={6}
               className="w-full px-6 py-4 rounded-xl text-secondary text-center text-2xl border-2 border-primary bg-accent bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-light transition-all duration-300 placeholder-gray-500"
             />
