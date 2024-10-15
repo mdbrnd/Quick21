@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, AlertCircle, Diamond, Spade, LogOut } from "lucide-react";
+import { User, AlertCircle, Diamond, Spade, LogOut, ScrollText } from "lucide-react";
 import RulesModal from "../../components/Rules";
 import { useSocket } from "../../SocketContext";
 
@@ -78,7 +78,7 @@ const LobbyScreen = () => {
             onClick={() => setShowRules(true)}
             className="bg-primary text-secondary hover:bg-primary-light transition-all duration-300 py-2 px-4 rounded-lg font-semibold flex items-center space-x-2 shadow-md"
           >
-            <AlertCircle size={20} />
+            <ScrollText size={20} />
             <span>Rules</span>
           </button>
           <h1 className="text-5xl font-bold text-primary pb-2 flex items-center absolute left-1/2 transform -translate-x-1/2">
