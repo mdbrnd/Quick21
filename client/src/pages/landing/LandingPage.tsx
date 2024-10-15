@@ -99,7 +99,7 @@ const LandingPage: React.FC = () => {
         type="submit"
         className="w-full bg-primary text-secondary hover:bg-primary-light font-bold py-3 px-4 rounded-xl text-xl transition-all duration-300 shadow-lg hover:shadow-primary"
       >
-        {isSignup ? "Sign Up" : "Sign In"}
+        {isSignup ? "Register" : "Log in"}
       </button>
     </form>
   );
@@ -145,19 +145,19 @@ const LandingPage: React.FC = () => {
           onClick={() => openModal(true)}
           className="bg-primary text-secondary hover:bg-primary-light font-bold py-3 px-6 rounded-xl text-xl transition-all duration-300 shadow-lg hover:shadow-primary"
         >
-          Sign Up
+          Register
         </button>
         <button
           onClick={() => openModal(false)}
           className="bg-secondary text-primary hover:bg-secondary-light font-bold py-3 px-6 rounded-xl text-xl transition-all duration-300 shadow-lg hover:shadow-secondary border-2 border-primary"
         >
-          Sign In
+          Log in
         </button>
       </div>
 
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <h2 className="text-2xl font-bold text-primary mb-4">
-          {isSignup ? "Sign Up" : "Sign In"}
+          {isSignup ? "Register" : "Log in"}
         </h2>
         <AuthForm />
         {error && (
@@ -182,7 +182,7 @@ const LandingPage: React.FC = () => {
             onClick={() => setIsSignup(!isSignup)}
             className="text-primary hover:text-white"
           >
-            {isSignup ? "Sign In" : "Sign Up"}
+            {isSignup ? "Register" : "Log in"}
           </button>
         </p>
       </Modal>
