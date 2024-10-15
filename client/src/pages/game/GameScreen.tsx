@@ -169,15 +169,9 @@ const GameScreen: React.FC = () => {
         </main>
       </div>
 
-      <div className="absolute left-5 bottom-2.5">
-        <span className="text-sm text-accent opacity-70 font-semibold">
-          v1.0
-        </span>
-      </div>
-
       <button
         onClick={handleLeaveGameButton}
-        className="absolute right-5 bottom-2.5 bg-primary hover:bg-red-600 text-secondary font-bold py-2 px-4 rounded-lg transition-colors duration-300 flex items-center space-x-2"
+        className="absolute right-5 bottom-2.5 bg-primary hover:bg-red-600 text-secondary font-bold py-2 px-2 rounded-lg transition-colors duration-300 flex items-center space-x-2"
       >
         <LogOut size={20} />
         <span>Leave</span>
