@@ -10,7 +10,6 @@ interface PlayerListProps {
 
 const PlayerList: React.FC<PlayerListProps> = ({ gameState }) => {
   const playersHandsArray = Array.from(gameState.playersHands.entries());
-  console.log("gameState pahe", gameState.currentPhase);
   const showCurrentTurn =
     gameState.currentPhase !== "Betting" &&
     gameState.currentPhase !== "RoundOver";
