@@ -41,8 +41,13 @@ class Room {
     this.game.removePlayer(playerSocketId);
   }
 
+  // could unify the two hasPlayer functions into one, but this is more readable
   hasPlayer(playerSocketId: string): boolean {
     return this.players.some((player) => player.socketId === playerSocketId);
+  }
+
+  hasPlayerUserId(userId: number): boolean {
+    return this.players.some((player) => player.userId === userId);
   }
 
   async performAction(
