@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36" version="24.7.17">
   <diagram name="Page-1" id="Dar2J2NtlHs_w-eXua3K">
-    <mxGraphModel dx="3857" dy="1830" grid="0" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2474" dy="1098" grid="0" gridSize="10" guides="0" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -71,7 +71,7 @@
         <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-41" value="Once the last player played their turn, the results are now evaluated" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
           <mxGeometry x="30" y="530" width="250" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-42" value="&amp;nbsp; The server updates the balance and emits a round over event which contains the results and updated balances as well as the updated game state. A new round is started once a player presses the new round button." style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;recursiveResize=1;labelPadding=7;spacing=6;" parent="1" vertex="1">
+        <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-42" value="&amp;nbsp; The server updates the balance and emits a round over event which contains the results and updated balances as well as the updated game state." style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;recursiveResize=1;labelPadding=7;spacing=6;" parent="1" vertex="1">
           <mxGeometry x="350" y="520" width="670" height="80" as="geometry" />
         </mxCell>
         <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-48" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="9ZdMkcM3FZ5pH_9xBx0A-46" target="9ZdMkcM3FZ5pH_9xBx0A-47" edge="1">
@@ -105,22 +105,19 @@
         <mxCell id="9ZdMkcM3FZ5pH_9xBx0A-54" value="&lt;div style=&quot;color: rgb(220, 215, 186); background-color: rgb(31, 31, 40); font-family: &amp;quot;CaskaydiaCove Nerd Font&amp;quot;, Consolas, &amp;quot;Courier New&amp;quot;, monospace; font-size: 16px; line-height: 22px; white-space-collapse: preserve;&quot;&gt;&lt;div&gt;&lt;span style=&quot;color: #957fb8;&quot;&gt;enum&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;RoundResult&lt;/span&gt; &lt;span style=&quot;color: #9cabca;&quot;&gt;{&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; Win &lt;span style=&quot;color: #c0a36e;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Win&quot;&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; Lose &lt;span style=&quot;color: #c0a36e;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Lose&quot;&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; Tie &lt;span style=&quot;color: #c0a36e;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Tie&quot;&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; Blackjack &lt;span style=&quot;color: #c0a36e;&quot;&gt;=&lt;/span&gt; &lt;span style=&quot;color: #98bb6c;&quot;&gt;&quot;Blackjack&quot;&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #727169;&quot;&gt;// player won with blackjack&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;}&lt;/span&gt;&lt;/div&gt;&lt;br&gt;&lt;div&gt;&lt;span style=&quot;color: #957fb8;&quot;&gt;interface&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;RoundOverInfo&lt;/span&gt; &lt;span style=&quot;color: #9cabca;&quot;&gt;{&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;results&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Map&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;color: #7aa89f;&quot;&gt;string&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;RoundResult&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;dealerHand&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Card&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;[];&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&amp;nbsp; &lt;span style=&quot;color: #e6c384;&quot;&gt;updatedBalances&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;:&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;Map&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span style=&quot;color: #7aa89f;&quot;&gt;string&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;,&lt;/span&gt; &lt;span style=&quot;color: #7aa89f;&quot;&gt;number&lt;/span&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;&amp;gt;;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: #9cabca;&quot;&gt;}&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="-10" y="1270" width="540" height="280" as="geometry" />
         </mxCell>
-        <mxCell id="X3_lPeT_8_L5V0b1No0M-2" value="Server sends event" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+        <mxCell id="X3_lPeT_8_L5V0b1No0M-2" value="Server sends event" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
           <mxGeometry x="335" y="630" width="130" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="X3_lPeT_8_L5V0b1No0M-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="X3_lPeT_8_L5V0b1No0M-3">
+        <mxCell id="X3_lPeT_8_L5V0b1No0M-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="X3_lPeT_8_L5V0b1No0M-3" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="590" y="745" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="X3_lPeT_8_L5V0b1No0M-3" value="Server listening for new round event from client" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+        <mxCell id="X3_lPeT_8_L5V0b1No0M-3" value="Server listening for new round event from client" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
           <mxGeometry y="710" width="320" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="X3_lPeT_8_L5V0b1No0M-5" value="New round is started" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+        <mxCell id="X3_lPeT_8_L5V0b1No0M-5" value="New round is started" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
           <mxGeometry x="580" y="710" width="320" height="70" as="geometry" />
-        </mxCell>
-        <mxCell id="X3_lPeT_8_L5V0b1No0M-6" value="Player presses new round button" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
-          <mxGeometry x="335" y="720" width="200" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
