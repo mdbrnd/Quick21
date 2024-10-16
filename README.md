@@ -13,7 +13,7 @@ Quick21 is a multiplayer web implementation of the classic Blackjack game, built
 
 ### Installation
 
-This project was tested using Windows 11 and macOS Sonoma. In order not to go beyond the scope of the project, not all packages were tested for vulnerabilities.
+This project was tested using Windows 11 and macOS Sonoma. In order not to go beyond the scope of the project, not all packages were tested for vulnerabilities. The game is designed for larger, horizontal screens, though it can still function on smaller devices like phones with the drawback of some UI overlap.
 
 1. Clone the repository:
    ```sh
