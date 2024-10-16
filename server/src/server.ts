@@ -114,7 +114,7 @@ app.post("/admin/add-money", async (req, res) => {
       .send({ message: "Token, name, and amount are required." });
   }
 
-  // check if types are correct
+  // Check if types are correct
   if (typeof name !== "string" || typeof amount !== "number") {
     return res.status(400).send({ message: "Invalid types." });
   }
@@ -128,14 +128,14 @@ app.post("/admin/add-money", async (req, res) => {
         .send({ message: "Forbidden: Insufficient permissions." });
     }
 
-    // check if user exists
+    // Check if user exists
     const user = await dbManager.getUserByName(name);
     if (!user) {
       return res.status(404).send({ message: "User not found." });
     }
 
     await dbManager.updateUserBalance(user.id, amount);
-    
+
     res.status(200).send({ message: "Money added to user successfully." });
   } catch (error) {
     console.error("Failed to add money to user:", error);
@@ -183,7 +183,7 @@ async function joinRoom(socket: AuthenticatedSocket, roomCode: string) {
   }
 }
 
-// TODO: if players leaves mid game, put next turn and transfer ownership and return bet
+// TODO: If players leaves mid game, put next turn and transfer ownership and return bet
 function leaveRoom(socket: any, roomCode: string) {
   let room = roomManager.getRoom(roomCode);
 
@@ -221,7 +221,7 @@ function startGame(socket: any, roomCode: string) {
     }
 
     let initialGameState = room.game.start().toDTO();
-    io.to(roomCode).emit("game-state-update", initialGameState); // send to all players in room. socket.to would exclude the sender
+    io.to(roomCode).emit("game-state-update", initialGameState); // Send to all players in room. socket.to would exclude the sender
   }
 }
 

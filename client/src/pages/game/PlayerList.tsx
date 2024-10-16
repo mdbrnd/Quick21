@@ -62,21 +62,11 @@ const PlayerItem: React.FC<PlayerItemProps> = ({
   const { userInfo } = useSocket();
 
   const isStillBetting = (name: string) => {
-    console.log(name);
-    console.log(gameState.bets);
-
     if (gameState.currentPhase !== "Betting" || !gameState.gameStarted)
       return false;
 
     if (gameState.bets === undefined || gameState.bets.size <= 0) return true;
 
-    const isStillBetting = Array.from(gameState.bets.entries()).some(
-      ([player, bet]) =>
-        player.name === name
-    );
-    console.log("isStillBetting", isStillBetting);
-
-    // check if the username exists in gameState and the bet is undefined or 0
     return Array.from(gameState.bets.entries()).some(
       ([player, bet]) =>
         player.name === name

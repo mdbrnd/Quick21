@@ -33,7 +33,7 @@ const rules: Rule[] = [
 ];
 
 interface RulesModalProps {
-  onClose: () => void; // Specifies that onClose is a function that returns void
+  onClose: () => void;
 }
 
 const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
