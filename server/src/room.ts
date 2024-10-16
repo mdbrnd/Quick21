@@ -126,7 +126,12 @@ class Room {
     for (const [player, balanceChange] of roundOverInfo.updatedBalances) {
       const user = await dbManager.getUser(player.userId);
       if (user) {
-        const newBalance = user.balance + balanceChange;
+        let newBalance = user.balance + balanceChange;
+        if (newBalance <= 0) {
+          // If the player has no money left, reset their balance to 500
+          newBalance = 500;
+        }
+        
         await dbManager.updateUserBalance(user.id, newBalance);
 
         // Update the player's balance in the game state
