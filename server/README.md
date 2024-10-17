@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is the backend for the Quick21 Blackjack game, built with Node.js (Express) and mainly socket.io. It handles user authentication, game logic, storage, and real-time communication. The server serves the build from the client using Node.
+This is the backend for the Quick21 Blackjack game, built with Node.js using Express.js and mainly Socket.IO. It handles user authentication, game logic, storage, and real-time communication. The server serves the build from the client using Node.
 
 ### Available Scripts
 
@@ -24,6 +24,7 @@ Builds the TypeScript files into JavaScript.
 
 - `POST /register`: Register a new user.
 - `POST /login`: Login an existing user.
+- `POST /admin/add-money`: Add money to any given user, as long as you are an admin.
 
 ### WebSocket Events
 The server listens for WebSocket events from the client and sends back updated information through callback, a response (that the client listen for) or a general `game-state-update` event which is emitted. Here is a list of all events that the client can call:
@@ -41,5 +42,11 @@ The server listens for WebSocket events from the client and sends back updated i
 
 ## Project Structure
 
-- `src/`: Contains the source code for the backend.
 - `db/`: Contains the SQLite database file.
+- `src/`: Contains the source code for the backend application.
+  - `database/`: Database management and operations.
+  - `models/`: TypeScript interfaces and classes for game logic.
+  - `game.ts`: Core game logic implementation.
+  - `room.ts` & `room_manager.ts`: Manage game rooms and players.
+  - `server.ts`: Main server file where are requests are handled.
+- `tests/`: Contains tests for the application.
