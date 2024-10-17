@@ -69,7 +69,6 @@ app.post("/register", async (req, res) => {
 interface JwtPayload {
   id: number;
   name: string;
-  balance: number;
 }
 
 app.post("/login", async (req, res) => {
@@ -256,12 +255,19 @@ io.on("connection", (socket) => {
   console.log("Authenticated user connected with socket id: ", authSocket.id);
   console.log("User details:", authSocket.user);
 
-  authSocket.on("create-room", (callback) => {
+  authSocket.on("create-room", async (callback) => {
     console.log("creating room");
+    let user = await dbManager.getUser(authSocket.user.id);
+
+    if (!user) {
+      console.log("user not found");
+      return;
+    }
+
     let createdRoom: Room = roomManager.createRoom({
       socketId: authSocket.id,
       name: authSocket.user.name,
-      balance: authSocket.user.balance,
+      balance: user.balance,
       userId: authSocket.user.id as unknown as number,
     });
     console.log("room created with id: " + createdRoom.code);
@@ -274,7 +280,7 @@ io.on("connection", (socket) => {
     roomManager.joinRoom(createdRoom.code, {
       socketId: authSocket.id,
       name: authSocket.user.name,
-      balance: authSocket.user.balance,
+      balance: user.balance,
       userId: authSocket.user.id as unknown as number,
     });
 
