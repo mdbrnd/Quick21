@@ -2,7 +2,7 @@
 
 ## Overview
 
-Quick21 is a multiplayer web implementation of the classic Blackjack game, built with React for the frontend and Express + Socket.IO for the backend. This project is designed to provide a seamless, interactive, and simple experience.
+Quick21 is a multiplayer web implementation of the classic Blackjack game, built with React for the frontend and Express + Socket.IO for the backend. This project is designed to provide a fast and simple experience.
 
 ## Setup
 
