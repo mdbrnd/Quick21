@@ -67,7 +67,7 @@ const PlayerItem: React.FC<PlayerItemProps> = ({
 
     if (gameState.bets === undefined || gameState.bets.size <= 0) return true;
 
-    return Array.from(gameState.bets.entries()).some(
+    return !Array.from(gameState.bets.entries()).some(
       ([player, bet]) =>
         player.name === name
     );
