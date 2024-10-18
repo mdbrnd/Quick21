@@ -1,7 +1,7 @@
 import React from "react";
 import { ClientGameState } from "../../models/game_state";
 import { Player } from "../../models/player";
-import { findBetBySocketId } from "../../models/utils";
+import { findBetBySocketId } from "../../utils";
 import {
   User,
   DollarSign,
@@ -68,8 +68,7 @@ const PlayerItem: React.FC<PlayerItemProps> = ({
     if (gameState.bets === undefined || gameState.bets.size <= 0) return true;
 
     return !Array.from(gameState.bets.entries()).some(
-      ([player, bet]) =>
-        player.name === name
+      ([player, bet]) => player.name === name
     );
   };
 

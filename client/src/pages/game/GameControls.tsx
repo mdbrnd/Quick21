@@ -7,7 +7,7 @@ import {
   calculateHandValue,
   findBetBySocketId,
   getPlayerHandBySocketId,
-} from "../../models/utils";
+} from "../../utils";
 import { useSocket } from "../../SocketContext";
 import { useNavigate } from "react-router-dom";
 
@@ -277,10 +277,10 @@ const GameControls: React.FC<GameControlsProps> = ({
                 {player.name}
               </span>
               {calculateHandValue(cards) > 21 && (
-                  <span className="ml-2 px-2 py-1 text-sm font-semibold rounded bg-red-600 text-white">
-                    Bust
-                  </span>
-                )}
+                <span className="ml-2 px-2 py-1 text-sm font-semibold rounded bg-red-600 text-white">
+                  Bust
+                </span>
+              )}
             </h3>
             <p className="text-accent mb-2 font-semibold">
               ${findBetBySocketId(gameState.bets, player.socketId)}

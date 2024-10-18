@@ -1,6 +1,6 @@
 import { Card } from "./card";
 import Player from "./player";
-import { serializeMap } from "./utils";
+import { serializeMap } from "../utils";
 
 export enum RoundResult {
   Win = "Win",
