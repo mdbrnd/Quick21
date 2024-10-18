@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, AlertCircle, Diamond, Spade, LogOut } from "lucide-react";
-import RulesModal from "../../components/Rules";
+import { User, AlertCircle, Diamond, Spade, LogOut, ScrollText } from "lucide-react";
+import RulesModal from "./Rules";
 import { useSocket } from "../../SocketContext";
 
 const LobbyScreen = () => {
@@ -72,16 +72,13 @@ const LobbyScreen = () => {
   return (
     <div className="min-h-screen bg-secondary text-accent font-sans relative overflow-hidden">
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+CjxyZWN0IHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iIzBhNGEyZiI+PC9yZWN0Pgo8cGF0aCBkPSJNMzAgMTBMMTAgMzBMMzAgNTBMNTAgMzBMMzAgMTBaIiBmaWxsPSJub25lIiBzdHJva2U9IiMxYTYxM2YiIHN0cm9rZS13aWR0aD0iMC41Ij48L3BhdGg+Cjwvc3ZnPg==')] opacity-40"></div>
-      <span className="absolute left-5 bottom-2.5 text-sm text-accent font-semibold">
-        v1.0
-      </span>
       <div className="container mx-auto px-4 py-8 relative z-10">
         <header className="flex justify-between items-center mb-12">
           <button
             onClick={() => setShowRules(true)}
             className="bg-primary text-secondary hover:bg-primary-light transition-all duration-300 py-2 px-4 rounded-lg font-semibold flex items-center space-x-2 shadow-md"
           >
-            <AlertCircle size={20} />
+            <ScrollText size={20} />
             <span>Rules</span>
           </button>
           <h1 className="text-5xl font-bold text-primary pb-2 flex items-center absolute left-1/2 transform -translate-x-1/2">
@@ -116,7 +113,7 @@ const LobbyScreen = () => {
             <input
               value={roomCode}
               onChange={sanitizeRoomCode}
-              placeholder="Enter game code"
+              placeholder="Enter room code"
               maxLength={6}
               className="w-full px-6 py-4 rounded-xl text-secondary text-center text-2xl border-2 border-primary bg-accent bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary-light transition-all duration-300 placeholder-gray-500"
             />

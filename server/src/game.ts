@@ -71,13 +71,13 @@ class Game {
   }
 
   public hit(playerSocketId: string) {
-    const player = this.getPlayerHandBySocketId(playerSocketId);
-    if (player) {
-      // if deck is empty, create a new deck
+    const playerHand = this.getPlayerHandBySocketId(playerSocketId);
+    if (playerHand) {
+      // If deck is empty, create a new deck
       if (this.state.deck.length === 0) {
         this.initializeDeck();
       }
-      player.push(this.state.deck.pop()!);
+      playerHand.push(this.state.deck.pop()!);
     }
   }
 
@@ -85,7 +85,7 @@ class Game {
     const players = Array.from(this.state.playersHands.keys());
     const currentIndex = players.indexOf(this.state.currentTurn);
     const nextIndex = (currentIndex + 1) % players.length;
-    // only next turn if the player busted/has blackjack or stood or doubled
+    // Only next turn if the player busted/has blackjack or stood or doubled
     if (
       action === PlayerAction.Stand ||
       action === PlayerAction.Double ||
@@ -104,7 +104,7 @@ class Game {
   }
 
   public shouldRoundEnd(action: PlayerAction): boolean {
-    // if the last player busted or stood or doubled, the round should end
+    // If the last player busted or stood or doubled, the round should end
     return (
       this.isLastTurn() &&
       (action === PlayerAction.Stand ||
@@ -136,7 +136,7 @@ class Game {
     return undefined;
   }
 
-  // copilot
+  // Generated with the help of GitHub Copilot
   private shuffleDeck(deck: Card[]): Card[] {
     for (let i = deck.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * i);
@@ -151,7 +151,7 @@ class Game {
   public dealFirstCards() {
     for (let i = 0; i < 2; i++) {
       for (let [player, hand] of this.state.playersHands) {
-        // if deck is empty, create a new deck
+        // If deck is empty, create a new deck
         if (this.state.deck.length === 0) {
           this.initializeDeck();
         }
@@ -169,7 +169,7 @@ class Game {
       }
     }
 
-    //TODO: If all players have blackjack, end the round
+    // If all players have blackjack, the round should end, however for complexity reasons, the round won't end but the player on the client side will only have the option to stand
   }
 
   public addPlayer(player: Player) {
@@ -189,7 +189,7 @@ class Game {
     this.state.bets.set(player, betAmount);
   }
 
-  // two functions below written with help from chatgpt
+  // Two functions below written with help from chatgpt
   public calculateHandValue(cards: Card[]): number {
     let value = 0;
     let aceCount = 0;
@@ -197,7 +197,7 @@ class Game {
     for (const card of cards) {
       if (card.value === "Ace") {
         aceCount++;
-        value += 11; // initially consider ace as 11
+        value += 11; // Initially consider ace as 11
       } else if (["Jack", "Queen", "King"].includes(card.value)) {
         value += 10;
       } else {
@@ -240,16 +240,16 @@ class Game {
         (playerValue === dealerValue && playerValue <= 21)
       ) {
         result = RoundResult.Tie;
-        balanceChange = 0; // return the bet
+        balanceChange = 0; // Return the bet
       } else if (
         (playerValue > dealerValue && playerValue <= 21) ||
         (playerValue <= 21 && dealerValue > 21)
       ) {
         result = RoundResult.Win;
-        balanceChange = bet; // win, double the bet
+        balanceChange = bet; // Win, double the bet
       } else {
         result = RoundResult.Lose;
-        balanceChange = -bet; // lose the bet
+        balanceChange = -bet; // Lose the bet
       }
 
       results.set(player, result);

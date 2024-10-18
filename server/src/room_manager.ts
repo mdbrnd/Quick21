@@ -29,7 +29,7 @@ class RoomManager {
     const room = this.rooms.get(roomCode);
     if (room) {
       // Only add player if room is not full and player is not already in room
-      if (room.players.length >= 5 || room.hasPlayer(player.socketId)) {
+      if (room.players.length >= 5 || room.hasPlayerUserId(player.userId)) {
         return false;
       }
 

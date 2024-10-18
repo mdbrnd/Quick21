@@ -69,7 +69,6 @@ app.post("/register", async (req, res) => {
 interface JwtPayload {
   id: number;
   name: string;
-  balance: number;
 }
 
 app.post("/login", async (req, res) => {
@@ -114,7 +113,7 @@ app.post("/admin/add-money", async (req, res) => {
       .send({ message: "Token, name, and amount are required." });
   }
 
-  // check if types are correct
+  // Check if types are correct
   if (typeof name !== "string" || typeof amount !== "number") {
     return res.status(400).send({ message: "Invalid types." });
   }
@@ -128,14 +127,14 @@ app.post("/admin/add-money", async (req, res) => {
         .send({ message: "Forbidden: Insufficient permissions." });
     }
 
-    // check if user exists
+    // Check if user exists
     const user = await dbManager.getUserByName(name);
     if (!user) {
       return res.status(404).send({ message: "User not found." });
     }
 
     await dbManager.updateUserBalance(user.id, amount);
-    
+
     res.status(200).send({ message: "Money added to user successfully." });
   } catch (error) {
     console.error("Failed to add money to user:", error);
@@ -183,7 +182,7 @@ async function joinRoom(socket: AuthenticatedSocket, roomCode: string) {
   }
 }
 
-// TODO: if players leaves mid game, put next turn and transfer ownership and return bet
+// TODO: If players leaves mid game, put next turn and transfer ownership and return bet
 function leaveRoom(socket: any, roomCode: string) {
   let room = roomManager.getRoom(roomCode);
 
@@ -221,7 +220,7 @@ function startGame(socket: any, roomCode: string) {
     }
 
     let initialGameState = room.game.start().toDTO();
-    io.to(roomCode).emit("game-state-update", initialGameState); // send to all players in room. socket.to would exclude the sender
+    io.to(roomCode).emit("game-state-update", initialGameState); // Send to all players in room. socket.to would exclude the sender
   }
 }
 
@@ -256,12 +255,19 @@ io.on("connection", (socket) => {
   console.log("Authenticated user connected with socket id: ", authSocket.id);
   console.log("User details:", authSocket.user);
 
-  authSocket.on("create-room", (callback) => {
+  authSocket.on("create-room", async (callback) => {
     console.log("creating room");
+    let user = await dbManager.getUser(authSocket.user.id);
+
+    if (!user) {
+      console.log("user not found");
+      return;
+    }
+
     let createdRoom: Room = roomManager.createRoom({
       socketId: authSocket.id,
       name: authSocket.user.name,
-      balance: authSocket.user.balance,
+      balance: user.balance,
       userId: authSocket.user.id as unknown as number,
     });
     console.log("room created with id: " + createdRoom.code);
@@ -274,7 +280,7 @@ io.on("connection", (socket) => {
     roomManager.joinRoom(createdRoom.code, {
       socketId: authSocket.id,
       name: authSocket.user.name,
-      balance: authSocket.user.balance,
+      balance: user.balance,
       userId: authSocket.user.id as unknown as number,
     });
 

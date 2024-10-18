@@ -22,13 +22,13 @@ const DealerHand: React.FC<{
   useEffect(() => {
     if (fullHand && fullHand.length > 1 && !isRevealing) {
       setIsRevealing(true);
-        setRevealedCards([fullHand[0], fullHand[1]]);
+      setRevealedCards([fullHand[0], fullHand[1]]);
+      setTimeout(() => {
+        setRevealedCards(fullHand);
         setTimeout(() => {
-          setRevealedCards(fullHand);
-          setTimeout(() => {
-            onRevealComplete();
-          }, 1000);
-        }, 500);
+          onRevealComplete();
+        }, 1000);
+      }, 500);
     }
   }, [fullHand, isRevealing, onRevealComplete]);
 
@@ -182,33 +182,22 @@ const GameControls: React.FC<GameControlsProps> = ({
     return calculateHandValue(playersHand) >= 21 ? false : true;
   }
 
-  // TODO: show diff balances when round ends
-
   return (
     <div className="w-full mx-auto">
-      {roundOverInfo !== undefined && dealerRevealComplete && (
-        <div className="bg-secondary-light text-primary p-4 rounded-lg shadow-lg mb-6">
-          <h2 className="text-2xl font-bold mb-2">Round Over</h2>
-          {Array.from(roundOverInfo.results.entries()).map(
-            ([player, result]) => (
-              <div key={player.socketId} className="mb-1">
-                <span className="font-semibold">{player.name}:</span> {result}
-              </div>
-            )
-          )}
-          <button
-            onClick={onStartNewRound}
-            className="mt-4 bg-primary text-secondary font-bold py-2 px-4 rounded hover:bg-primary-light transition-colors duration-300"
-          >
-            New Round
-          </button>
-        </div>
-      )}
+      <div className="h-28 flex items-center justify-center">
+        {roundOverInfo !== undefined && dealerRevealComplete ? (
+          <RoundOverDisplay
+            roundOverInfo={roundOverInfo}
+            onStartNewRound={onStartNewRound}
+          />
+        ) : (
+          <div className="invisible">Placeholder</div>
+        )}
+      </div>
 
       {gameState.currentTurn?.socketId === socket.id &&
         roundOverInfo === undefined && (
           <div className="fixed bottom-0 left-0 right-0 bg-secondary-dark p-4 flex justify-center space-x-4 z-10">
-            {/*TODO: A bit of a workaround while the server doesnt yet skip everyone who is dealt blackjack*/}
             {shouldShowHitBtn() && (
               <button
                 onClick={onHit}
@@ -234,24 +223,36 @@ const GameControls: React.FC<GameControlsProps> = ({
           </div>
         )}
 
-      {/*{roundOverInfo === undefined && (
-        <div className="bg-secondary text-accent p-4 rounded-lg shadow-lg mb-6 text-center">
-          <h2 className="text-xl font-semibold">
-            Current Phase: {gameState.currentPhase}
-          </h2>
-        </div>
-      )}*/}
-
       {(gameState.dealersVisibleCard || roundOverInfo) && (
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-primary mb-2">Dealer</h2>
+          <h2 className="text-2xl font-bold text-primary mb-2 flex items-center">
+            Dealer
+            {roundOverInfo !== undefined &&
+              dealerRevealComplete &&
+              calculateHandValue(roundOverInfo.dealersHand) > 21 && (
+                <span className="ml-2 px-2 py-1 text-sm font-semibold rounded bg-red-600 text-white">
+                  Bust
+                </span>
+              )}
+          </h2>
+          <div className="flex">
+            <div className="flex justify-center items-center w-12 h-6 rounded-full bg-primary text-white text-lg font-bold shadow-lg">
+              {roundOverInfo !== undefined &&
+                dealerRevealComplete &&
+                calculateHandValue(roundOverInfo.dealersHand)}
+              {roundOverInfo === undefined &&
+                calculateHandValue(new Array(gameState.dealersVisibleCard!))}
+              {roundOverInfo !== undefined &&
+                !dealerRevealComplete &&
+                calculateHandValue(new Array(gameState.dealersVisibleCard!))}
+            </div>
+          </div>
           <div className="flex justify-center">
             <DealerHand
               visibleCard={gameState.dealersVisibleCard}
               fullHand={roundOverInfo?.dealersHand ?? null}
               onRevealComplete={() => {
                 setDealerRevealComplete(true);
-                console.log("Dealer reveal complete"); // Add this line for debugging
               }}
             />
           </div>
@@ -264,15 +265,22 @@ const GameControls: React.FC<GameControlsProps> = ({
             key={player.socketId}
             className="bg-secondary-light p-4 rounded-lg shadow-lg"
           >
-            <h3
-              className={`text-xl font-bold mb-1 ${
-                gameState.currentTurn?.socketId === player.socketId &&
-                roundOverInfo === undefined
-                  ? "text-green-500"
-                  : "text-primary"
-              }`}
-            >
-              {player.name}
+            <h3 className="text-xl font-bold mb-1 flex items-center">
+              <span
+                className={
+                  gameState.currentTurn?.socketId === player.socketId &&
+                  roundOverInfo === undefined
+                    ? "text-green-500"
+                    : "text-primary"
+                }
+              >
+                {player.name}
+              </span>
+              {calculateHandValue(cards) > 21 && (
+                  <span className="ml-2 px-2 py-1 text-sm font-semibold rounded bg-red-600 text-white">
+                    Bust
+                  </span>
+                )}
             </h3>
             <p className="text-accent mb-2 font-semibold">
               ${findBetBySocketId(gameState.bets, player.socketId)}
@@ -291,3 +299,42 @@ const GameControls: React.FC<GameControlsProps> = ({
 };
 
 export default GameControls;
+
+interface RoundOverDisplayProps {
+  roundOverInfo: RoundOverInfo;
+  onStartNewRound: () => void;
+}
+
+const RoundOverDisplay: React.FC<RoundOverDisplayProps> = ({
+  roundOverInfo,
+  onStartNewRound,
+}) => {
+  const [timeLeft, setTimeLeft] = useState(5);
+
+  useEffect(() => {
+    if (roundOverInfo !== undefined) {
+      const timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+
+      const startNewRoundTimer = setTimeout(() => {
+        onStartNewRound();
+      }, 6000);
+
+      return () => {
+        clearInterval(timer);
+        clearTimeout(startNewRoundTimer);
+      };
+    }
+  }, [roundOverInfo, onStartNewRound]);
+
+  return (
+    <div className="bg-secondary-light text-primary p-4 rounded-lg shadow-lg mb-6">
+      <h2 className="text-2xl font-bold mb-2">Round Over</h2>
+      <p className="text-lg">
+        New round starting in <span className="font-bold">{timeLeft}</span>{" "}
+        seconds...
+      </p>
+    </div>
+  );
+};

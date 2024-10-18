@@ -41,8 +41,13 @@ class Room {
     this.game.removePlayer(playerSocketId);
   }
 
+  // Could unify the two hasPlayer functions into one, but this is more readable
   hasPlayer(playerSocketId: string): boolean {
     return this.players.some((player) => player.socketId === playerSocketId);
+  }
+
+  hasPlayerUserId(userId: number): boolean {
+    return this.players.some((player) => player.userId === userId);
   }
 
   async performAction(
@@ -83,7 +88,7 @@ class Room {
           user
         );
         break;
-      case PlayerAction.Stand: // do nothing as player is standing
+      case PlayerAction.Stand: // Do nothing as player is standing
         break;
     }
 
@@ -96,7 +101,6 @@ class Room {
 
     this.game.shouldNextTurn(action);
 
-    // TODO: add tests, like a simulation game
     // Check if next player has blackjack; repeated code is a bit ugly, might change in the future
     const nextPlayer = this.game.state.currentTurn;
     const nextPlayerHand = this.game.state.playersHands.get(nextPlayer);
@@ -121,7 +125,12 @@ class Room {
     for (const [player, balanceChange] of roundOverInfo.updatedBalances) {
       const user = await dbManager.getUser(player.userId);
       if (user) {
-        const newBalance = user.balance + balanceChange;
+        let newBalance = user.balance + balanceChange;
+        if (newBalance <= 0) {
+          // If the player has no money left, reset their balance to 500
+          newBalance = 500;
+        }
+
         await dbManager.updateUserBalance(user.id, newBalance);
 
         // Update the player's balance in the game state
@@ -138,7 +147,7 @@ class Room {
     betAmount: number,
     user: User
   ): ServerGameState {
-    // if same state is returned, then bet was not placed
+    // If same state is returned, then bet was not placed
     const player = this.getPlayer(playerSocketId);
     if (!player) {
       return this.game.state;

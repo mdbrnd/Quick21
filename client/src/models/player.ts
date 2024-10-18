@@ -5,6 +5,7 @@ export interface Player {
   userId: number;
 }
 
+// Enums are used with strings instead of ints for better serialization when transferring data
 export enum PlayerAction {
   Hit = "hit",
   Stand = "stand",

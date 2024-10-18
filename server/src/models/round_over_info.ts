@@ -6,7 +6,7 @@ export enum RoundResult {
   Win = "Win",
   Lose = "Lose",
   Tie = "Tie",
-  Blackjack = "Blackjack", // player won with blackjack
+  Blackjack = "Blackjack", // Player won with blackjack
 }
 
 export class RoundOverInfo {

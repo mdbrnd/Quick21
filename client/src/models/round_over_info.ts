@@ -2,6 +2,7 @@ import { Card } from "./card";
 import { Player } from "./player";
 import { deserializeMap } from "./utils";
 
+// Enums are used with strings instead of ints for better serialization when transferring data
 export enum RoundResult {
   Win = "Win",
   Lose = "Lose",
