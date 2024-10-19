@@ -162,7 +162,6 @@ async function joinRoom(socket: AuthenticatedSocket, roomCode: string) {
   let couldJoin: boolean = roomManager.joinRoom(roomCode, {
     socketId: socket.id,
     name: socket.user.name,
-    balance: user?.balance ?? 0,
     userId: socket.user.id as unknown as number,
   });
 
@@ -267,7 +266,6 @@ io.on("connection", (socket) => {
     let createdRoom: Room = roomManager.createRoom({
       socketId: authSocket.id,
       name: authSocket.user.name,
-      balance: user.balance,
       userId: authSocket.user.id as unknown as number,
     });
     console.log("room created with id: " + createdRoom.code);
@@ -280,7 +278,6 @@ io.on("connection", (socket) => {
     roomManager.joinRoom(createdRoom.code, {
       socketId: authSocket.id,
       name: authSocket.user.name,
-      balance: user.balance,
       userId: authSocket.user.id as unknown as number,
     });
 

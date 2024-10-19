@@ -8,7 +8,7 @@ class Game {
     false, // gameStarted
     [], // deck
     [], // dealersHand
-    { socketId: "", name: "", balance: 0, userId: -1 }, // currentTurn
+    { socketId: "", name: "", userId: -1 }, // currentTurn
     new Map(), // playersHands
     "Betting", // currentPhase
     new Map() // bets

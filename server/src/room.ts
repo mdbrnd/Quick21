@@ -132,10 +132,6 @@ class Room {
         }
 
         await dbManager.updateUserBalance(user.id, newBalance);
-
-        // Update the player's balance in the game state
-        player.balance = newBalance;
-        console.log(player, " new balance: ", newBalance);
       }
     }
 
