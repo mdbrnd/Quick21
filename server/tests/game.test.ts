@@ -9,8 +9,8 @@ describe("Game", () => {
   let player2: Player;
 
   beforeEach(() => {
-    player1 = { socketId: "123", name: "Test Player 1", balance: 1000, userId: 1 };
-    player2 = { socketId: "456", name: "Test Player 2", balance: 1000, userId: 2 };
+    player1 = { socketId: "123", name: "Test Player 1", userId: 1 };
+    player2 = { socketId: "456", name: "Test Player 2", userId: 2 };
     game = new Game(player1);
     game.addPlayer(player2);
   });
@@ -102,7 +102,6 @@ describe("Game", () => {
     const player2: Player = {
       socketId: "456",
       name: "Player 2",
-      balance: 1000,
       userId: 2,
     };
     game.addPlayer(player2);
