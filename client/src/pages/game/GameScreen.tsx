@@ -122,7 +122,7 @@ const GameScreen: React.FC = () => {
       <div className="container mx-auto px-4 py-8 relative z-10">
         <header className="flex justify-between items-center mb-8">
           <div className="flex items-center space-x-2 bg-primary bg-opacity-20 rounded-full py-2 px-4">
-            <span className="font-semibold text-white">Room: {roomCode}</span>
+            <span className="font-semibold text-white">Room Code: {roomCode}</span>
             <button
               onClick={() => navigator.clipboard.writeText(roomCode || "")}
               className="text-primary hover:text-primary-light rounded-lg transition-colors duration-300"
