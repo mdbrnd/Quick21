@@ -115,7 +115,7 @@ class Game {
     );
   }
 
-  public endRound(): RoundOverInfo {
+  public getRoundOverInfo(): RoundOverInfo {
     // Deal to dealer
     while (this.calculateHandValue(this.state.dealersHand) < 17) {
       if (this.state.deck.length === 0) {

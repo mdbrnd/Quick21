@@ -41,25 +41,23 @@ const LobbyScreen = () => {
     });
   };
 
-  const joinRoom = () => {
+  const joinRoom = async () => {
     if (roomCode.length !== 6) {
       alert("Room code must be 6 digits");
       return;
     }
 
     if (!socket) {
-      alert("Socket connection not established");
+      alert("Socket connection not established. Try refreshing the page.");
       return;
     }
 
-    socket.emit("join-room", roomCode);
-    socket.once("join-room-response", (success) => {
-      if (!success) {
-        alert("Room not found or full");
-      } else {
-        navigate("/game", { state: { roomCode: roomCode, isOwner: false } });
-      }
-    });
+    const couldJoin = await socket.emitWithAck("join-room", roomCode);
+    if (!couldJoin) {
+      alert("Room not found or full");
+      return;
+    }
+    navigate("/game", { state: { roomCode: roomCode, isOwner: false } });
   };
 
   const sanitizeRoomCode = (event: any) => {

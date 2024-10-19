@@ -4,7 +4,7 @@ import Room from "./room";
 class RoomManager {
   private rooms: Map<string, Room> = new Map();
 
-  generateRoomCode(): string {
+  public generateRoomCode(): string {
     let isUnique = false;
     let roomCode = "";
     while (isUnique === false) {
@@ -18,14 +18,14 @@ class RoomManager {
     return roomCode;
   }
 
-  createRoom(initialPlayer: Player): Room {
+  public createRoom(initialPlayer: Player): Room {
     const roomCode = this.generateRoomCode();
     const room = new Room(roomCode, initialPlayer);
     this.rooms.set(roomCode, room);
     return room;
   }
 
-  joinRoom(roomCode: string, player: Player): boolean {
+  public joinRoom(roomCode: string, player: Player): boolean {
     const room = this.rooms.get(roomCode);
     if (room) {
       // Only add player if room is not full and player is not already in room
@@ -39,15 +39,15 @@ class RoomManager {
     return false;
   }
 
-  getRoom(roomCode: string): Room | undefined {
+  public getRoom(roomCode: string): Room | undefined {
     return this.rooms.get(roomCode);
   }
 
-  closeRoom(roomCode: string): boolean {
+  public closeRoom(roomCode: string): boolean {
     return this.rooms.delete(roomCode);
   }
 
-  getRoomThatPlayerIsIn(playerSocketId: string): Room | undefined {
+  public getRoomThatPlayerIsIn(playerSocketId: string): Room | undefined {
     for (let [roomCode, room] of this.rooms) {
       if (room.players.find((player) => player.socketId === playerSocketId)) {
         return room;
