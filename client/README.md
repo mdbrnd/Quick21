@@ -14,7 +14,3 @@ Since the server serves the build instead of connecting to a separate client ins
   - `pages/`: Components for different pages/routes in the application.
   - `main/`: Core application components (`App.tsx`).
   - `SocketContext.tsx`: Handles the authentication and session management using React's context API
-
-## License
-
-This project is licensed under the MIT License.

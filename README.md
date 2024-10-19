@@ -54,6 +54,10 @@ This project was tested using Windows 11 and macOS Sonoma. In order not to go be
 
 More details for the project structure can be found in the respective `README.md` files of the `client` and `server` directories.
 
+## AI Assistance Disclaimer
+
+A significant portion of the user interface (UI) for this project was designed with the assistance of AI language models, specifically ChatGPT and Claude AI. These AI tools were used to generate ideas, improve layouts, and optimize the user experience.
+
 ## License
 
 This project is licensed under the MIT License.

@@ -52,6 +52,7 @@ app.use(
   })
 );
 
+// Routes created with help from ChatGPT
 app.post("/register", async (req, res) => {
   const { name, password } = req.body;
   if (!name || !password) {

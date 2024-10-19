@@ -47,8 +47,6 @@ const BettingControls: React.FC = () => {
     }
   };
 
-  // UI designed with the help of claude ai
-
   return (
     <div className="bg-secondary-dark border border-primary p-6 sm:p-8 rounded-xl shadow-lg max-w-6xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">

@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, AlertCircle, Diamond, Spade, LogOut, ScrollText } from "lucide-react";
+import {
+  User,
+  AlertCircle,
+  Diamond,
+  Spade,
+  LogOut,
+  ScrollText,
+} from "lucide-react";
 import RulesModal from "./Rules";
 import { useSocket } from "../../SocketContext";
 

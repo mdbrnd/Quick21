@@ -189,7 +189,7 @@ class Game {
     this.state.bets.set(player, betAmount);
   }
 
-  // Two functions below written with help from chatgpt
+  // Two functions below written with help from ChatGPT
   public calculateHandValue(cards: Card[]): number {
     let value = 0;
     let aceCount = 0;

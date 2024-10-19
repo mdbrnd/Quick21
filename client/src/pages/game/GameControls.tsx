@@ -124,6 +124,7 @@ const GameControls: React.FC<GameControlsProps> = ({
     return `/assets/images/cards/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
   }
 
+  // Designed with the help of ChatGPT and Claude AI
   const renderStackedCards = (cards: Card[], playerKey: string) => {
     const animatedCount = animatedCards[playerKey] || 0;
 
