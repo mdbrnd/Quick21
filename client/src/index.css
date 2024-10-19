@@ -21,7 +21,6 @@ button {
 }
 
 button:hover {
-  background-color: #d4af37;
   box-shadow: 0 0 8px 3px rgba(197, 191, 7, 0.6);
 }
 

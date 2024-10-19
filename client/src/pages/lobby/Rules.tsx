@@ -61,11 +61,13 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
       </div>
 
       <div className="mb-6">
-        <img
-          src={rules[currentRule].image}
-          alt={rules[currentRule].altText}
-          className="w-full object-cover rounded-lg mb-4"
-        />
+        <div className="h-64 mb-4 flex items-center justify-center overflow-hidden rounded-xl">
+          <img
+            src={rules[currentRule].image}
+            alt={rules[currentRule].altText}
+            className="max-h-full max-w-full object-contain"
+          />
+        </div>
         <p className="text-accent text-lg">{rules[currentRule].text}</p>
       </div>
 
