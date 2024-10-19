@@ -21,16 +21,17 @@ class Room {
     this.game = new Game(initialPlayer);
   }
 
-  addPlayer(player: Player) {
+  public addPlayer(player: Player) {
     this.players.push(player);
     this.game.addPlayer(player);
   }
 
-  getPlayer(playerSocketId: string): Player | undefined {
+  public getPlayer(playerSocketId: string): Player | undefined {
     return this.players.find((player) => player.socketId === playerSocketId);
   }
 
-  removePlayer(playerSocketId: string) {
+  // A bit ugly, but necessary due to the existing structure
+  public async removePlayer(playerSocketId: string): Promise<RoundOverInfo | undefined> {
     const index = this.players.findIndex(
       (player) => player.socketId === playerSocketId
     );
@@ -38,19 +39,33 @@ class Room {
       this.players.splice(index, 1);
     }
 
+    // If the player left without finishing his turn, we need to move to the next player or end the round
+    if (this.game.state.currentTurn.socketId === playerSocketId && this.game.state.currentPhase == "Playing") {
+      const lastPlayer = [...this.game.state.playersHands.entries()].at(-1)![0];
+      if (lastPlayer.socketId === playerSocketId) {
+        this.game.removePlayer(playerSocketId);
+        this.game.state.currentPhase = "RoundOver";
+        let roundOverInfo = this.game.getRoundOverInfo();
+        await this.updatePlayerBalances(roundOverInfo);
+        return roundOverInfo;
+      } else {
+        this.game.shouldNextTurn(PlayerAction.Stand);
+      }
+    }
+
     this.game.removePlayer(playerSocketId);
   }
 
   // Could unify the two hasPlayer functions into one, but this is more readable
-  hasPlayer(playerSocketId: string): boolean {
+  public hasPlayer(playerSocketId: string): boolean {
     return this.players.some((player) => player.socketId === playerSocketId);
   }
 
-  hasPlayerUserId(userId: number): boolean {
+  public hasPlayerUserId(userId: number): boolean {
     return this.players.some((player) => player.userId === userId);
   }
 
-  async performAction(
+  public async performAction(
     playerSocketId: string,
     action: PlayerAction,
     user: User | undefined
@@ -94,20 +109,24 @@ class Room {
 
     if (this.game.shouldRoundEnd(action)) {
       this.game.state.currentPhase = "RoundOver";
-      let roundOverInfo = this.game.endRound();
+      let roundOverInfo = this.game.getRoundOverInfo();
       await this.updatePlayerBalances(roundOverInfo);
       return [this.game.state, roundOverInfo];
     }
 
     this.game.shouldNextTurn(action);
 
-    // Check if next player has blackjack; repeated code is a bit ugly, might change in the future
+    // Check if next player has blackjack; repeated code is a bit ugly, but it works
     const nextPlayer = this.game.state.currentTurn;
     const nextPlayerHand = this.game.state.playersHands.get(nextPlayer);
-    if (nextPlayerHand && this.game.calculateHandValue(nextPlayerHand) === 21 && this.game.state.currentPhase == "Playing") {
+    if (
+      nextPlayerHand &&
+      this.game.calculateHandValue(nextPlayerHand) === 21 &&
+      this.game.state.currentPhase == "Playing"
+    ) {
       if (this.game.isLastTurn()) {
         this.game.state.currentPhase = "RoundOver";
-        let roundOverInfo = this.game.endRound();
+        let roundOverInfo = this.game.getRoundOverInfo();
         await this.updatePlayerBalances(roundOverInfo);
         return [this.game.state, roundOverInfo];
       } else {
@@ -127,22 +146,18 @@ class Room {
       if (user) {
         let newBalance = user.balance + balanceChange;
         if (newBalance <= 0) {
-          // If the player has no money left, reset their balance to 500
-          newBalance = 500;
+          // If the player has no money left, reset their balance to 2000
+          newBalance = 2000;
         }
 
         await dbManager.updateUserBalance(user.id, newBalance);
-
-        // Update the player's balance in the game state
-        player.balance = newBalance;
-        console.log(player, " new balance: ", newBalance);
       }
     }
 
     return roundOverInfo;
   }
 
-  placeBet(
+  public placeBet(
     playerSocketId: string,
     betAmount: number,
     user: User

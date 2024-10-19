@@ -1,6 +1,6 @@
-import { Card } from "./card";
-import { ClientGameState } from "./game_state";
-import { Player } from "./player";
+import { Card } from "./models/card";
+import { ClientGameState } from "./models/game_state";
+import { Player } from "./models/player";
 
 const serializeMap = (map: Map<any, any>) => {
   return Array.from(map.entries());
@@ -58,4 +58,10 @@ function calculateHandValue(cards: Card[]): number {
   return value;
 }
 
-export { serializeMap, deserializeMap, findBetBySocketId, calculateHandValue, getPlayerHandBySocketId };
+export {
+  serializeMap,
+  deserializeMap,
+  findBetBySocketId,
+  calculateHandValue,
+  getPlayerHandBySocketId,
+};

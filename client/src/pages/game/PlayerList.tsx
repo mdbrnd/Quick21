@@ -1,7 +1,7 @@
 import React from "react";
 import { ClientGameState } from "../../models/game_state";
 import { Player } from "../../models/player";
-import { findBetBySocketId } from "../../models/utils";
+import { findBetBySocketId } from "../../utils";
 import {
   User,
   DollarSign,
@@ -67,9 +67,9 @@ const PlayerItem: React.FC<PlayerItemProps> = ({
 
     if (gameState.bets === undefined || gameState.bets.size <= 0) return true;
 
-    return Array.from(gameState.bets.entries()).some(
-      ([player, bet]) =>
-        player.name === name
+    // If the players name doesn't exist in the bets map, they haven't bet yet
+    return !Array.from(gameState.bets.entries()).some(
+      ([player, bet]) => player.name === name
     );
   };
 
@@ -96,12 +96,12 @@ const PlayerItem: React.FC<PlayerItemProps> = ({
           {userInfo?.name === player.name && (
             <div className="flex items-center bg-primary text-white px-2 py-1 rounded-full text-sm">
               <CircleDollarSign size={16} className="mr-1" />
-              <span>{userInfo.balance}</span>
+              <span>${userInfo.balance.toLocaleString()}</span>
             </div>
           )}
         </div>
         <div className="text-sm text-accent mt-1 flex items-center">
-          Bet: ${bet}
+          Bet: ${bet?.toLocaleString()}
         </div>
       </div>
     </div>

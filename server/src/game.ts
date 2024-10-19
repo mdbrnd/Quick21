@@ -8,7 +8,7 @@ class Game {
     false, // gameStarted
     [], // deck
     [], // dealersHand
-    { socketId: "", name: "", balance: 0, userId: -1 }, // currentTurn
+    { socketId: "", name: "", userId: -1 }, // currentTurn
     new Map(), // playersHands
     "Betting", // currentPhase
     new Map() // bets
@@ -115,7 +115,7 @@ class Game {
     );
   }
 
-  public endRound(): RoundOverInfo {
+  public getRoundOverInfo(): RoundOverInfo {
     // Deal to dealer
     while (this.calculateHandValue(this.state.dealersHand) < 17) {
       if (this.state.deck.length === 0) {
@@ -189,7 +189,7 @@ class Game {
     this.state.bets.set(player, betAmount);
   }
 
-  // Two functions below written with help from chatgpt
+  // Two functions below written with help from ChatGPT
   public calculateHandValue(cards: Card[]): number {
     let value = 0;
     let aceCount = 0;

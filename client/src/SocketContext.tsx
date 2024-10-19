@@ -8,12 +8,14 @@ const API_BASE_URL: string =
     ? "https://quick21.onrender.com"
     : "http://localhost:4000";
 
+// Concept for this file created with the help of ChatGPT
+
 interface SocketContextType {
   socket: Socket | null;
   connect: (token: string) => void;
   disconnect: () => void;
   userInfo: UserDTO | null;
-  isAuthenticated: boolean; // TODO: fix weird behaviour with this (sometimes it shows false even right after changing it to true)
+  isAuthenticated: boolean;
   refreshUserInfo: () => void;
 }
 

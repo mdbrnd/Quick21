@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { ClientGameState } from "../../models/game_state";
 import { Card } from "../../models/card";
-import { RoundOverInfo } from "../../models/round_over_info";
+import { RoundOverInfo, RoundResult } from "../../models/round_over_info";
 import "../../index.css";
 import {
   calculateHandValue,
   findBetBySocketId,
   getPlayerHandBySocketId,
-} from "../../models/utils";
+} from "../../utils";
 import { useSocket } from "../../SocketContext";
 import { useNavigate } from "react-router-dom";
 
@@ -100,7 +100,7 @@ const GameControls: React.FC<GameControlsProps> = ({
     {}
   );
   const [dealerRevealComplete, setDealerRevealComplete] = useState(false);
-  const { socket, userInfo } = useSocket();
+  const { socket, userInfo, refreshUserInfo } = useSocket();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -124,6 +124,7 @@ const GameControls: React.FC<GameControlsProps> = ({
     return `/assets/images/cards/${card.value.toLowerCase()}_of_${card.suit.toLowerCase()}.png`;
   }
 
+  // Designed with the help of ChatGPT and Claude AI
   const renderStackedCards = (cards: Card[], playerKey: string) => {
     const animatedCount = animatedCards[playerKey] || 0;
 
@@ -180,6 +181,38 @@ const GameControls: React.FC<GameControlsProps> = ({
     if (playersHand === undefined) return true;
 
     return calculateHandValue(playersHand) >= 21 ? false : true;
+  }
+
+  function getRoundResult(
+    roundOverInfo: RoundOverInfo,
+    playerSocketId: string
+  ): RoundResult | undefined {
+    const result = Array.from(roundOverInfo.results.entries()).find(
+      ([player, result]) => player.socketId === playerSocketId
+    );
+
+    return result ? result[1] : undefined;
+  }
+
+  function getBalanceChange(
+    roundOverInfo: RoundOverInfo,
+    playerSocketId: string
+  ) : string {
+    const result = getRoundResult(roundOverInfo, playerSocketId);
+    const bet = findBetBySocketId(gameState.bets, playerSocketId);
+
+    if (!result || bet === undefined) return "";
+
+    switch (result) {
+      case RoundResult.Win:
+        return `+$${bet.toLocaleString()}`;
+      case RoundResult.Lose:
+        return `-$${bet.toLocaleString()}`;
+      case RoundResult.Blackjack:
+        return `+$${(bet * 1.5).toLocaleString()}`;
+      case RoundResult.Tie:
+        return "Tie";
+    }
   }
 
   return (
@@ -253,6 +286,7 @@ const GameControls: React.FC<GameControlsProps> = ({
               fullHand={roundOverInfo?.dealersHand ?? null}
               onRevealComplete={() => {
                 setDealerRevealComplete(true);
+                refreshUserInfo();
               }}
             />
           </div>
@@ -277,13 +311,29 @@ const GameControls: React.FC<GameControlsProps> = ({
                 {player.name}
               </span>
               {calculateHandValue(cards) > 21 && (
-                  <span className="ml-2 px-2 py-1 text-sm font-semibold rounded bg-red-600 text-white">
-                    Bust
-                  </span>
-                )}
+                <span className="ml-2 px-2 py-1 text-sm font-semibold rounded bg-red-600 text-white">
+                  Bust
+                </span>
+              )}
+              {roundOverInfo !== undefined && dealerRevealComplete && (
+                <span
+                  className={`ml-2 px-2 py-1 text-sm font-semibold rounded ${
+                    getRoundResult(roundOverInfo, player.socketId) === RoundResult.Win ||
+                    getRoundResult(roundOverInfo, player.socketId) ===
+                      RoundResult.Blackjack
+                      ? "bg-green-600"
+                      : getRoundResult(roundOverInfo, player.socketId) ===
+                        RoundResult.Lose
+                      ? "bg-red-600"
+                      : "bg-yellow-600"
+                  } text-white`}
+                >
+                  {getBalanceChange(roundOverInfo, player.socketId)}
+                </span>
+              )}
             </h3>
-            <p className="text-accent mb-2 font-semibold">
-              ${findBetBySocketId(gameState.bets, player.socketId)}
+            <p className="text-white mb-2 font-semibold">
+              ${findBetBySocketId(gameState.bets, player.socketId)?.toLocaleString()}
             </p>
             {renderStackedCards(cards, player.socketId)}
             <div className="flex">
@@ -338,3 +388,4 @@ const RoundOverDisplay: React.FC<RoundOverDisplayProps> = ({
     </div>
   );
 };
+

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSocket } from "../../SocketContext";
 import { useNavigate } from "react-router-dom";
+import { DollarSignIcon, PlayIcon, ShieldCheckIcon, Users } from "lucide-react";
 
 const API_BASE_URL: string =
   process.env.REACT_APP_ENV === "production" ||
@@ -17,17 +18,6 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   const formRef = useRef<HTMLFormElement>(null);
-
-  // useEffect to read stored token and connect to socket
-  /*useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    if (token && !socket) {
-      connect(token);
-
-      // Redirect to lobby if already authenticated
-      //navigate("/lobby");
-    }
-  }, [socket, connect]);*/
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -140,30 +130,66 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-secondary flex flex-col items-center justify-center p-4">
-      <h1 className="text-5xl font-bold text-primary mb-8">Blackjack Game</h1>
-      <p className="text-xl text-primary mb-8">
-        Ready to test your luck? Sign in or sign up to start playing!
-      </p>
+    <div className="min-h-screen bg-secondary flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-primary opacity-5 transform rotate-45 scale-150"></div>
 
-      <div className="space-x-4">
-        <button
-          onClick={() => openModal(true)}
-          className="bg-primary text-secondary hover:bg-primary-light font-bold py-3 px-6 rounded-xl text-xl transition-all duration-300 shadow-lg hover:shadow-primary"
-        >
-          Register
-        </button>
-        <button
-          onClick={() => openModal(false)}
-          className="bg-secondary text-primary hover:bg-secondary-light font-bold py-3 px-6 rounded-xl text-xl transition-all duration-300 shadow-lg hover:shadow-secondary border-2 border-primary"
-        >
-          Log in
-        </button>
+      <div className="z-10 text-center max-w-4xl">
+        <h1 className="text-6xl font-extrabold text-primary mb-4 tracking-tight">
+          Welcome to Quick21
+        </h1>
+        <p className="text-2xl text-primary mb-8">
+          Experience the thrill of the casino from the comfort of your home!
+        </p>
+
+        {/* Fake Money Disclaimer */}
+        <div className="bg-primary text-secondary py-2 px-4 rounded-full inline-block mb-8">
+          <span className="font-bold">Play with Fake Money</span> - All the fun,
+          none of the risk!
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          {[
+            { icon: PlayIcon, text: "Play Anytime" },
+            { icon: ShieldCheckIcon, text: "Secure Gaming" },
+            { icon: DollarSignIcon, text: "Win Big" },
+            { icon: Users, text: "Multiplayer" },
+          ].map((feature, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <feature.icon className="w-12 h-12 text-primary mb-2" />
+              <span className="text-primary font-semibold">{feature.text}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="space-x-6">
+          <button
+            onClick={() => openModal(true)}
+            className="bg-primary text-secondary hover:bg-opacity-90 font-bold py-4 px-8 rounded-full text-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+          >
+            Get Started
+          </button>
+          <button
+            onClick={() => openModal(false)}
+            className="bg-secondary text-primary hover:bg-opacity-90 font-bold py-4 px-8 rounded-full text-xl transition-all duration-300 shadow-lg hover:shadow-xl border-2 border-primary transform hover:scale-105"
+          >
+            Log in
+          </button>
+        </div>
       </div>
 
+      <div className="mt-16 bg-primary bg-opacity-10 p-6 rounded-lg max-w-2xl mx-auto">
+        <p className="text-primary italic text-lg">
+          "This is the best online Blackjack game I've ever played. The
+          interface is smooth, and the multiplayer feature is addictive!"
+        </p>
+        <p className="text-primary font-semibold mt-2">- Matthew B.</p>
+      </div>
+
+      {/* Modal */}
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <h2 className="text-2xl font-bold text-primary mb-4">
-          {isSignup ? "Register" : "Log in"}
+        <h2 className="text-3xl font-bold text-primary mb-6">
+          {isSignup ? "Join the Table" : "Welcome Back"}
         </h2>
         <AuthForm />
         {error && (
@@ -182,13 +208,13 @@ const LandingPage: React.FC = () => {
             <span className="block sm:inline">{success}</span>
           </div>
         )}
-        <p className="text-center text-white mt-4">
-          {isSignup ? "Already have an account?" : "Don't have an account?"}{" "}
+        <p className="text-center text-primary mt-6">
+          {isSignup ? "Already at the table?" : "New to the game?"}{" "}
           <button
             onClick={() => setIsSignup(!isSignup)}
-            className="text-primary hover:text-white"
+            className="text-primary hover:text-secondary underline font-semibold"
           >
-            {isSignup ? "Register" : "Log in"}
+            {isSignup ? "Log in" : "Sign up"}
           </button>
         </p>
       </Modal>

@@ -3,7 +3,7 @@ import { User } from "../models/user";
 import path from "path";
 import fs from "fs";
 
-// Groundwork generated with the help of chatgpt
+// Groundwork generated with the help of ChatGPT
 
 class DBManager {
   private db: sqlite3.Database;

@@ -1,6 +1,6 @@
 import { Card } from "./card";
 import { Player } from "./player";
-import { deserializeMap, serializeMap } from "./utils";
+import { deserializeMap, serializeMap } from "../utils";
 
 export class ClientGameState {
   gameStarted: boolean;

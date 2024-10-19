@@ -15,13 +15,20 @@ const server = createServer(app);
 const SERVER_PORT = process.env.PORT || 4000;
 const DEV_CLIENT_PORT = 3000;
 const dbManager = new DBManager();
+const roomManager = new RoomManager();
 const JWT_SECRET = process.env.JWT_SECRET;
+const STARTING_BALANCE = 10000;
 
 if (!JWT_SECRET) {
   console.error(
     "JWT_SECRET is not defined. Set JWT_SECRET environment variable and create .env file in the root directory if it does not yet exist. (/server/.env), JWT_SECRET=<your_secret>"
   );
   process.exit(1);
+}
+
+interface JwtPayload {
+  id: number;
+  name: string;
 }
 
 app.use(express.json()); // Middleware to parse JSON bodies
@@ -45,6 +52,7 @@ app.use(
   })
 );
 
+// Routes created with help from ChatGPT
 app.post("/register", async (req, res) => {
   const { name, password } = req.body;
   if (!name || !password) {
@@ -58,18 +66,13 @@ app.post("/register", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    await dbManager.addUser(name, hashedPassword, 1000);
+    await dbManager.addUser(name, hashedPassword, STARTING_BALANCE);
     res.status(201).send({ message: "User registered successfully." });
   } catch (error) {
     console.error("Registration error:", error);
     res.status(500).send({ message: "Failed to register user." });
   }
 });
-
-interface JwtPayload {
-  id: number;
-  name: string;
-}
 
 app.post("/login", async (req, res) => {
   const { name, password } = req.body;
@@ -151,80 +154,6 @@ const io = new Server(server, {
   },
 });
 
-const roomManager = new RoomManager();
-
-// TODO: make so players cant join/only spectate already started game/only on next round; match game state
-async function joinRoom(socket: AuthenticatedSocket, roomCode: string) {
-  console.log("joining room " + roomCode);
-
-  let user = await dbManager.getUser(socket.user.id);
-
-  let couldJoin: boolean = roomManager.joinRoom(roomCode, {
-    socketId: socket.id,
-    name: socket.user.name,
-    balance: user?.balance ?? 0,
-    userId: socket.user.id as unknown as number,
-  });
-
-  socket.emit("join-room-response", couldJoin);
-
-  if (couldJoin) {
-    socket.join(roomCode);
-    console.log("player added to room");
-    // Update game state to show others that player is in room
-    let room = roomManager.getRoom(roomCode);
-    if (room) {
-      let gameState = room.game.state.toClientGameState().toDTO();
-      io.to(roomCode).emit("game-state-update", gameState);
-    }
-  } else {
-    console.log("could not add player to room");
-  }
-}
-
-// TODO: If players leaves mid game, put next turn and transfer ownership and return bet
-function leaveRoom(socket: any, roomCode: string) {
-  let room = roomManager.getRoom(roomCode);
-
-  if (room) {
-    room.removePlayer(socket.id);
-    socket.leave(roomCode);
-    socket.emit("leave-room-response", true);
-
-    console.log("player removed from room");
-
-    if (room.players.length === 0) {
-      console.log("closing room");
-      roomManager.closeRoom(roomCode);
-    } else {
-      // Send updated game state so player list is accurate
-      let gameState = room.game.state.toClientGameState().toDTO();
-      io.to(roomCode).emit("game-state-update", gameState);
-    }
-  } else {
-    socket.emit("leave-room-response", false);
-  }
-}
-
-//TODO: somehow fetch game if user reloads page
-function startGame(socket: any, roomCode: string) {
-  let room = roomManager.getRoom(roomCode);
-
-  if (room) {
-    if (
-      room.hasPlayer(socket.id) == false ||
-      room.owner.socketId !== socket.id
-    ) {
-      console.log("player not in room or not owner");
-      return;
-    }
-
-    let initialGameState = room.game.start().toDTO();
-    io.to(roomCode).emit("game-state-update", initialGameState); // Send to all players in room. socket.to would exclude the sender
-  }
-}
-
-// Extend socket to include user (details) property
 interface AuthenticatedSocket extends Socket {
   user: JwtPayload;
 }
@@ -250,6 +179,52 @@ const authenticateToken = (socket: any, next: any) => {
 // Auth middleware for all socket connections; ran once on connection, not for every request
 io.use(authenticateToken);
 
+async function leaveRoom(socket: any, roomCode: string): Promise<boolean> {
+  let room = roomManager.getRoom(roomCode);
+
+  if (room) {
+    // If the player to leave was the last player and hadn't finished the round, the round is over and the info needs to be sent to the clients
+    const roundOverInfo = await room.removePlayer(socket.id);
+
+    socket.leave(roomCode);
+    console.log("player removed from room");
+
+    if (room.players.length === 0) {
+      console.log("closing room");
+      roomManager.closeRoom(roomCode);
+    } else {
+      // Send updated game state so player list is accurate
+      let gameState = room.game.state.toClientGameState().toDTO();
+      io.to(roomCode).emit("game-state-update", gameState);
+
+      if (roundOverInfo) {
+        console.log("round over because player left");
+        io.to(roomCode).emit("round-over", roundOverInfo.toDTO());
+      }
+    }
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function startGame(socket: any, roomCode: string) {
+  let room = roomManager.getRoom(roomCode);
+
+  if (room) {
+    if (
+      room.hasPlayer(socket.id) == false ||
+      room.owner.socketId !== socket.id
+    ) {
+      console.log("player not in room or not owner");
+      return;
+    }
+
+    let initialGameState = room.game.start().toDTO();
+    io.to(roomCode).emit("game-state-update", initialGameState); // Send to all players in room. socket.to would exclude the sender
+  }
+}
+
 io.on("connection", (socket) => {
   const authSocket = socket as AuthenticatedSocket;
   console.log("Authenticated user connected with socket id: ", authSocket.id);
@@ -267,7 +242,6 @@ io.on("connection", (socket) => {
     let createdRoom: Room = roomManager.createRoom({
       socketId: authSocket.id,
       name: authSocket.user.name,
-      balance: user.balance,
       userId: authSocket.user.id as unknown as number,
     });
     console.log("room created with id: " + createdRoom.code);
@@ -280,7 +254,6 @@ io.on("connection", (socket) => {
     roomManager.joinRoom(createdRoom.code, {
       socketId: authSocket.id,
       name: authSocket.user.name,
-      balance: user.balance,
       userId: authSocket.user.id as unknown as number,
     });
 
@@ -311,14 +284,36 @@ io.on("connection", (socket) => {
     }
   });
 
-  // TODO: change to emit with ack
-  authSocket.on("join-room", (roomCode: string) => {
-    joinRoom(authSocket, roomCode);
+  authSocket.on("join-room", async (roomCode: string, callback) => {
+    console.log("joining room " + roomCode);
+
+    let user = await dbManager.getUser(authSocket.user.id);
+
+    let couldJoin: boolean = roomManager.joinRoom(roomCode, {
+      socketId: socket.id,
+      name: authSocket.user.name,
+      userId: authSocket.user.id as unknown as number,
+    });
+
+    callback(couldJoin);
+
+    if (couldJoin) {
+      socket.join(roomCode);
+      console.log("player added to room");
+      // Update game state to show others that player is in room
+      let room = roomManager.getRoom(roomCode);
+      if (room) {
+        let gameState = room.game.state.toClientGameState().toDTO();
+        io.to(roomCode).emit("game-state-update", gameState);
+      }
+    } else {
+      console.log("could not add player to room");
+    }
   });
 
-  // TODO: change to emit with ack
-  authSocket.on("leave-room", (roomCode: string) => {
-    leaveRoom(socket, roomCode);
+  authSocket.on("leave-room", async (roomCode: string, callback) => {
+    const couldLeave = await leaveRoom(authSocket, roomCode);
+    callback(couldLeave);
   });
 
   authSocket.on("start-game", (roomCode: string) => {
@@ -387,11 +382,11 @@ io.on("connection", (socket) => {
     }
   });
 
-  authSocket.on("disconnect", () => {
+  authSocket.on("disconnect", async () => {
     console.log("user disconnected");
     let room = roomManager.getRoomThatPlayerIsIn(socket.id);
     if (room) {
-      leaveRoom(socket, room.code);
+      await leaveRoom(socket, room.code);
     }
   });
 });

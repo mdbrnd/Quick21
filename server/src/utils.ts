@@ -1,3 +1,5 @@
+// Created with the help of ChatGPT
+
 const serializeMap = (map: Map<any, any>) => {
   return Array.from(map.entries());
 };

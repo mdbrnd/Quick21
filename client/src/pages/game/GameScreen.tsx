@@ -74,12 +74,12 @@ const GameScreen: React.FC = () => {
     socket.emit("start-game", roomCode);
   };
 
-  const handleLeaveGameButton = () => {
+  const handleLeaveGameButton = async () => {
     if (!socket || !roomCode) {
       navigate("/");
       return;
     }
-    socket.emit("leave-room", roomCode);
+    await socket.emitWithAck("leave-room", roomCode);
     navigate("/lobby");
   };
 

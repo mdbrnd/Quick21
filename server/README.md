@@ -47,6 +47,6 @@ The server listens for WebSocket events from the client and sends back updated i
   - `database/`: Database management and operations.
   - `models/`: TypeScript interfaces and classes for game logic.
   - `game.ts`: Core game logic implementation.
-  - `room.ts` & `room_manager.ts`: Manage game rooms and players.
+  - `room.ts` & `room_manager.ts`: Manage game rooms.
   - `server.ts`: Main server file where are requests are handled.
 - `tests/`: Contains tests for the application.

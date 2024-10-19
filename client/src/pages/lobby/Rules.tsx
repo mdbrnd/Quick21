@@ -7,8 +7,6 @@ interface Rule {
   text: string;
 }
 
-// TODO: add images
-
 const rules: Rule[] = [
   {
     image: "/assets/images/beat-dealer.png",
@@ -66,7 +64,7 @@ const RulesModal: React.FC<RulesModalProps> = ({ onClose }) => {
         <img
           src={rules[currentRule].image}
           alt={rules[currentRule].altText}
-          className="w-full h-48 object-cover rounded-lg mb-4"
+          className="w-full object-cover rounded-lg mb-4"
         />
         <p className="text-accent text-lg">{rules[currentRule].text}</p>
       </div>

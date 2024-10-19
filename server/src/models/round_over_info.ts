@@ -1,12 +1,12 @@
 import { Card } from "./card";
 import Player from "./player";
-import { serializeMap } from "./utils";
+import { serializeMap } from "../utils";
 
 export enum RoundResult {
   Win = "Win",
   Lose = "Lose",
   Tie = "Tie",
-  Blackjack = "Blackjack", // Player won with blackjack
+  Blackjack = "Blackjack", // Player won with blackjack, 1.5x payout
 }
 
 export class RoundOverInfo {

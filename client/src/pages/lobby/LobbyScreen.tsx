@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User, AlertCircle, Diamond, Spade, LogOut, ScrollText } from "lucide-react";
+import {
+  User,
+  AlertCircle,
+  Diamond,
+  Spade,
+  LogOut,
+  ScrollText,
+} from "lucide-react";
 import RulesModal from "./Rules";
 import { useSocket } from "../../SocketContext";
 
@@ -41,25 +48,23 @@ const LobbyScreen = () => {
     });
   };
 
-  const joinRoom = () => {
+  const joinRoom = async () => {
     if (roomCode.length !== 6) {
       alert("Room code must be 6 digits");
       return;
     }
 
     if (!socket) {
-      alert("Socket connection not established");
+      alert("Socket connection not established. Try refreshing the page.");
       return;
     }
 
-    socket.emit("join-room", roomCode);
-    socket.once("join-room-response", (success) => {
-      if (!success) {
-        alert("Room not found or full");
-      } else {
-        navigate("/game", { state: { roomCode: roomCode, isOwner: false } });
-      }
-    });
+    const couldJoin = await socket.emitWithAck("join-room", roomCode);
+    if (!couldJoin) {
+      alert("Room not found or full");
+      return;
+    }
+    navigate("/game", { state: { roomCode: roomCode, isOwner: false } });
   };
 
   const sanitizeRoomCode = (event: any) => {
@@ -90,7 +95,9 @@ const LobbyScreen = () => {
             <User size={24} className="text-primary" />
             <span className="font-semibold text-white">{userInfo?.name}</span>
             <div className="flex items-center space-x-1 text-primary">
-              <span className="font-bold">${userInfo?.balance}</span>
+              <span className="font-bold">
+                ${userInfo?.balance.toLocaleString()}
+              </span>
             </div>
             <button
               onClick={() => logOut()}
