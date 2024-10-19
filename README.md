@@ -52,7 +52,7 @@ This project was tested using Windows 11 and macOS Sonoma. In order not to go be
 - `client/`: Contains the React frontend application.
 - `server/`: Contains the Express + socket.io backend application.
 
-More details for the project structure can be found in the respective `README.md` files of the `client` and `server` directories.
+More details for the project structure can be found in the respective `README.md` files of the [client](https://github.com/mdbrnd/quick21/tree/main/client/README.md) and [server](https://github.com/mdbrnd/quick21/tree/main/server/README.md) directories.
 
 ## AI Assistance Disclaimer
 
