@@ -67,6 +67,7 @@ const PlayerItem: React.FC<PlayerItemProps> = ({
 
     if (gameState.bets === undefined || gameState.bets.size <= 0) return true;
 
+    // If the players name doesn't exist in the bets map, they haven't bet yet
     return !Array.from(gameState.bets.entries()).some(
       ([player, bet]) => player.name === name
     );
