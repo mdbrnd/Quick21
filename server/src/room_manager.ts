@@ -1,6 +1,8 @@
 import Player from "./models/player";
 import Room from "./room";
 
+const MAX_PLAYERS = 5;
+
 class RoomManager {
   private rooms: Map<string, Room> = new Map();
 
@@ -25,18 +27,30 @@ class RoomManager {
     return room;
   }
 
-  public joinRoom(roomCode: string, player: Player): boolean {
+  public joinRoom(roomCode: string, player: Player): [success: boolean, errorMessage: string | undefined] {
     const room = this.rooms.get(roomCode);
     if (room) {
-      // Only add player if room is not full and player is not already in room
-      if (room.players.length >= 5 || room.hasPlayerUserId(player.userId)) {
-        return false;
+      // Only add player if room is not full, player is not already in room and round is not in progress
+      if (room.players.length >= MAX_PLAYERS) {
+        return [false, "Room is full."];
+      }
+
+      if (
+        room.hasPlayerUserId(player.userId)
+      ) {
+        return [false, "Player is already in room."];
+      }
+
+      if (
+        room.game.state.currentPhase !== "Betting"
+      ) {
+        return [false, "Round is already in progress. Wait for the next round to begin, then try joining again."];
       }
 
       room.addPlayer(player);
-      return true;
+      return [true, undefined];
     }
-    return false;
+    return [false, "Room not found."];
   }
 
   public getRoom(roomCode: string): Room | undefined {

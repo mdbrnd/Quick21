@@ -50,7 +50,7 @@ const LobbyScreen = () => {
 
   const joinRoom = async () => {
     if (roomCode.length !== 6) {
-      alert("Room code must be 6 digits");
+      alert("Room code must be 6 digits.");
       return;
     }
 
@@ -59,9 +59,19 @@ const LobbyScreen = () => {
       return;
     }
 
-    const couldJoin = await socket.emitWithAck("join-room", roomCode);
-    if (!couldJoin) {
-      alert("Room not found or full");
+    const result = await socket.emitWithAck(
+      "join-room",
+      roomCode
+    );
+
+    console.log(result);
+
+    if (!result.couldJoin) {
+      if (result.errorMessage) {
+        alert(result.errorMessage);
+      } else {
+        alert("Room not found or full");
+      }
       return;
     }
     navigate("/game", { state: { roomCode: roomCode, isOwner: false } });
