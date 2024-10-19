@@ -7,7 +7,8 @@
     "dev": "nodemon server/src/server.ts",
     "prebuild": "cd client && npm install && cd .. && cd server && npm install",
     "build": "cd client && npm run build && cd .. && cd server && npm run build",
-    "test": "cd server && jest"
+    "test": "cd server && jest",
+    "start:dev": "npm run build && npm run dev"
   },
   "keywords": [],
   "author": "",

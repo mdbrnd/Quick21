@@ -71,7 +71,7 @@ const LobbyScreen = () => {
 
   return (
     <div className="min-h-screen bg-secondary text-accent font-sans relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+CjxyZWN0IHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0iIzBhNGEyZiI+PC9yZWN0Pgo8cGF0aCBkPSJNMzAgMTBMMTAgMzBMMzAgNTBMNTAgMzBMMzAgMTBaIiBmaWxsPSJub25lIiBzdHJva2U9IiMxYTYxM2YiIHN0cm9rZS13aWR0aD0iMC41Ij48L3BhdGg+Cjwvc3ZnPg==')] opacity-40"></div>
+      <div className="absolute inset-0 opacity-40"></div>
       <div className="container mx-auto px-4 py-8 relative z-10">
         <header className="flex justify-between items-center mb-12">
           <button
@@ -90,7 +90,7 @@ const LobbyScreen = () => {
             <User size={24} className="text-primary" />
             <span className="font-semibold text-white">{userInfo?.name}</span>
             <div className="flex items-center space-x-1 text-primary">
-              <span className="font-bold">${userInfo?.balance}</span>
+              <span className="font-bold">${userInfo?.balance.toLocaleString()}</span>
             </div>
             <button
               onClick={() => logOut()}

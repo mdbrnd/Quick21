@@ -96,12 +96,12 @@ const PlayerItem: React.FC<PlayerItemProps> = ({
           {userInfo?.name === player.name && (
             <div className="flex items-center bg-primary text-white px-2 py-1 rounded-full text-sm">
               <CircleDollarSign size={16} className="mr-1" />
-              <span>{userInfo.balance}</span>
+              <span>${userInfo.balance.toLocaleString()}</span>
             </div>
           )}
         </div>
         <div className="text-sm text-accent mt-1 flex items-center">
-          Bet: ${bet}
+          Bet: ${bet?.toLocaleString()}
         </div>
       </div>
     </div>

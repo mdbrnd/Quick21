@@ -8,7 +8,7 @@ const API_BASE_URL: string =
     ? "https://quick21.onrender.com"
     : "http://localhost:4000";
 
-// UI designed with the help of gpt4
+// UI designed with the help of claude ai
 
 const AdminPage: React.FC = () => {
   const navigate = useNavigate();
