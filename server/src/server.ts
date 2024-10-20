@@ -396,6 +396,7 @@ server.listen(SERVER_PORT, () => {
   console.log(`server running at http://localhost:${SERVER_PORT}`);
 });
 
+// Help from ChatGPT
 process.on("SIGINT", () => {
   server.close(() => {
     console.log("Server shut down gracefully.");
