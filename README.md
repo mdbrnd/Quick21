@@ -47,6 +47,8 @@ This project was tested using Windows 11 and macOS Sonoma. In order not to go be
 
 2. Open [http://localhost:4000](http://localhost:4000) to view the application in your browser.
 
+**Note:** On Windows, make sure to terminate the program using Ctrl+C or by running it through an integrated terminal in VSCode. Unlike UNIX-based systems, Windows handles process termination differently and does not always send proper signals like SIGINT or SIGTERM to the child process. If you close the terminal using the window controls (the X button), the Node.js process will remain running in the background, leading to an "address in use" error when you try to start the server again. This issue does not affect macOS. For more details, refer to [Microsoft's documentation](https://learn.microsoft.com/en-us/windows/win32/procthread/terminating-a-process) and https://unix.stackexchange.com/questions/149741/why-is-sigint-not-propagated-to-child-process-when-sent-to-its-parent-process.
+
 ## Project Structure
 
 - `client/`: Contains the React frontend application.
@@ -55,9 +57,16 @@ This project was tested using Windows 11 and macOS Sonoma. In order not to go be
 
 More details for the project structure can be found in the respective `README.md` files of the [client](https://github.com/mdbrnd/quick21/tree/main/client/README.md) and [server](https://github.com/mdbrnd/quick21/tree/main/server/README.md) directories.
 
+## Known Issues
+
+- Occasionally, WebSocket requests fail, causing the player list to not populate when a player joins a room. I have not yet been able to track down the source of the bug.
+- In `SocketContext.tsx`, the `isAuthenticated` state sometimes fails to initialize correctly, leading to potential issues with authentication handling. It works correctly on the landing page, so a workaround is to redirect to the landing page if the socket is unauthorized or uninitialized and then redirect back to the lobby.
+- On mobile, certain UI elements overlap, affecting the display and usability of the interface.
+- Technically, the card area UI could go out of its boundaries a bit if a player has a hand with 5+ cards (very unlikely).
+
 ## Sources
 
-A full list of sources used can be found [here](https://github.com/mdbrnd/Maturarbeit/blob/main/Maturarbeit_Blackjack_GH.pdf).
+A list of sources used can be found [here](https://github.com/mdbrnd/Maturarbeit/blob/main/Maturarbeit_Blackjack_GH.pdf).
 
 ## License
 
