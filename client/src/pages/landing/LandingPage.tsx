@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { DollarSignIcon, PlayIcon, ShieldCheckIcon, Users } from "lucide-react";
 
 const API_BASE_URL: string =
-  process.env.REACT_APP_ENV === "production"
+  process.env.REACT_APP_ENV === "production" || undefined
     ? "https://quick21.onrender.com"
     : "http://localhost:4000";
 

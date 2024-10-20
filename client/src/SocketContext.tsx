@@ -2,8 +2,9 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { UserDTO } from "./models/userDTO";
 
+
 const API_BASE_URL: string =
-  process.env.REACT_APP_ENV === "production"
+  process.env.REACT_APP_ENV === "production" || undefined // In production, the custom REACT_APP_ENV doesn't exist, so we use undefined
     ? "https://quick21.onrender.com"
     : "http://localhost:4000";
 
