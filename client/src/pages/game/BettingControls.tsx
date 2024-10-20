@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Location, useLocation, useNavigate } from "react-router-dom";
-import { Minus, Plus, DollarSign, AlertCircle, CoinsIcon } from "lucide-react";
+import { Minus, Plus, AlertCircle } from "lucide-react";
 import { useSocket } from "../../SocketContext";
 import LocationState from "../../models/location_state";
 

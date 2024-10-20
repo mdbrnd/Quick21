@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   User,
-  AlertCircle,
   Diamond,
   Spade,
   LogOut,
@@ -63,8 +62,6 @@ const LobbyScreen = () => {
       "join-room",
       roomCode
     );
-
-    console.log(result);
 
     if (!result.couldJoin) {
       if (result.errorMessage) {
