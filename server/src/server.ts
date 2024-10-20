@@ -21,7 +21,7 @@ const STARTING_BALANCE = 10000;
 
 if (!JWT_SECRET) {
   console.error(
-    "JWT_SECRET is not defined. Set JWT_SECRET environment variable and create .env file in the root directory if it does not yet exist. (/server/.env), JWT_SECRET=<your_secret>"
+    "JWT_SECRET is not defined. Set JWT_SECRET environment variable and create .env file in the root directory if it does not yet exist. (/Quick21/.env), JWT_SECRET=<your_secret>"
   );
   process.exit(1);
 }
