@@ -57,10 +57,10 @@ const GameScreen: React.FC = () => {
       socket.off("game-state-update", updateGameState);
       socket.off("round-over");
     };
-  }, [socket, roomCode, navigate]);
+  }, [socket, roomCode, navigate, location.state]);
 
   function updateGameState(gameState: ClientGameState) {
-    console.log("updating game state to:");
+    console.log("Updating game state to:");
     console.log(gameState);
     setGameState(gameState);
     refreshUserInfo();

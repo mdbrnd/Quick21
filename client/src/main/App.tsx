@@ -1,14 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import LobbyScreen from "../pages/lobby/LobbyScreen";
 import GameScreen from "../pages/game/GameScreen";
 import LandingPage from "../pages/landing/LandingPage";
-import { SocketProvider, useSocket } from "../SocketContext";
+import { SocketProvider } from "../SocketContext";
 import AdminPage from "../pages/admin/AdminPage";
 
 const App: React.FC = () => {
-  const socket = useSocket();
-
   return (
     <SocketProvider>
       <Router>

@@ -4,14 +4,11 @@ import { Player } from "../../models/player";
 import { findBetBySocketId } from "../../utils";
 import {
   User,
-  DollarSign,
   Clock,
-  BadgeDollarSign,
   CircleDollarSign,
   HandCoins,
 } from "lucide-react";
 import { useSocket } from "../../SocketContext";
-import { UserDTO } from "../../models/userDTO";
 
 interface PlayerListProps {
   gameState: ClientGameState;

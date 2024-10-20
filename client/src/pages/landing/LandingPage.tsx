@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { DollarSignIcon, PlayIcon, ShieldCheckIcon, Users } from "lucide-react";
 
 const API_BASE_URL: string =
-  process.env.REACT_APP_ENV === "production" ||
-  process.env.REACT_APP_ENV === undefined
+  process.env.REACT_APP_ENV === "production"
     ? "https://quick21.onrender.com"
     : "http://localhost:4000";
 
@@ -14,7 +13,7 @@ const LandingPage: React.FC = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const { socket, connect, isAuthenticated } = useSocket();
+  const { connect, isAuthenticated } = useSocket();
   const navigate = useNavigate();
 
   const formRef = useRef<HTMLFormElement>(null);
