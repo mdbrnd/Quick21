@@ -13,23 +13,23 @@ export enum RoundResult {
 export class RoundOverInfo {
   results: Map<Player, RoundResult>;
   dealersHand: Card[];
-  updatedBalances: Map<Player, number>;
+  balanceChanges: Map<Player, number>;
 
   constructor(
     results: Map<Player, RoundResult>,
     dealersHand: Card[],
-    updatedBalances: Map<Player, number>
+    balanceChanges: Map<Player, number>
   ) {
     this.results = results;
     this.dealersHand = dealersHand;
-    this.updatedBalances = updatedBalances;
+    this.balanceChanges = balanceChanges;
   }
 
   static fromDTO(data: any) {
     return {
       results: deserializeMap(data.results) as Map<Player, RoundResult>,
       dealersHand: data.dealersHand,
-      updatedBalances: deserializeMap(data.updatedBalances) as Map<
+      balanceChanges: deserializeMap(data.balanceChanges) as Map<
         Player,
         number
       >,

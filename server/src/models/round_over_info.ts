@@ -12,23 +12,23 @@ export enum RoundResult {
 export class RoundOverInfo {
   results: Map<Player, RoundResult>;
   dealersHand: Card[];
-  updatedBalances: Map<Player, number>;
+  balanceChanges: Map<Player, number>;
 
   constructor(
     results: Map<Player, RoundResult>,
     dealersHand: Card[],
-    updatedBalances: Map<Player, number>
+    balanceChanges: Map<Player, number>
   ) {
     this.results = results;
     this.dealersHand = dealersHand;
-    this.updatedBalances = updatedBalances;
+    this.balanceChanges = balanceChanges;
   }
 
   toDTO() {
     return {
       results: serializeMap(this.results),
       dealersHand: this.dealersHand,
-      updatedBalances: serializeMap(this.updatedBalances),
+      balanceChanges: serializeMap(this.balanceChanges),
     };
   }
 }
