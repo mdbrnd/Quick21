@@ -71,7 +71,7 @@ class DBManager {
 
   getUserByName(name: string): Promise<User | undefined> {
     return new Promise((resolve, reject) => {
-      this.db.get("SELECT * FROM users WHERE name = ?", [name], (err, row) => {
+      this.db.get("SELECT * FROM users WHERE name = ? COLLATE NOCASE", [name], (err, row) => {
         if (err) {
           reject(err);
           return;
@@ -84,7 +84,7 @@ class DBManager {
   userExists(name: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.db.get(
-        "SELECT COUNT(*) as count FROM users WHERE name = ?",
+        "SELECT COUNT(*) as count FROM users WHERE name = ? COLLATE NOCASE",
         [name],
         (err, row: any) => {
           if (err) {

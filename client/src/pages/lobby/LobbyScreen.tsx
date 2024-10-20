@@ -63,7 +63,7 @@ const LobbyScreen = () => {
       roomCode
     );
 
-    if (!result.couldJoin) {
+    if (!result.success) {
       if (result.errorMessage) {
         alert(result.errorMessage);
       } else {

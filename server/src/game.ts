@@ -220,7 +220,7 @@ class Game {
 
   private determineRoundResults(state: ServerGameState): RoundOverInfo {
     const results = new Map<Player, RoundResult>();
-    const updatedBalances = new Map<Player, number>();
+    const balanceChanges = new Map<Player, number>();
     const dealerValue = this.calculateHandValue(state.dealersHand);
     const dealerBlackjack = this.hasBlackjack(state.dealersHand);
 
@@ -253,10 +253,10 @@ class Game {
       }
 
       results.set(player, result);
-      updatedBalances.set(player, balanceChange);
+      balanceChanges.set(player, balanceChange);
     });
 
-    return new RoundOverInfo(results, state.dealersHand, updatedBalances);
+    return new RoundOverInfo(results, state.dealersHand, balanceChanges);
   }
 }
 

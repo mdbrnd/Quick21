@@ -299,7 +299,7 @@ io.on("connection", (socket) => {
     });
 
     if (couldJoin) {
-      socket.join(roomCode);
+      await socket.join(roomCode);
       console.log("player added to room");
       // Update game state to show others that player is in room
       let room = roomManager.getRoom(roomCode);

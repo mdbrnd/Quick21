@@ -32,7 +32,9 @@ class Room {
   }
 
   // A bit ugly, but necessary due to the existing structure
-  public async removePlayer(playerSocketId: string): Promise<RoundOverInfo | undefined> {
+  public async removePlayer(
+    playerSocketId: string
+  ): Promise<RoundOverInfo | undefined> {
     const index = this.players.findIndex(
       (player) => player.socketId === playerSocketId
     );
@@ -41,7 +43,10 @@ class Room {
     }
 
     // If the player left without finishing his turn, we need to move to the next player or end the round
-    if (this.game.state.currentTurn.socketId === playerSocketId && this.game.state.currentPhase == "Playing") {
+    if (
+      this.game.state.currentTurn.socketId === playerSocketId &&
+      this.game.state.currentPhase == "Playing"
+    ) {
       const lastPlayer = [...this.game.state.playersHands.entries()].at(-1)![0];
       if (lastPlayer.socketId === playerSocketId) {
         this.game.removePlayer(playerSocketId);
@@ -142,7 +147,7 @@ class Room {
     roundOverInfo: RoundOverInfo
   ): Promise<RoundOverInfo> {
     // Update balances in the database
-    for (const [player, balanceChange] of roundOverInfo.updatedBalances) {
+    for (const [player, balanceChange] of roundOverInfo.balanceChanges) {
       const user = await dbManager.getUser(player.userId);
       if (user) {
         let newBalance = user.balance + balanceChange;
