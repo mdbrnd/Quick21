@@ -395,3 +395,17 @@ io.on("connection", (socket) => {
 server.listen(SERVER_PORT, () => {
   console.log(`server running at http://localhost:${SERVER_PORT}`);
 });
+
+process.on("SIGINT", () => {
+  server.close(() => {
+    console.log("Server shut down gracefully.");
+    process.exit(0);
+  });
+});
+
+process.on("SIGTERM", () => {
+  server.close(() => {
+    console.log("Server shut down gracefully.");
+    process.exit(0);
+  });
+});
