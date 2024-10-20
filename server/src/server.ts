@@ -26,6 +26,8 @@ if (!JWT_SECRET) {
   process.exit(1);
 }
 
+// This file could be extracted into multiples files for more modularity, but I find it clearer when every request handler and things related to the server are in the same file, especially for smaller projects like this one.
+
 interface JwtPayload {
   id: number;
   name: string;
@@ -299,7 +301,7 @@ io.on("connection", (socket) => {
     });
 
     if (couldJoin) {
-      await socket.join(roomCode);
+      socket.join(roomCode);
       console.log("player added to room");
       // Update game state to show others that player is in room
       let room = roomManager.getRoom(roomCode);
