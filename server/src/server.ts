@@ -287,15 +287,16 @@ io.on("connection", (socket) => {
   authSocket.on("join-room", async (roomCode: string, callback) => {
     console.log("joining room " + roomCode);
 
-    let user = await dbManager.getUser(authSocket.user.id);
-
-    let couldJoin: boolean = roomManager.joinRoom(roomCode, {
+    let [couldJoin, errorMessage] = roomManager.joinRoom(roomCode, {
       socketId: socket.id,
       name: authSocket.user.name,
       userId: authSocket.user.id as unknown as number,
     });
 
-    callback(couldJoin);
+    callback({
+      success: couldJoin,
+      errorMessage: errorMessage,
+    });
 
     if (couldJoin) {
       socket.join(roomCode);
@@ -307,7 +308,7 @@ io.on("connection", (socket) => {
         io.to(roomCode).emit("game-state-update", gameState);
       }
     } else {
-      console.log("could not add player to room");
+      console.log("could not add player to room: " + errorMessage);
     }
   });
 

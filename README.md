@@ -17,10 +17,10 @@ This project was tested using Windows 11 and macOS Sonoma. In order not to go be
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/mdbrnd/quick21.git
-   cd quick21
+   git clone https://github.com/mdbrnd/Quick21.git
+   cd Quick21
    ```
-2. Create a `.env` file in the root directory (the resulting path should be `quick21/.env`) and add the following:
+2. Create a `.env` file in the root directory (the resulting path should be `Quick21/.env`) and add the following:
 
    ```env
    JWT_SECRET=your_jwt_secret
@@ -31,7 +31,7 @@ This project was tested using Windows 11 and macOS Sonoma. In order not to go be
 
    The NODE_ENV variable specificies which environment the application is running in (production or development)
 
-3. Create a `.env` file in the `client` directory (the resulting path should be `quick21/client/.env`) and add the following:
+3. Create a `.env` file in the `client` directory (the resulting path should be `Quick21/client/.env`) and add the following:
    ```env
    REACT_APP_ENV=development
    ```
@@ -52,7 +52,7 @@ This project was tested using Windows 11 and macOS Sonoma. In order not to go be
 - `client/`: Contains the React frontend application.
 - `server/`: Contains the Express + socket.io backend application.
 
-More details for the project structure can be found in the respective `README.md` files of the `client` and `server` directories.
+More details for the project structure can be found in the respective `README.md` files of the [client](https://github.com/mdbrnd/quick21/tree/main/client/README.md) and [server](https://github.com/mdbrnd/quick21/tree/main/server/README.md) directories.
 
 ## AI Assistance Disclaimer
 

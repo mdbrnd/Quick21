@@ -6,6 +6,7 @@ import { RoundOverInfo } from "./models/round_over_info";
 import { User } from "./models/user";
 
 const dbManager = new DBManager();
+const RESET_BALANCE = 2000;
 
 class Room {
   public code: string;
@@ -146,8 +147,8 @@ class Room {
       if (user) {
         let newBalance = user.balance + balanceChange;
         if (newBalance <= 0) {
-          // If the player has no money left, reset their balance to 2000
-          newBalance = 2000;
+          // If the player has no money left, reset their balance
+          newBalance = RESET_BALANCE;
         }
 
         await dbManager.updateUserBalance(user.id, newBalance);
