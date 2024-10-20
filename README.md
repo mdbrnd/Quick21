@@ -63,6 +63,7 @@ More details for the project structure can be found in the respective `README.md
 - In `SocketContext.tsx`, the `isAuthenticated` state sometimes fails to initialize correctly, leading to potential issues with authentication handling. It works correctly on the landing page, so a workaround is to redirect to the landing page if the socket is unauthorized or uninitialized and then redirect back to the lobby.
 - On mobile, certain UI elements overlap, affecting the display and usability of the interface.
 - Technically, the card area UI could go out of its boundaries a bit if a player has a hand with 5+ cards (very unlikely).
+- If the owner leaves the game, the game state could become unfunctional
 
 ## Sources
 
