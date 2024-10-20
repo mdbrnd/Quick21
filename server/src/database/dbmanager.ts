@@ -13,7 +13,7 @@ class DBManager {
     console.log(`DB Path: ${dbPath}`);
     // When using npm start, which is whats used in production, the db path is different since its running in dist folder
     if (process.env.NODE_ENV === "production") {
-      dbPath = path.resolve(__dirname, "../../../db/database.sqlite");
+      dbPath = "/var/data/db/database.sqlite";
     }
     const dbDir = path.dirname(dbPath);
 
