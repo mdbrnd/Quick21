@@ -55,9 +55,8 @@ This project was tested using Windows 11 and macOS Sonoma. In order not to go be
 
 More details for the project structure can be found in the respective `README.md` files of the [client](https://github.com/mdbrnd/quick21/tree/main/client/README.md) and [server](https://github.com/mdbrnd/quick21/tree/main/server/README.md) directories.
 
-## Disclaimer
+## Sources
 
-A significant portion of the user interface (UI) for this project was designed with the assistance of AI language models, specifically ChatGPT and Claude AI. These AI tools were used to generate ideas, improve layouts, and optimize the user experience.
 A full list of sources used can be found [here](https://github.com/mdbrnd/Maturarbeit/blob/main/Maturarbeit_Blackjack_GH.pdf).
 
 ## License
